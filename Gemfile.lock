@@ -1,0 +1,19 @@
+PATH
+  remote: .
+  specs:
+    coove (0.1.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    rake (13.0.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  coove!
+  rake (~> 13.0)
+
+BUNDLED WITH
+   2.1.2
