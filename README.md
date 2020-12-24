@@ -1,13 +1,13 @@
-# Coove
+# Drum
 
-A small tool that lets you backup and sync your playlists across music streaming services and with your local library.
+A small tool for syncing your playlists across music streaming services and with your local library.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'coove'
+gem 'drum'
 ```
 
 And then execute:
@@ -16,7 +16,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install coove
+    $ gem install drum
 
 ## Usage
 
@@ -30,7 +30,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/coove.
+Bug reports and pull requests are welcome on GitHub at https://github.com/fwcd/drum.
 
 ## License
 

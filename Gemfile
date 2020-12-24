@@ -1,8 +1,6 @@
-# frozen_string_literal: true
-
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in coove.gemspec
+# Specify your gem's dependencies in drum.gemspec
 gemspec
 
-gem "rake", "~> 13.0"
+gem "rake", "~> 12.0"
