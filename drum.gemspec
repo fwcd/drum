@@ -29,4 +29,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'thor', '~> 0.20'
   spec.add_dependency 'sequel', '~> 5.39'
   spec.add_dependency 'sqlite3', '~> 1.4'
+  spec.add_dependency 'rspotify', '~> 2.10'
 end
