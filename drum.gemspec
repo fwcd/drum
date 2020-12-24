@@ -27,4 +27,5 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   
   spec.add_dependency 'thor', '~> 0.20'
+  spec.add_dependency 'sequel', '~> 5.39'
 end
