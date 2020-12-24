@@ -11,29 +11,11 @@ A small tool for syncing your playlists across music streaming services and with
 - [ ] Playlist folders
 - [ ] Smart playlists (making rules, then e.g. syncing them to streaming services, even if these have no notion of 'smart' playlists)
 
-## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'drum'
-```
-
-And then execute:
-
-    $ bundle install
-
-Or install it yourself as:
-
-    $ gem install drum
-
-## Usage
-
-TODO: Write usage instructions here
-
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+
+To run the application, run `bundle exec bin/drum`.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
