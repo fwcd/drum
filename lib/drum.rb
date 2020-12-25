@@ -34,5 +34,16 @@ module Drum
         puts "ERROR: Sorry, #{name} is not a valid service! Try one of these: #{@services.keys}"
       end
     end
+
+    desc 'push', 'Uploads a library to an external service (e.g. spotify)'
+    def push(name)
+      service = @services[name.downcase]
+      unless service.nil?
+        puts "Pushing to #{name}..."
+        service.push
+      else
+        puts "ERROR: Sorry, #{name} is not a valid service! Try one of these: #{@services.keys}"
+      end
+    end
   end
 end

@@ -4,6 +4,6 @@ class Drum::Service
   end
 
   def push
-    puts "ERROR: Service cannot be pushed (yet)!"
+    puts "ERROR: Service cannot be pushed to (yet)!"
   end
 end
