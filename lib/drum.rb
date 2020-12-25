@@ -1,4 +1,6 @@
 require 'drum/db'
+require 'drum/services/dummy'
+require 'drum/services/service'
 require 'drum/version'
 require 'thor'
 
@@ -11,16 +13,26 @@ module Drum
       
       db_dir = "#{Dir.home}/.drum"
       Dir.mkdir(db_dir) unless File.exists?(db_dir)
-      Drum.setup_db("sqlite://#{db_dir}/drum.sqlite3")
+      @db = Drum.setup_db("sqlite://#{db_dir}/drum.sqlite3")
+
+      @services = {
+        'dummy' => Dummy.new
+      }
     end
 
     def self.exit_on_failure?
       true
     end
     
-    desc 'ping', 'Pongs.'
-    def ping
-      puts 'Pong!'
+    desc 'pull', 'Fetches a library from an external service (e.g. spotify)'
+    def pull(name)
+      service = @services[name.downcase]
+      unless service.nil?
+        puts "Pulling from #{name}..."
+        service.pull
+      else
+        puts "ERROR: Sorry, #{name} is not a valid service! Try one of these: #{@services.keys}"
+      end
     end
   end
 end
