@@ -10,6 +10,7 @@ module Drum
       String :title
       Integer :duration_ms
       TrueClass :explicit
+      String :isrc
       # General audio features
       Float :tempo            # beats per minute
       Integer :key            # 0 = C, 1 = C#/D, ...
