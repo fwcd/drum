@@ -11,7 +11,7 @@ module Drum
       
       db_dir = "#{Dir.home}/.drum"
       Dir.mkdir(db_dir) unless File.exists?(db_dir)
-      Drum.setup_db("#{db_dir}/drum.sqlite3")
+      Drum.setup_db("sqlite://#{db_dir}/drum.sqlite3")
     end
 
     def self.exit_on_failure?
