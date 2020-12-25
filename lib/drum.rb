@@ -26,39 +26,39 @@ module Drum
       true
     end
 
+    no_commands do
+      def with_service(raw)
+        name = raw.downcase
+        service = @services[name]
+        unless service.nil?
+          yield(name, service)
+        else
+          raise "Sorry, #{name} is not a valid service! Try one of these: #{@services.keys}"
+        end
+      end
+    end
+
     desc 'preview', 'Previews information from an external service (e.g. spotify)'
-    def preview(name)
-      name = name.downcase
-      service = @services[name]
-      unless service.nil?
+    def preview(raw)
+      self.with_service(raw) do |name, service|
         puts "Previewing #{name}..."
         service.preview
-      else
-        raise "Sorry, #{name} is not a valid service! Try one of these: #{@services.keys}"
       end
     end
     
     desc 'pull', 'Fetches a library from an external service (e.g. spotify)'
-    def pull(name)
-      name = name.downcase
-      service = @services[name]
-      unless service.nil?
-        puts "Pulling from #{name}..."
+    def pull(raw)
+      self.with_service(raw) do |name, service|
+        puts "Pulling #{name}..."
         service.pull(@db, name)
-      else
-        raise "Sorry, #{name} is not a valid service! Try one of these: #{@services.keys}"
       end
     end
 
     desc 'push', 'Uploads a library to an external service (e.g. spotify)'
-    def push(name)
-      name = name.downcase
-      service = @services[name]
-      unless service.nil?
+    def push(raw)
+      self.with_service(raw) do |name, service|
         puts "Pushing to #{name}..."
         service.push(@db, name)
-      else
-        raise "Sorry, #{name} is not a valid service! Try one of these: #{@services.keys}"
       end
     end
   end
