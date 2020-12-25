@@ -4,6 +4,8 @@ require 'rspotify'
 module Drum
   class SpotifyService < Service
     def authenticate
+      # TODO: OAuth to access the user's private playlists
+
       client_id = ENV['SPOTIFY_CLIENT_ID']
       client_secret = ENV['SPOTIFY_CLIENT_SECRET']
       user = ENV['SPOTIFY_USER']
