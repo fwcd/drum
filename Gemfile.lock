@@ -41,7 +41,6 @@ GEM
       omniauth (~> 1.9)
     public_suffix (3.1.1)
     rack (2.2.3)
-    rake (12.3.3)
     rest-client (2.0.2)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
@@ -63,7 +62,6 @@ PLATFORMS
 
 DEPENDENCIES
   drum!
-  rake (~> 12.0)
 
 BUNDLED WITH
    2.2.3
