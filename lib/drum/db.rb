@@ -153,6 +153,7 @@ module Drum
       primary_key :id
       String :name, null: false
       foreign_key :service_id, :services, null: true
+      foreign_key :user_id, :users, null: true
     end
 
     db.create_table?(:library_tracks) do
