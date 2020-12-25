@@ -1,6 +1,7 @@
 require 'drum/db'
 require 'drum/services/dummy'
 require 'drum/services/service'
+require 'drum/services/spotify'
 require 'drum/version'
 require 'thor'
 
@@ -16,12 +17,25 @@ module Drum
       @db = Drum.setup_db("sqlite://#{db_dir}/drum.sqlite3")
 
       @services = {
-        'dummy' => DummyService.new
+        'dummy' => DummyService.new,
+        'spotify' => SpotifyService.new
       }
     end
 
     def self.exit_on_failure?
       true
+    end
+
+    desc 'preview', 'Previews information from an external service (e.g. spotify)'
+    def preview(name)
+      name = name.downcase
+      service = @services[name]
+      unless service.nil?
+        puts "Previewing #{name}..."
+        service.preview
+      else
+        raise "Sorry, #{name} is not a valid service! Try one of these: #{@services.keys}"
+      end
     end
     
     desc 'pull', 'Fetches a library from an external service (e.g. spotify)'
@@ -32,7 +46,7 @@ module Drum
         puts "Pulling from #{name}..."
         service.pull(@db, name)
       else
-        puts "ERROR: Sorry, #{name} is not a valid service! Try one of these: #{@services.keys}"
+        raise "Sorry, #{name} is not a valid service! Try one of these: #{@services.keys}"
       end
     end
 
@@ -44,7 +58,7 @@ module Drum
         puts "Pushing to #{name}..."
         service.push(@db, name)
       else
-        puts "ERROR: Sorry, #{name} is not a valid service! Try one of these: #{@services.keys}"
+        raise "Sorry, #{name} is not a valid service! Try one of these: #{@services.keys}"
       end
     end
   end
