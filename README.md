@@ -22,6 +22,13 @@ sudo gem install sqlite3 -- --with-sqlite3-lib=/usr/lib
 
 To run the application, run `bundle exec bin/drum`. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
+To use the service integrations, e.g. with Spotify, set the following environment variables:
+
+```
+SPOTIFY_CLIENT_ID=...
+SPOTIFY_CLIENT_SECRET=...
+```
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/fwcd/drum.

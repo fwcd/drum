@@ -1,6 +1,6 @@
 require 'drum/services/service'
 
 module Drum
-  class Dummy < Service
+  class DummyService < Service
   end
 end

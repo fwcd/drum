@@ -16,7 +16,7 @@ module Drum
       @db = Drum.setup_db("sqlite://#{db_dir}/drum.sqlite3")
 
       @services = {
-        'dummy' => Dummy.new
+        'dummy' => DummyService.new
       }
     end
 
@@ -26,10 +26,11 @@ module Drum
     
     desc 'pull', 'Fetches a library from an external service (e.g. spotify)'
     def pull(name)
-      service = @services[name.downcase]
+      name = name.downcase
+      service = @services[name]
       unless service.nil?
         puts "Pulling from #{name}..."
-        service.pull
+        service.pull(@db, name)
       else
         puts "ERROR: Sorry, #{name} is not a valid service! Try one of these: #{@services.keys}"
       end
@@ -37,10 +38,11 @@ module Drum
 
     desc 'push', 'Uploads a library to an external service (e.g. spotify)'
     def push(name)
-      service = @services[name.downcase]
+      name = name.downcase
+      service = @services[name]
       unless service.nil?
         puts "Pushing to #{name}..."
-        service.push
+        service.push(@db, name)
       else
         puts "ERROR: Sorry, #{name} is not a valid service! Try one of these: #{@services.keys}"
       end
