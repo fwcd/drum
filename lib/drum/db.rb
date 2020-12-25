@@ -103,7 +103,7 @@ module Drum
     # External services/locators
 
     db.create_table?(:service) do
-      # a music streaming service (or similar, e.g. 'local' is a service too)
+      # a music streaming service (or similar, e.g. 'local' could be a service too)
       primary_key :id
       String :name, null: false
     end
