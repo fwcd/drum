@@ -4,6 +4,10 @@ module Drum
   def self.setup_db(uri)
     db = Sequel.connect(uri)
     
+    # TODO: Albums, track-album relation, smart playlists, playlist folders,
+    #       separate tables for externals locations/ids (e.g. 'tracks_spotify',
+    #       'tracks_local' holding URIs/file paths/...)
+    
     db.create_table?(:tracks) do
       primary_key :id
       # Generic metadata
