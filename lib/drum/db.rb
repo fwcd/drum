@@ -4,7 +4,7 @@ module Drum
   def self.setup_db(uri)
     db = Sequel.connect(uri)
     
-    # TODO: Albums, track-album relation, smart playlists, playlist folders,
+    # TODO: smart playlists, playlist folders,
     #       separate tables for externals locations/ids (e.g. 'tracks_spotify',
     #       'tracks_local' holding URIs/file paths/...)
     
@@ -40,6 +40,27 @@ module Drum
       foreign_key :artist_id, :artists, null: false
       foreign_key :track_id, :tracks, null: false
       primary_key [:artist_id, :track_id]
+    end
+
+    db.create_table?(:albums) do
+      primary_key :id
+      String :name, null: false
+      String :type, null: false        # 'album', 'single' or 'compilation'
+      String :release_date, null: true # e.g. 2020-12-24, 2020-12 or 2020
+    end
+
+    db.create_table?(:album_artists) do
+      foreign_key :artist_id, :artists, null: false
+      foreign_key :album_id, :albums, null: false
+      primary_key [:artist_id, :album_id]
+    end
+
+    db.create_table?(:album_tracks) do
+      foreign_key :album_id, :albums, null: false
+      foreign_key :track_id, :tracks, null: false
+      primary_key [:album_id, :track_id]
+      Integer :track_index, null: false # within the album
+      Integer :disc_number, null: false # 1 or higher
     end
     
     db.create_table?(:users) do
