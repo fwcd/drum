@@ -10,6 +10,7 @@ A small tool for syncing your playlists across music streaming services and with
 - [ ] Import/export of common playlist formats (Drum's own `json` format, `m3u`, ...)
 - [ ] Playlist folders
 - [ ] Smart playlists (making rules, then e.g. syncing them to streaming services, even if these have no notion of 'smart' playlists)
+- [ ] Store metadata like BPM, key, time signature, etc
 
 ## Development
 
