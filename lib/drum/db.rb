@@ -34,10 +34,29 @@ module Drum
     db.create_table?(:track_artists) do
       foreign_key :artist_id, :artists
       foreign_key :track_id, :tracks
+      primary_key [:artist_id, :track_id]
+    end
+    
+    db.create_table?(:users) do
+      primary_key :id
+      String :name
+      String :display_name
     end
 
     db.create_table?(:playlists) do
-      # TODO
+      primary_key :id
+      String :name
+      String :description
+      foreign_key :user_id, :users
+    end
+    
+    db.create_table?(:playlist_tracks) do
+      foreign_key :playlist_id, :playlists
+      foreign_key :track_id, :tracks
+      primary_key [:playlist_id, :track_id]
+      Integer :track_index # within the playlist
+      DateTime :added_at
+      foreign_key :user_id, :users
     end
 
     return db
