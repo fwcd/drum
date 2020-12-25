@@ -4,9 +4,9 @@ module Drum
   def self.setup_db(uri)
     db = Sequel.connect(uri)
     
-    # TODO: Smart playlists,
-    #       separate tables for externals locations/ids (e.g. 'tracks_spotify',
-    #       'tracks_local' holding URIs/file paths/...)
+    # TODO: Smart playlists
+
+    # Tracks
     
     db.create_table?(:tracks) do
       primary_key :id
@@ -30,6 +30,8 @@ module Drum
       Float :speechiness, null: true      # 0.0 to 1.0, > 0.6 = only spoken words
       Float :valence, null: true          # 0.0 to 1.0, musical positiveness, higher = happier
     end
+
+    # Artists
     
     db.create_table?(:artists) do
       primary_key :id
@@ -41,6 +43,8 @@ module Drum
       foreign_key :track_id, :tracks, null: false
       primary_key [:artist_id, :track_id]
     end
+
+    # Albums
 
     db.create_table?(:albums) do
       primary_key :id
@@ -62,12 +66,16 @@ module Drum
       Integer :track_index, null: false # within the album
       Integer :disc_number, null: false # 1 or higher
     end
+
+    # Users
     
     db.create_table?(:users) do
       primary_key :id
       String :name, null: false
       String :display_name, null: true
     end
+
+    # Playlists
 
     db.create_table?(:playlists) do
       primary_key :id
@@ -92,14 +100,71 @@ module Drum
       foreign_key :user_id, :users, null: false # the user that added the song
     end
 
-    db.create_table?(:library_tracks) do
+    # External services/locators
+
+    db.create_table?(:service) do
+      # a music streaming service (or similar, e.g. 'local' is a service too)
+      primary_key :id
+      String :name, null: false
+    end
+
+    db.create_table?(:track_services) do
+      # locates a track on a service
       foreign_key :track_id, :tracks, null: false
-      primary_key [:track_id]
+      foreign_key :service_id, :services, null: false
+      primary_key [:track_id, :service_id]
+      String :uri, null: true
+      String :external_id, null: true
+    end
+
+    db.create_table?(:album_services) do
+      # locates an album on a service
+      foreign_key :album_id, :albums, null: false
+      foreign_key :service_id, :services, null: false
+      primary_key [:album_id, :service_id]
+      String :uri, null: true
+      String :external_id, null: true
+      String :image_uri, null: true
+    end
+
+    db.create_table?(:artist_services) do
+      # locates an artist on a service
+      foreign_key :artist_id, :artists, null: false
+      foreign_key :service_id, :services, null: false
+      primary_key [:artist_id, :service_id]
+      String :uri, null: true
+      String :external_id, null: true
+      String :image_uri, null: true
+    end
+
+    db.create_table?(:playlist_services) do
+      # locates a playlist on a service
+      foreign_key :playlist_id, :playlists, null: false
+      foreign_key :service_id, :services, null: false
+      primary_key [:playlist_id, :service_id]
+      String :uri, null: true
+      String :external_id, null: true
+      String :image_uri, null: true
+    end
+
+    # User library
+
+    db.create_table?(:libraries) do
+      primary_key :id
+      String :name, null: false
+      foreign_key :service_id, :services, null: true
+    end
+
+    db.create_table?(:library_tracks) do
+      foreign_key :library_id, :libraries, null: false
+      foreign_key :track_id, :tracks, null: false
+      primary_key [:library_id, :track_id]
     end
 
     db.create_table?(:library_playlists) do
+      foreign_key :library_id, :libraries, null: false
       foreign_key :playlist_id, :playlists, null: false
-      primary_key [:playlist_id]
+      primary_key [:library_id, :playlist_id]
     end
 
     return db
