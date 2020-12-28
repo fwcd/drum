@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     drum (0.1.0)
+      launchy (~> 2.4)
       rspotify (~> 2.10)
       sequel (~> 5.39)
       sqlite3 (~> 1.4)
@@ -14,12 +15,15 @@ GEM
       public_suffix (>= 2.0.2, < 4.0)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
-    faraday (1.0.1)
+    faraday (1.2.0)
       multipart-post (>= 1.2, < 3)
+      ruby2_keywords
     hashie (4.1.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     jwt (2.2.2)
+    launchy (2.4.3)
+      addressable (~> 2.3)
     mime-types (3.3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2020.1104)
@@ -49,6 +53,7 @@ GEM
       addressable (~> 2.5.2)
       omniauth-oauth2 (>= 1.6)
       rest-client (~> 2.0.2)
+    ruby2_keywords (0.0.2)
     sequel (5.39.0)
     sqlite3 (1.4.2)
     thor (0.20.3)
