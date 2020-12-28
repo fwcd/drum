@@ -31,4 +31,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'sqlite3', '~> 1.4'
   spec.add_dependency 'rspotify', '~> 2.10'
   spec.add_dependency 'launchy', '~> 2.4'
+  spec.add_dependency 'webrick', '~> 1.7'
+  spec.add_dependency 'rest-client'
 end

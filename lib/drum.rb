@@ -18,7 +18,7 @@ module Drum
 
       @services = {
         'dummy' => DummyService.new,
-        'spotify' => SpotifyService.new
+        'spotify' => SpotifyService.new(@db)
       }
     end
 
@@ -50,7 +50,7 @@ module Drum
     def pull(raw)
       self.with_service(raw) do |name, service|
         puts "Pulling #{name}..."
-        service.pull(@db, name)
+        service.pull(name)
       end
     end
 
@@ -58,7 +58,7 @@ module Drum
     def push(raw)
       self.with_service(raw) do |name, service|
         puts "Pushing to #{name}..."
-        service.push(@db, name)
+        service.push(name)
       end
     end
   end

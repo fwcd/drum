@@ -102,10 +102,10 @@ module Drum
 
     # External services/locators
 
-    db.create_table?(:service) do
+    db.create_table?(:services) do
       # a music streaming service (or similar, e.g. 'local' could be a service too)
       primary_key :id
-      String :name, null: false
+      String :name, null: false, unique: true
     end
 
     db.create_table?(:track_services) do
@@ -172,9 +172,11 @@ module Drum
     
     db.create_table?(:auth_tokens) do
       primary_key :id
+      foreign_key :service_id, :services, null: false
       String :access_token, null: false
-      String :token_type, null: false
-      DateTime :expires_at, null: false
+      String :refresh_token, null: true
+      String :token_type, null: true # e.g. Bearer
+      DateTime :expires_at, null: true
     end
 
     return db
