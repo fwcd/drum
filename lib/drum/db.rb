@@ -167,6 +167,15 @@ module Drum
       foreign_key :playlist_id, :playlists, null: false
       primary_key [:library_id, :playlist_id]
     end
+    
+    # Authentication data
+    
+    db.create_table?(:auth_tokens) do
+      primary_key :id
+      String :access_token, null: false
+      String :token_type, null: false
+      DateTime :expires_at, null: false
+    end
 
     return db
   end
