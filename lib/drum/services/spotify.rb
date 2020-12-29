@@ -8,8 +8,16 @@ require 'webrick'
 
 module Drum
   class SpotifyService < Service
+    NAME = 'Spotify'    
+
     def initialize(db)
-      @service_id = db[:services].insert_ignore.insert(:name => 'Spotify')
+      @db = db
+      service = db[:services].where(:name => NAME).first
+      if service.nil?
+        @service_id = db[:services].insert(:name => NAME)
+      else
+        @service_id = service[:id]
+      end
     end
 
     def authenticate_app(client_id, client_secret)
@@ -107,7 +115,7 @@ module Drum
       access_token, refresh_token, token_type = self.authenticate_user(client_id, client_secret)
       me_json = self.fetch_me(access_token, token_type)
       
-      if client_id.nil? || client_secret.nil? || user.nil?
+      if client_id.nil? || client_secret.nil?
         raise 'Please specify the Spotify client id and secret in your env vars!'
       end
 
