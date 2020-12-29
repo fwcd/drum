@@ -67,6 +67,7 @@ module Drum
         # Playlists
         'playlist-modify-private',
         'playlist-read-private',
+        'playlist-read-collaborative',
         # Library
         'user-library-modify',
         'user-library-read',
