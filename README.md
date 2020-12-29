@@ -35,6 +35,10 @@ The client ID and secret can be obtained by creating a Spotify application in th
 http://localhost:17998/callback
 ```
 
+## Limitations
+
+* The Spotify API [does not](https://developer.spotify.com/documentation/general/guides/working-with-playlists/#folders) provide a way to access folders currently
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/fwcd/drum.
