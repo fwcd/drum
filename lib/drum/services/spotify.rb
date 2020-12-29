@@ -132,18 +132,18 @@ module Drum
       client_id = ENV['SPOTIFY_CLIENT_ID']
       client_secret = ENV['SPOTIFY_CLIENT_SECRET']
       
+      if client_id.nil? || client_secret.nil?
+        raise 'Please specify the Spotify client id and secret in your env vars!'
+      end
+
       # TODO: Perform refresh flow if a valid token is in the DB
 
       self.authenticate_app(client_id, client_secret)
       access_token, refresh_token, token_type = self.authenticate_user(client_id, client_secret)
       me_json = self.fetch_me(access_token, token_type)
       
-      if client_id.nil? || client_secret.nil?
-        raise 'Please specify the Spotify client id and secret in your env vars!'
-      end
-
       @me = RSpotify::User.new({
-        'credentials': {
+        'credentials' => {
           'token' => access_token,
           'refresh_token' => refresh_token,
           'access_refresh_callback' => Proc.new do |new_token, token_lifetime|
