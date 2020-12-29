@@ -40,8 +40,8 @@ module Drum
       # via Spotify's website, we use a small embedded
       # HTTP server as a 'callback'.
 
-      port = 17998 # TODO: Dynamically generate a port
-      server = WEBrick::HTTPServer.new :Port => 17998
+      port = 17998
+      server = WEBrick::HTTPServer.new :Port => port
       csrf_state = SecureRandom.hex
       auth_code = nil
       error = nil

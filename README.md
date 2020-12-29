@@ -27,7 +27,12 @@ To use the service integrations, e.g. with Spotify, set the following environmen
 ```
 SPOTIFY_CLIENT_ID=...
 SPOTIFY_CLIENT_SECRET=...
-SPOTIFY_USER=...
+```
+
+The client ID and secret can be obtained by creating a Spotify application in the [developer dashboard](https://developer.spotify.com/dashboard/applications). After adding the application, make sure to whitelist the following redirect URI (required for user authentication):
+
+```
+http://localhost:17998/callback
 ```
 
 ## Contributing
