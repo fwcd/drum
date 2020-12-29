@@ -25,8 +25,17 @@ module Drum
     end
     
     def authenticate_user(client_id, client_secret)
-      # Generate an access refresh token,
-      # this requires user interaction. Since the
+      existing = @db[:auth_tokens]
+        .where(:service_id => @service_id)
+        .where{expires_at > (DateTime.now + (1800 / 86400.0))} # half an hour in days
+        .first
+      
+      unless existing.nil?
+        return existing[:access_token], existing[:refresh_token], existing[:token_type]
+      end
+
+      # Generate a new access refresh token,
+      # this might require user interaction. Since the
       # user has to authenticate through the browser
       # via Spotify's website, we use a small embedded
       # HTTP server as a 'callback'.
