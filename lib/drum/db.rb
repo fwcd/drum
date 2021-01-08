@@ -71,8 +71,6 @@ module Drum
     
     db.create_table?(:users) do
       primary_key :id
-      String :name, null: false
-      String :display_name, null: true
     end
 
     # Playlists
@@ -108,13 +106,22 @@ module Drum
       String :name, null: false, unique: true
     end
 
+    db.create_table?(:user_services) do
+      # locates a user on a service
+      foreign_key :user_id, null: false
+      foreign_key :service_id, :services, null: false
+      primary_key [:user_id, :service_id]
+      String :external_id, null: false, unique: true
+      String :display_name, null: true
+    end
+
     db.create_table?(:track_services) do
       # locates a track on a service
       foreign_key :track_id, :tracks, null: false
       foreign_key :service_id, :services, null: false
       primary_key [:track_id, :service_id]
       String :uri, null: true
-      String :external_id, null: true
+      String :external_id, null: true, unique: true
     end
 
     db.create_table?(:album_services) do
@@ -123,7 +130,7 @@ module Drum
       foreign_key :service_id, :services, null: false
       primary_key [:album_id, :service_id]
       String :uri, null: true
-      String :external_id, null: true
+      String :external_id, null: true, unique: true
       String :image_uri, null: true
     end
 
@@ -133,7 +140,7 @@ module Drum
       foreign_key :service_id, :services, null: false
       primary_key [:artist_id, :service_id]
       String :uri, null: true
-      String :external_id, null: true
+      String :external_id, null: true, unique: true
       String :image_uri, null: true
     end
 
@@ -143,8 +150,9 @@ module Drum
       foreign_key :service_id, :services, null: false
       primary_key [:playlist_id, :service_id]
       String :uri, null: true
-      String :external_id, null: true
+      String :external_id, null: true, unique: true
       String :image_uri, null: true
+      TrueClass :collaborative, null: true
     end
 
     # User library

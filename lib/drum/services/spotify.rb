@@ -142,6 +142,7 @@ module Drum
       access_token, refresh_token, token_type = self.authenticate_user(client_id, client_secret)
       me_json = self.fetch_me(access_token, token_type)
       
+      @me_id = me_json['id']
       @me = RSpotify::User.new({
         'credentials' => {
           'token' => access_token,
@@ -158,7 +159,7 @@ module Drum
             )
           end
         },
-        'id' => me_json['id']
+        'id' => @me_id
       })
       
       puts "Successfully logged in to Spotify API as #{me_json['id']}."
@@ -166,7 +167,60 @@ module Drum
 
     def preview
       self.authenticate
-      puts @me.playlists.map { |p| "Found playlist '#{p.name}'" }
+      puts @me.playlists.map { |p| "Found playlist '#{p.name}, images: #{p.images}'" }
+    end
+
+    def pull(library_name)
+      self.authenticate
+
+      # Check whether user already exists, i.e. find its
+      # internal id. If so, update it!
+      
+      user_id = @db[:user_services].where(
+        :service_id => @service_id,
+        :external_id => @me_id,
+      ).first&.dig(:user_id)
+
+      @db[:user_services].insert_ignore.insert(
+        :service_id => @service_id,
+        :user_id => user_id,
+        :external_id => @me_id
+        # TODO
+        # :display_name => @me&.display_name
+      )
+
+      user_id = @db[:users].insert_conflict(:replace).insert(
+        :id => user_id
+      )
+
+      playlists = @me.playlists
+      playlists.each do |p|
+        # Check whether playlist already exists, i.e. find its
+        # internal id. If so, update it!
+
+        id = @db[:playlist_services].where(
+          :service_id => @service_id,
+          :external_id => p.id
+        ).first&.dig(:playlist_id)
+
+        @db[:playlist_services].insert_ignore.insert(
+          :service_id => @service_id,
+          :playlist_id => id,
+          :external_id => p.id,
+          :uri => p.uri,
+          :image_uri => p&.images.first&.dig('url'),
+          :collaborative => p&.collaborative
+        )
+
+        @db[:playlists].insert_conflict(:replace).insert(
+          :name => p.name,
+          :description => p&.description,
+          :user_id => user_id
+        )
+      end
+
+      puts "Pulled #{playlists.length} playlist(s) from Spotify."
+      # TODO: Handle pagination?
     end
   end
 end
