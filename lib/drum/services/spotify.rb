@@ -205,8 +205,9 @@ module Drum
       @db[:user_services].insert_ignore.insert(
         :service_id => @service_id,
         :user_id => id,
-        :external_id => user.id,
-        :display_name => user&.display_name
+        :external_id => user.id
+        # TODO: Currently 404s
+        # :display_name => user&.display_name
       )
 
       return id
@@ -224,7 +225,10 @@ module Drum
       id = @db[:tracks].insert_conflict(:replace).insert(
         :id => id,
         :name => track.name,
-        # TODO
+        :duration_ms => track.duration_ms,
+        :explicit => track.explicit,
+        :isrc => track.external_ids['isrc']
+        # TODO: Audio features
       )
 
       @db[:track_services].insert_conflict(:replace).insert(
@@ -235,6 +239,7 @@ module Drum
       )
     end
 
+    # TODO: Store albums
     # TODO: Insert playlist-track
 
     def store_playlist(playlist)

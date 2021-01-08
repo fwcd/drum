@@ -11,7 +11,7 @@ module Drum
     db.create_table?(:tracks) do
       primary_key :id
       # Generic metadata
-      String :title, null: false
+      String :name, null: false
       Integer :duration_ms, null: false
       TrueClass :explicit, null: true
       String :isrc, null: true
