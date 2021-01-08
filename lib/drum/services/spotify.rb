@@ -181,7 +181,7 @@ module Drum
 
     def preview
       self.authenticate
-      puts self.all_playlists.map { |p| "Found playlist '#{p.name}, images: #{p.images}'" }
+      puts self.all_playlists.map { |p| "Found playlist '#{p.name}' (#{p.total} track(s))" }
     end
 
     def pull(library_name)
