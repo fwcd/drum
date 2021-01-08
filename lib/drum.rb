@@ -4,6 +4,7 @@ require 'drum/services/service'
 require 'drum/services/spotify'
 require 'drum/version'
 require 'thor'
+require 'git'
 
 module Drum
   class Error < StandardError; end
@@ -11,10 +12,17 @@ module Drum
   class CLI < Thor
     def initialize(*args)
       super
-      
-      db_dir = "#{Dir.home}/.drum"
-      Dir.mkdir(db_dir) unless File.exists?(db_dir)
-      @db = Drum.setup_db("sqlite://#{db_dir}/drum.sqlite3")
+
+      # Set up .drum directory
+      @dot_dir = "#{Dir.home}/.drum"
+      Dir.mkdir(@dot_dir) unless File.exists?(@dot_dir)
+
+      # Set up Git repo and database
+      @git = Git.init(@dot_dir)
+      @git.config('user.name', 'drum')
+      @git.config('user.email', '')
+      @db = Drum.setup_db("sqlite://#{@dot_dir}/drum.sqlite3")
+      self.commit_changes
 
       @services = {
         'dummy' => DummyService.new,
@@ -36,6 +44,16 @@ module Drum
           raise "Sorry, #{name} is not a valid service! Try one of these: #{@services.keys}"
         end
       end
+
+      def commit_changes
+        # TODO: Make sure that we are on the correct (default?) branch
+        begin
+          @git.add(all: true)
+          @git.commit(Time.now.strftime('Snapshot %Y-%m-%d %H:%M:%S'))
+        rescue
+          # If repo is in a clean state and no changes were made, ignore
+        end
+      end
     end
 
     desc 'preview', 'Previews information from an external service (e.g. spotify)'
@@ -51,6 +69,7 @@ module Drum
       self.with_service(raw) do |name, service|
         puts "Pulling #{name}..."
         service.pull(name)
+        self.commit_changes
       end
     end
 

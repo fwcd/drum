@@ -153,6 +153,7 @@ module Drum
       String :external_id, null: true, unique: true
       String :image_uri, null: true
       TrueClass :collaborative, null: true
+      TrueClass :public, null: true
     end
 
     # User library
