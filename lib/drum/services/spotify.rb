@@ -195,9 +195,8 @@ module Drum
       @db[:user_services].insert_ignore.insert(
         :service_id => @service_id,
         :user_id => id,
-        :external_id => user.id
-        # TODO
-        # :display_name => @me&.display_name
+        :external_id => user.id,
+        :display_name => user&.display_name
       )
 
       return id
