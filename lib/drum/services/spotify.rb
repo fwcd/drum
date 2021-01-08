@@ -237,10 +237,22 @@ module Drum
         :uri => track.uri,
         :external_id => track.id
       )
+
+      return id
     end
 
     # TODO: Store albums
-    # TODO: Insert playlist-track
+    
+    def store_playlist_track(playlist, playlist_id, i, track)
+      user = playlist.tracks_added_by[track.id]
+      return @db[:playlist_tracks].insert_conflict(:replace).insert(
+        :playlist_id => playlist_id,
+        :track_id => self.store_track(track),
+        :track_index => i,
+        :added_at => playlist.tracks_added_at[track.id],
+        :added_by => user && self.store_user(user)
+      )
+    end
 
     def store_playlist(playlist)
         # Check whether playlist already exists, i.e. find its
@@ -266,6 +278,10 @@ module Drum
           :image_uri => playlist&.images.first&.dig('url'),
           :collaborative => playlist&.collaborative
         )
+
+        self.all_tracks(playlist).each_with_index do |track, i|
+          self.store_playlist_track(playlist, id, i, track)
+        end
 
         return id
     end

@@ -95,7 +95,7 @@ module Drum
       primary_key [:playlist_id, :track_id]
       Integer :track_index, null: true          # within the playlist, null if unordered
       DateTime :added_at, null: true            # the date the song was added
-      foreign_key :user_id, :users, null: false # the user that added the song
+      foreign_key :added_by, :users, null: true # the user (id) that added the song
     end
 
     # External services/locators
