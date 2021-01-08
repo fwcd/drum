@@ -177,6 +177,60 @@ module Drum
       end
     end
 
+    def store_user(user)
+      # Check whether user already exists, i.e. find its
+      # internal id. If so, update it!
+      
+      id = @db[:user_services].where(
+        :service_id => @service_id,
+        :external_id => user.id
+      ).first&.dig(:user_id)
+
+      if id.nil?
+        id = @db[:users].insert(
+          :id => id
+        )
+      end
+
+      @db[:user_services].insert_ignore.insert(
+        :service_id => @service_id,
+        :user_id => id,
+        :external_id => user.id
+        # TODO
+        # :display_name => @me&.display_name
+      )
+
+      return id
+    end
+
+    def store_playlist(playlist)
+        # Check whether playlist already exists, i.e. find its
+        # internal id. If so, update it!
+
+        id = @db[:playlist_services].where(
+          :service_id => @service_id,
+          :external_id => playlist.id
+        ).first&.dig(:playlist_id)
+
+        id = @db[:playlists].insert_conflict(:replace).insert(
+          :id => id,
+          :name => playlist.name,
+          :description => playlist&.description,
+          :user_id => self.store_user(playlist.owner)
+        )
+
+        @db[:playlist_services].insert_conflict(:replace).insert(
+          :service_id => @service_id,
+          :playlist_id => id,
+          :external_id => playlist.id,
+          :uri => playlist.uri,
+          :image_uri => playlist&.images.first&.dig('url'),
+          :collaborative => playlist&.collaborative
+        )
+
+        return id
+    end
+
     # CLI
 
     def preview
@@ -187,52 +241,10 @@ module Drum
     def pull(library_name)
       self.authenticate
 
-      # Check whether user already exists, i.e. find its
-      # internal id. If so, update it!
-      
-      user_id = @db[:user_services].where(
-        :service_id => @service_id,
-        :external_id => @me_id,
-      ).first&.dig(:user_id)
-
-      user_id = @db[:users].insert_conflict(:replace).insert(
-        :id => user_id
-      )
-
-      @db[:user_services].insert_ignore.insert(
-        :service_id => @service_id,
-        :user_id => user_id,
-        :external_id => @me_id
-        # TODO
-        # :display_name => @me&.display_name
-      )
+      user_id = self.store_user(@me)
 
       playlists = self.all_playlists
-      playlists.each do |p|
-        # Check whether playlist already exists, i.e. find its
-        # internal id. If so, update it!
-
-        id = @db[:playlist_services].where(
-          :service_id => @service_id,
-          :external_id => p.id
-        ).first&.dig(:playlist_id)
-
-        id = @db[:playlists].insert_conflict(:replace).insert(
-          :id => id,
-          :name => p.name,
-          :description => p&.description,
-          :user_id => user_id
-        )
-
-        @db[:playlist_services].insert_ignore.insert(
-          :service_id => @service_id,
-          :playlist_id => id,
-          :external_id => p.id,
-          :uri => p.uri,
-          :image_uri => p&.images.first&.dig('url'),
-          :collaborative => p&.collaborative
-        )
-      end
+      playlists.each { |p| self.store_playlist(p) }
 
       puts "Pulled #{playlists.length} playlist(s) from Spotify."
 
