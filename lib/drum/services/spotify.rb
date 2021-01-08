@@ -242,6 +242,9 @@ module Drum
     end
 
     # TODO: Store albums
+    # TODO: Store artists
+    # TODO: Figure out how tracks_added_by exactly works (i.e.
+    #       if its keys are ids or full objects)
     
     def store_playlist_track(playlist, playlist_id, i, track)
       user = playlist.tracks_added_by[track.id]
