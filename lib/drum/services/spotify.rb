@@ -9,6 +9,7 @@ require 'webrick'
 module Drum
   class SpotifyService < Service
     NAME = 'Spotify'    
+    PLAYLISTS_CHUNK_SIZE = 50
 
     def initialize(db)
       @db = db
@@ -165,9 +166,22 @@ module Drum
       puts "Successfully logged in to Spotify API as #{me_json['id']}."
     end
 
+    # Utilities
+    
+    def all_playlists(offset: 0)
+      playlists = @me.playlists(limit: PLAYLISTS_CHUNK_SIZE, offset: offset)
+      unless playlists.empty?
+        return playlists + self.all_playlists(offset: offset + PLAYLISTS_CHUNK_SIZE)
+      else
+        return []
+      end
+    end
+
+    # CLI
+
     def preview
       self.authenticate
-      puts @me.playlists.map { |p| "Found playlist '#{p.name}, images: #{p.images}'" }
+      puts self.all_playlists.map { |p| "Found playlist '#{p.name}, images: #{p.images}'" }
     end
 
     def pull(library_name)
@@ -193,7 +207,7 @@ module Drum
         # :display_name => @me&.display_name
       )
 
-      playlists = @me.playlists
+      playlists = self.all_playlists
       playlists.each do |p|
         # Check whether playlist already exists, i.e. find its
         # internal id. If so, update it!
