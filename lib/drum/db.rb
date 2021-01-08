@@ -120,7 +120,7 @@ module Drum
       foreign_key :track_id, :tracks, null: false
       foreign_key :service_id, :services, null: false
       primary_key [:track_id, :service_id]
-      String :uri, null: true
+      String :uri, null: true, unique: true
       String :external_id, null: true, unique: true
     end
 
@@ -129,7 +129,7 @@ module Drum
       foreign_key :album_id, :albums, null: false
       foreign_key :service_id, :services, null: false
       primary_key [:album_id, :service_id]
-      String :uri, null: true
+      String :uri, null: true, unique: true
       String :external_id, null: true, unique: true
       String :image_uri, null: true
     end
@@ -139,7 +139,7 @@ module Drum
       foreign_key :artist_id, :artists, null: false
       foreign_key :service_id, :services, null: false
       primary_key [:artist_id, :service_id]
-      String :uri, null: true
+      String :uri, null: true, unique: true
       String :external_id, null: true, unique: true
       String :image_uri, null: true
     end
@@ -149,9 +149,10 @@ module Drum
       foreign_key :playlist_id, :playlists, null: false
       foreign_key :service_id, :services, null: false
       primary_key [:playlist_id, :service_id]
-      String :uri, null: true
+      String :uri, null: true, unique: true
       String :external_id, null: true, unique: true
       String :image_uri, null: true
+      String :preview_uri, null: true # for Spotify a 30s MP3
       TrueClass :collaborative, null: true
       TrueClass :public, null: true
     end

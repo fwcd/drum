@@ -10,6 +10,7 @@ module Drum
   class SpotifyService < Service
     NAME = 'Spotify'    
     PLAYLISTS_CHUNK_SIZE = 50
+    TRACKS_CHUNK_SIZE = 100
 
     def initialize(db)
       @db = db
@@ -177,6 +178,15 @@ module Drum
       end
     end
 
+    def all_tracks(playlist, offset: 0)
+      tracks = playlist.tracks(limit: TRACKS_CHUNK_SIZE, offset: offset)
+      unless tracks.empty?
+        return tracks + self.all_tracks(playlist, offset: offset + TRACKS_CHUNK_SIZE)
+      else
+        return []
+      end
+    end
+
     def store_user(user)
       # Check whether user already exists, i.e. find its
       # internal id. If so, update it!
@@ -201,6 +211,31 @@ module Drum
 
       return id
     end
+
+    def store_track(track)
+      # Check whether track already exists, i.e. find its
+      # internal id. If so, update it!
+
+      id = @db[:track_services].where(
+        :service_id => @service_id,
+        :external_id => track.id
+      ).first&.dig(:track_id)
+
+      id = @db[:tracks].insert_conflict(:replace).insert(
+        :id => id,
+        :name => track.name,
+        # TODO
+      )
+
+      @db[:track_services].insert_conflict(:replace).insert(
+        :service_id => @service_id,
+        :track_id => id,
+        :uri => track.uri,
+        :external_id => track.id
+      )
+    end
+
+    # TODO: Insert playlist-track
 
     def store_playlist(playlist)
         # Check whether playlist already exists, i.e. find its
