@@ -181,16 +181,16 @@ module Drum
         :external_id => @me_id,
       ).first&.dig(:user_id)
 
+      user_id = @db[:users].insert_conflict(:replace).insert(
+        :id => user_id
+      )
+
       @db[:user_services].insert_ignore.insert(
         :service_id => @service_id,
         :user_id => user_id,
         :external_id => @me_id
         # TODO
         # :display_name => @me&.display_name
-      )
-
-      user_id = @db[:users].insert_conflict(:replace).insert(
-        :id => user_id
       )
 
       playlists = @me.playlists
@@ -203,6 +203,13 @@ module Drum
           :external_id => p.id
         ).first&.dig(:playlist_id)
 
+        id = @db[:playlists].insert_conflict(:replace).insert(
+          :id => id,
+          :name => p.name,
+          :description => p&.description,
+          :user_id => user_id
+        )
+
         @db[:playlist_services].insert_ignore.insert(
           :service_id => @service_id,
           :playlist_id => id,
@@ -210,12 +217,6 @@ module Drum
           :uri => p.uri,
           :image_uri => p&.images.first&.dig('url'),
           :collaborative => p&.collaborative
-        )
-
-        @db[:playlists].insert_conflict(:replace).insert(
-          :name => p.name,
-          :description => p&.description,
-          :user_id => user_id
         )
       end
 
