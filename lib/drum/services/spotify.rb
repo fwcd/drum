@@ -15,7 +15,11 @@ module Drum
     PLAYLISTS_CHUNK_SIZE = 50
     TRACKS_CHUNK_SIZE = 100
 
-    limit_method :store_track, rate: 300 # calls per minute
+    # Rate-limiting for API-heavy methods
+    # 'rate' describes the max. number of calls per minute
+    limit_method :store_track, rate: 300
+    limit_method :all_tracks, rate: 300
+    limit_method :all_playlists, rate: 300
 
     def initialize(db)
       @db = db
