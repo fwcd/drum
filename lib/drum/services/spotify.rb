@@ -213,7 +213,7 @@ module Drum
       return id
     end
 
-    def store_track(track, skip_existing)
+    def store_track(track, update_existing)
       # Check whether track already exists, i.e. find its
       # internal id. If so, update it!
 
@@ -222,7 +222,7 @@ module Drum
         :external_id => track.id
       ).first&.dig(:track_id)
 
-      unless !id.nil? && skip_existing
+      if update_existing || id.nil?
         features = track&.audio_features
         id = @db[:tracks].insert_conflict(:replace).insert(
           :id => id,
@@ -260,18 +260,18 @@ module Drum
     # TODO: Figure out how tracks_added_by exactly works (i.e.
     #       if its keys are ids or full objects)
     
-    def store_playlist_track(playlist, playlist_id, i, track, skip_existing)
+    def store_playlist_track(playlist, playlist_id, i, track, update_existing)
       user = playlist.tracks_added_by[track.id]
       return @db[:playlist_tracks].insert_conflict(:replace).insert(
         :playlist_id => playlist_id,
-        :track_id => self.store_track(track, skip_existing),
+        :track_id => self.store_track(track, update_existing),
         :track_index => i,
         :added_at => playlist.tracks_added_at[track.id],
         :added_by => user && self.store_user(user)
       )
     end
 
-    def store_playlist(playlist, skip_existing)
+    def store_playlist(playlist, update_existing)
         # Check whether playlist already exists, i.e. find its
         # internal id. If so, update it!
 
@@ -297,7 +297,7 @@ module Drum
         )
 
         self.all_tracks(playlist).each_with_index do |track, i|
-          self.store_playlist_track(playlist, id, i, track, skip_existing)
+          self.store_playlist_track(playlist, id, i, track, update_existing)
         end
 
         return id
@@ -322,7 +322,12 @@ module Drum
       end
     end
 
-    def pull(library_name, skip_existing)
+    def pull(library_name, options)
+      update_existing = options[:update_existing]
+      if update_existing
+        puts 'Updating existing tracks.'
+      end
+
       self.authenticate
 
       user_id = self.store_user(@me)
@@ -330,7 +335,7 @@ module Drum
       playlists = self.all_playlists
       playlists.each_with_index do |playlist, i|
         puts "Storing playlist #{i + 1}/#{playlists.length} (#{playlist.total} track(s))..."
-        self.store_playlist(playlist, skip_existing)
+        self.store_playlist(playlist, update_existing)
       end
 
       puts "Pulled #{playlists.length} playlist(s) from Spotify."

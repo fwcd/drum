@@ -65,15 +65,10 @@ module Drum
     end
     
     desc 'pull', 'Fetches a library from an external service (e.g. spotify)'
-    method_options :skip_existing => :boolean
     def pull(raw)
       self.with_service(raw) do |name, service|
         puts "Pulling #{name}..."
-        skip_existing = options[:skip_existing]
-        if skip_existing
-          puts 'Skipping existing tracks'
-        end
-        service.pull(name, skip_existing)
+        service.pull(name, options)
         self.commit_changes
       end
     end
@@ -82,7 +77,7 @@ module Drum
     def push(raw)
       self.with_service(raw) do |name, service|
         puts "Pushing to #{name}..."
-        service.push(name)
+        service.push(name, options)
       end
     end
   end
