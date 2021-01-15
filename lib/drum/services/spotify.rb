@@ -321,9 +321,6 @@ module Drum
 
       puts "Pulled #{playlists.length} playlist(s) from Spotify."
 
-      # TODO: Pull playlist tracks and track meta
-      # TODO: Move playlist/user/track/... insertion/update into methods
-      # TODO: Handle pagination
       # TODO: Handle merging?
     end
   end
