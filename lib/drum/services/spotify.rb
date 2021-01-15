@@ -270,8 +270,6 @@ module Drum
 
     # TODO: Store albums
     # TODO: Store artists
-    # TODO: Figure out how tracks_added_by exactly works (i.e.
-    #       if its keys are ids or full objects)
     
     def store_playlist_track(playlist, playlist_id, i, track, update_existing)
       user = playlist.tracks_added_by[track.id]
@@ -332,6 +330,7 @@ module Drum
           t = tracks[0]
           puts "Snippet of #{p.name}'s first track: #{t.inspect} with features #{t.audio_features&.inspect}"
         end
+        puts "Tracks added by: #{p.tracks_added_by}, added at: #{p.tracks_added_at}"
       end
     end
 
