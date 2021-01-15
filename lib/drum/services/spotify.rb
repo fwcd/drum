@@ -213,7 +213,7 @@ module Drum
       return id
     end
 
-    def store_track(track)
+    def store_track(track, skip_existing)
       # Check whether track already exists, i.e. find its
       # internal id. If so, update it!
 
@@ -222,33 +222,35 @@ module Drum
         :external_id => track.id
       ).first&.dig(:track_id)
 
-      features = track&.audio_features
-      id = @db[:tracks].insert_conflict(:replace).insert(
-        :id => id,
-        :name => track.name,
-        :duration_ms => track.duration_ms,
-        :explicit => track.explicit,
-        :isrc => track.external_ids['isrc'],
-        :tempo => features&.tempo,
-        :key => features&.key,
-        :mode => features&.mode,
-        :time_signature => features&.time_signature,
-        :acousticness => features&.acousticness,
-        :danceability => features&.danceability,
-        :energy => features&.energy,
-        :instrumentalness => features&.instrumentalness,
-        :liveness => features&.liveness,
-        :loudness => features&.loudness,
-        :speechiness => features&.speechiness,
-        :valence => features&.valence
-      )
+      unless !id.nil? && skip_existing
+        features = track&.audio_features
+        id = @db[:tracks].insert_conflict(:replace).insert(
+          :id => id,
+          :name => track.name,
+          :duration_ms => track.duration_ms,
+          :explicit => track.explicit,
+          :isrc => track.external_ids['isrc'],
+          :tempo => features&.tempo,
+          :key => features&.key,
+          :mode => features&.mode,
+          :time_signature => features&.time_signature,
+          :acousticness => features&.acousticness,
+          :danceability => features&.danceability,
+          :energy => features&.energy,
+          :instrumentalness => features&.instrumentalness,
+          :liveness => features&.liveness,
+          :loudness => features&.loudness,
+          :speechiness => features&.speechiness,
+          :valence => features&.valence
+        )
 
-      @db[:track_services].insert_conflict(:replace).insert(
-        :service_id => @service_id,
-        :track_id => id,
-        :uri => track.uri,
-        :external_id => track.id
-      )
+        @db[:track_services].insert_conflict(:replace).insert(
+          :service_id => @service_id,
+          :track_id => id,
+          :uri => track.uri,
+          :external_id => track.id
+        )
+      end
 
       return id
     end
@@ -258,18 +260,18 @@ module Drum
     # TODO: Figure out how tracks_added_by exactly works (i.e.
     #       if its keys are ids or full objects)
     
-    def store_playlist_track(playlist, playlist_id, i, track)
+    def store_playlist_track(playlist, playlist_id, i, track, skip_existing)
       user = playlist.tracks_added_by[track.id]
       return @db[:playlist_tracks].insert_conflict(:replace).insert(
         :playlist_id => playlist_id,
-        :track_id => self.store_track(track),
+        :track_id => self.store_track(track, skip_existing),
         :track_index => i,
         :added_at => playlist.tracks_added_at[track.id],
         :added_by => user && self.store_user(user)
       )
     end
 
-    def store_playlist(playlist)
+    def store_playlist(playlist, skip_existing)
         # Check whether playlist already exists, i.e. find its
         # internal id. If so, update it!
 
@@ -295,7 +297,7 @@ module Drum
         )
 
         self.all_tracks(playlist).each_with_index do |track, i|
-          self.store_playlist_track(playlist, id, i, track)
+          self.store_playlist_track(playlist, id, i, track, skip_existing)
         end
 
         return id
@@ -320,7 +322,7 @@ module Drum
       end
     end
 
-    def pull(library_name)
+    def pull(library_name, skip_existing)
       self.authenticate
 
       user_id = self.store_user(@me)
@@ -328,7 +330,7 @@ module Drum
       playlists = self.all_playlists
       playlists.each_with_index do |playlist, i|
         puts "Storing playlist #{i + 1}/#{playlists.length} (#{playlist.total} track(s))..."
-        self.store_playlist(playlist)
+        self.store_playlist(playlist, skip_existing)
       end
 
       puts "Pulled #{playlists.length} playlist(s) from Spotify."
