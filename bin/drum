@@ -2,4 +2,5 @@
 
 require 'drum'
 
+Warning[:deprecated] = false
 Drum::CLI.start
