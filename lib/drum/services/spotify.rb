@@ -3,14 +3,19 @@ require 'json'
 require 'launchy'
 require 'rest-client'
 require 'rspotify'
+require 'ruby-limiter'
 require 'securerandom'
 require 'webrick'
 
 module Drum
   class SpotifyService < Service
+    extend Limiter::Mixin
+
     NAME = 'Spotify'    
     PLAYLISTS_CHUNK_SIZE = 50
     TRACKS_CHUNK_SIZE = 100
+
+    limit_method :store_track, rate: 300 # calls per minute
 
     def initialize(db)
       @db = db
