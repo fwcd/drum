@@ -222,13 +222,25 @@ module Drum
         :external_id => track.id
       ).first&.dig(:track_id)
 
+      features = track&.audio_features
       id = @db[:tracks].insert_conflict(:replace).insert(
         :id => id,
         :name => track.name,
         :duration_ms => track.duration_ms,
         :explicit => track.explicit,
-        :isrc => track.external_ids['isrc']
-        # TODO: Audio features
+        :isrc => track.external_ids['isrc'],
+        :tempo => features&.tempo,
+        :key => features&.key,
+        :mode => features&.mode,
+        :time_signature => features&.time_signature,
+        :acousticness => features&.acousticness,
+        :danceability => features&.danceability,
+        :energy => features&.energy,
+        :instrumentalness => features&.instrumentalness,
+        :liveness => features&.liveness,
+        :loudness => features&.loudness,
+        :speechiness => features&.speechiness,
+        :valence => features&.valence
       )
 
       @db[:track_services].insert_conflict(:replace).insert(
@@ -303,7 +315,7 @@ module Drum
         tracks = p.tracks
         unless tracks.empty?
           t = tracks[0]
-          puts "Snippet of #{p.name}'s first track: #{t.inspect} with features #{t.audio_features.inspect}"
+          puts "Snippet of #{p.name}'s first track: #{t.inspect} with features #{t.audio_features&.inspect}"
         end
       end
     end
