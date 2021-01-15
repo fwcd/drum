@@ -314,7 +314,10 @@ module Drum
       user_id = self.store_user(@me)
 
       playlists = self.all_playlists
-      playlists.each { |p| self.store_playlist(p) }
+      playlists.each_with_index do |playlist, i|
+        puts "Storing playlist #{i + 1}/#{playlists.length} (#{playlist.total} track(s))..."
+        self.store_playlist(playlist)
+      end
 
       puts "Pulled #{playlists.length} playlist(s) from Spotify."
 
