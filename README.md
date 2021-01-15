@@ -2,6 +2,8 @@
 
 A small tool for syncing your playlists across music streaming services and with your local library.
 
+![Icon](artwork/icon128.png)
+
 ## Development
 
 After checking out the repo, run `bin/setup` (or `bundle install`) to install dependencies. If you use macOS and the installation of the SQLite3 gem fails, try
