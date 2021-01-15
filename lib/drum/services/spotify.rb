@@ -232,7 +232,11 @@ module Drum
       ).first&.dig(:track_id)
 
       if update_existing || id.nil?
-        features = track&.audio_features
+        begin
+          features = track&.audio_features
+        rescue
+          features = nil
+        end
         id = @db[:tracks].insert_conflict(:replace).insert(
           :id => id,
           :name => track.name,
