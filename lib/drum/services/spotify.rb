@@ -293,7 +293,19 @@ module Drum
 
     def preview
       self.authenticate
-      puts self.all_playlists.map { |p| "Found playlist '#{p.name}' (#{p.total} track(s))" }
+
+      playlists = self.all_playlists
+      puts playlists.map { |p| "Found playlist '#{p.name}' (#{p.total} track(s))" }
+
+      # DEBUG
+      unless self.all_playlists.empty?
+        p = playlists[0]
+        tracks = p.tracks
+        unless tracks.empty?
+          t = tracks[0]
+          puts "Snippet of #{p.name}'s first track: #{t.inspect} with features #{t.audio_features.inspect}"
+        end
+      end
     end
 
     def pull(library_name)
