@@ -1,11 +1,13 @@
 require 'drum/services/service'
 require 'jwt'
+require 'rest-client'
 require 'launchy'
 require 'webrick'
 
 module Drum
   class AppleMusicService < Service
     NAME = 'Apple Music'
+    BASE_URL = 'https://api.music.apple.com/v1'
 
     def initialize(db)
       @db = db
@@ -143,10 +145,37 @@ module Drum
       @user_token = user_token
     end
 
+    # Apple Music API
+
+    def request(method, endpoint)
+      RestClient::Request.execute(
+        method: method,
+        url: "#{BASE_URL}#{endpoint}",
+        headers: {
+          'Authorization': "Bearer #{@token}",
+          'Music-User-Token': @user_token
+        }
+      )
+    end
+
+    def get_json(endpoint)
+      response = request(:get, endpoint)
+      unless response.code >= 200 && response.code < 300
+        raise "Something went wrong while GETting #{endpoint}: #{response}"
+      end
+      return JSON.parse(response.body)
+    end
+
+    # CLI
+
     def preview
       self.authenticate
 
-      # TODO
+      # TODO: Move to API-wrapping method
+      playlists = get_json('/me/library/playlists')['data']
+      playlists.each do |playlist|
+        puts "Found playlist #{playlist['attributes']['name']}"
+      end
     end
   end
 end
