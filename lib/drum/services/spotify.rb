@@ -309,7 +309,9 @@ module Drum
       added_by = playlist.tracks_added_by
       added_at = playlist.tracks_added_at
 
-      self.all_tracks(playlist).each_with_index do |track, i|
+      tracks = self.all_tracks(playlist)
+      tracks.each_with_index do |track, i|
+        puts "  Storing track #{i + 1}/#{tracks.length}..."
         self.store_playlist_track(i, track, added_at[track.id], added_by[track.id], id, update_existing)
       end
 
@@ -348,7 +350,7 @@ module Drum
 
       playlists = self.all_playlists
       playlists.each_with_index do |playlist, i|
-        puts "Storing playlist #{i + 1}/#{playlists.length} (#{playlist.total} track(s))..."
+        puts "Storing playlist #{i + 1}/#{playlists.length} '#{playlist.name}' (#{playlist.total} track(s))..."
         self.store_playlist(playlist, update_existing)
       end
 
