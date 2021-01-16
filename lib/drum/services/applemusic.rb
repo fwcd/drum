@@ -15,15 +15,7 @@ module Drum
       end
     end
 
-    def authenticate
-      p8_file = ENV['MUSICKIT_KEY_P8_FILE_PATH']
-      key_id = ENV['MUSICKIT_KEY_ID']
-      team_id = ENV['MUSICKIT_TEAM_ID']
-
-      if p8_file.nil? || key_id.nil? || team_id.nil?
-        raise 'Please specify your MusicKit keys in your env vars!'
-      end
-
+    def authenticate_app(p8_file, key_id, team_id)
       # TODO: Store and reuse keys in DB instead of regenerating a new one each time
 
       expiration_in_days = 180 # may not be greater than 180
@@ -54,9 +46,20 @@ module Drum
       pem_file = `openssl pkcs8 -nocrypt -in #{p8_file}`
       private_key = OpenSSL::PKey::EC.new(pem_file) 
       payload = {:iss => "#{team_id}", :iat => iat, :exp => exp}
-      @token = JWT.encode(payload, private_key, "ES256", { alg: "ES256", kid: "#{key_id}" })
+      return JWT.encode(payload, private_key, "ES256", { alg: "ES256", kid: "#{key_id}" })
+    end
 
-      puts "Generated MusicKit JWT #{@token}"
+    def authenticate
+      p8_file = ENV['MUSICKIT_KEY_P8_FILE_PATH']
+      key_id = ENV['MUSICKIT_KEY_ID']
+      team_id = ENV['MUSICKIT_TEAM_ID']
+
+      if p8_file.nil? || key_id.nil? || team_id.nil?
+        raise 'Please specify your MusicKit keys in your env vars!'
+      end
+
+      @token = self.authenticate_app(p8_file, key_id, team_id)
+      puts "Generated MusicKit JWT token #{@token}"
     end
 
     def preview
