@@ -161,7 +161,7 @@ module Drum
 
     db.create_table?(:libraries) do
       primary_key :id
-      String :name, null: false
+      String :name, unique: true, null: false
       foreign_key :service_id, :services, null: true
       foreign_key :user_id, :users, null: true
     end
