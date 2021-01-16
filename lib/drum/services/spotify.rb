@@ -222,7 +222,7 @@ module Drum
       return id
     end
 
-    def store_track(track, update_existing)
+    def store_track(track, library_id, update_existing)
       # Check whether track already exists, i.e. find its
       # internal id. If so, update it!
 
@@ -256,14 +256,19 @@ module Drum
           :speechiness => features&.speechiness,
           :valence => features&.valence
         )
-
-        @db[:track_services].insert_conflict(:replace).insert(
-          :service_id => @service_id,
-          :track_id => id,
-          :uri => track.uri,
-          :external_id => track.id
-        )
       end
+
+      @db[:track_services].insert_conflict(:replace).insert(
+        :service_id => @service_id,
+        :track_id => id,
+        :uri => track.uri,
+        :external_id => track.id
+      )
+
+      @db[:library_tracks].insert_ignore.insert(
+        :library_id => library_id,
+        :track_id => id
+      )
 
       return id
     end
@@ -271,17 +276,17 @@ module Drum
     # TODO: Store albums
     # TODO: Store artists
     
-    def store_playlist_track(i, track, added_at, added_by, playlist_id, update_existing)
+    def store_playlist_track(i, track, added_at, added_by, playlist_id, library_id, update_existing)
       return @db[:playlist_tracks].insert_conflict(:replace).insert(
         :playlist_id => playlist_id,
-        :track_id => self.store_track(track, update_existing),
+        :track_id => self.store_track(track, library_id, update_existing),
         :track_index => i,
         :added_at => added_at,
         :added_by => added_by && self.store_user(added_by)
       )
     end
 
-    def store_playlist(playlist, update_existing)
+    def store_playlist(playlist, library_id, update_existing)
       # Check whether playlist already exists, i.e. find its
       # internal id. If so, update it!
 
@@ -306,16 +311,29 @@ module Drum
         :collaborative => playlist&.collaborative
       )
 
+      @db[:library_playlists].insert_ignore.insert(
+        :library_id => library_id,
+        :playlist_id => id
+      )
+
       added_by = playlist.tracks_added_by
       added_at = playlist.tracks_added_at
 
       tracks = self.all_tracks(playlist)
       tracks.each_with_index do |track, i|
         puts "  Storing track #{i + 1}/#{tracks.length}..."
-        self.store_playlist_track(i, track, added_at[track.id], added_by[track.id], id, update_existing)
+        self.store_playlist_track(i, track, added_at[track.id], added_by[track.id], id, library_id, update_existing)
       end
 
       return id
+    end
+
+    def store_library(user_id)
+      return @db[:libraries].insert_ignore.insert(
+        :service_id => @service_id,
+        :user_id => user_id,
+        :name => NAME
+      )
     end
 
     # CLI
@@ -347,17 +365,17 @@ module Drum
       self.authenticate
 
       user_id = self.store_user(@me)
+      library_id = self.store_library(user_id)
 
       playlists = self.all_playlists
       playlists.each_with_index do |playlist, i|
         puts "Storing playlist #{i + 1}/#{playlists.length} '#{playlist.name}' (#{playlist.total} track(s))..."
-        self.store_playlist(playlist, update_existing)
+        self.store_playlist(playlist, library_id, update_existing)
       end
 
       puts "Pulled #{playlists.length} playlist(s) from Spotify."
 
       # TODO: Handle merging?
-      # TODO: Handle libraries
     end
   end
 end
