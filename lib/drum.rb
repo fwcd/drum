@@ -50,7 +50,7 @@ module Drum
         begin
           @git.add(all: true)
           @git.commit(Time.now.strftime('Snapshot %Y-%m-%d %H:%M:%S'))
-        rescue
+        rescue StandardError
           # If repo is in a clean state and no changes were made, ignore
         end
       end
