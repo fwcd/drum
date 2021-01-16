@@ -271,47 +271,49 @@ module Drum
     # TODO: Store albums
     # TODO: Store artists
     
-    def store_playlist_track(playlist, playlist_id, i, track, update_existing)
-      user = playlist.tracks_added_by[track.id]
+    def store_playlist_track(i, track, added_at, added_by, playlist_id, update_existing)
       return @db[:playlist_tracks].insert_conflict(:replace).insert(
         :playlist_id => playlist_id,
         :track_id => self.store_track(track, update_existing),
         :track_index => i,
-        :added_at => playlist.tracks_added_at[track.id],
-        :added_by => user && self.store_user(user)
+        :added_at => added_at,
+        :added_by => added_by && self.store_user(added_by)
       )
     end
 
     def store_playlist(playlist, update_existing)
-        # Check whether playlist already exists, i.e. find its
-        # internal id. If so, update it!
+      # Check whether playlist already exists, i.e. find its
+      # internal id. If so, update it!
 
-        id = @db[:playlist_services].where(
-          :service_id => @service_id,
-          :external_id => playlist.id
-        ).first&.dig(:playlist_id)
+      id = @db[:playlist_services].where(
+        :service_id => @service_id,
+        :external_id => playlist.id
+      ).first&.dig(:playlist_id)
 
-        id = @db[:playlists].insert_conflict(:replace).insert(
-          :id => id,
-          :name => playlist.name,
-          :description => playlist&.description,
-          :user_id => self.store_user(playlist.owner)
-        )
+      id = @db[:playlists].insert_conflict(:replace).insert(
+        :id => id,
+        :name => playlist.name,
+        :description => playlist&.description,
+        :user_id => self.store_user(playlist.owner)
+      )
 
-        @db[:playlist_services].insert_conflict(:replace).insert(
-          :service_id => @service_id,
-          :playlist_id => id,
-          :external_id => playlist.id,
-          :uri => playlist.uri,
-          :image_uri => playlist&.images.first&.dig('url'),
-          :collaborative => playlist&.collaborative
-        )
+      @db[:playlist_services].insert_conflict(:replace).insert(
+        :service_id => @service_id,
+        :playlist_id => id,
+        :external_id => playlist.id,
+        :uri => playlist.uri,
+        :image_uri => playlist&.images.first&.dig('url'),
+        :collaborative => playlist&.collaborative
+      )
 
-        self.all_tracks(playlist).each_with_index do |track, i|
-          self.store_playlist_track(playlist, id, i, track, update_existing)
-        end
+      added_by = playlist.tracks_added_by
+      added_at = playlist.tracks_added_at
 
-        return id
+      self.all_tracks(playlist).each_with_index do |track, i|
+        self.store_playlist_track(i, track, added_at[track.id], added_by[track.id], id, update_existing)
+      end
+
+      return id
     end
 
     # CLI
@@ -353,6 +355,7 @@ module Drum
       puts "Pulled #{playlists.length} playlist(s) from Spotify."
 
       # TODO: Handle merging?
+      # TODO: Handle libraries
     end
   end
 end
