@@ -31,6 +31,8 @@ module Drum
       end
     end
 
+    # Authentication
+
     def authenticate_app(client_id, client_secret)
       RSpotify.authenticate(client_id, client_secret)
     end

@@ -1,5 +1,7 @@
 require 'drum/services/service'
 require 'jwt'
+require 'launchy'
+require 'webrick'
 
 module Drum
   class AppleMusicService < Service
@@ -14,6 +16,8 @@ module Drum
         @service_id = service[:id]
       end
     end
+
+    # Authentication
 
     def authenticate_app(p8_file, key_id, team_id)
       # TODO: Store and reuse keys in DB instead of regenerating a new one each time
@@ -49,6 +53,73 @@ module Drum
       return JWT.encode(payload, private_key, "ES256", { alg: "ES256", kid: "#{key_id}" })
     end
 
+    def authenticate_user(token)
+      # TODO: Store this token in the DB
+
+      # Generate a new access refresh token,
+      # this might require user interaction. Since the
+      # user has to authenticate through the browser
+      # via Spotify's website, we use a small embedded
+      # HTTP server as a 'callback'.
+
+      port = 17997
+      server = WEBrick::HTTPServer.new :Port => port
+      user_token = nil
+
+      server.mount_proc '/' do |req, res|
+        res.content_type = 'text/html'
+        res.body = [
+          '<!DOCTYPE html>',
+          '<html>',
+          '  <head>',
+          '    <script src="https://js-cdn.music.apple.com/musickit/v1/musickit.js"></script>',
+          '    <script>',
+          "      document.addEventListener('musickitloaded', () => {",
+          '        MusicKit.configure({',
+          "          developerToken: '#{token}',",
+          "          app: { name: 'Drum', build: '0.0.1' }",
+          '        });',
+          '        MusicKit.getInstance()',
+          '          .authorize()',
+          "          .then(userToken => fetch('/callback', { method: 'POST', body: userToken }))",
+          "          .then(response => { document.getElementById('status').innerText = response.text(); });",
+          '      });',
+          '    </script>',
+          '  </head>',
+          '  <body>',
+          '    <div id="status">Authorizing...</div>',
+          '  </body>',
+          '</html>'
+        ].join("\n")
+      end
+
+      server.mount_proc '/callback' do |req, res|
+        user_token = req.body
+        unless user_token.nil? || user_token.empty?
+          res.body = 'Successfully got user token!'
+        else
+          res.body = 'Did not get user token! :('
+        end
+        server.shutdown
+      end
+
+      Thread.new do
+        sleep(1) # a short delay to make sure that the web server has launched
+        Launchy.open("http://localhost:#{port}/")
+      end
+
+      trap 'INT' do server.shutdown end
+      
+      puts "Launching callback HTTP server on port #{port}, waiting for auth code..."
+      server.start
+
+      if user_token.nil?
+        raise "Did not get a MusicKit user token."
+      end
+
+      return user_token
+    end
+
     def authenticate
       p8_file = ENV['MUSICKIT_KEY_P8_FILE_PATH']
       key_id = ENV['MUSICKIT_KEY_ID']
@@ -58,8 +129,14 @@ module Drum
         raise 'Please specify your MusicKit keys in your env vars!'
       end
 
-      @token = self.authenticate_app(p8_file, key_id, team_id)
-      puts "Generated MusicKit JWT token #{@token}"
+      token = self.authenticate_app(p8_file, key_id, team_id)
+      puts "Generated MusicKit JWT token #{token}"
+
+      user_token = self.authenticate_user(token)
+      puts "Generated MusicKit user token #{user_token}"
+
+      @token = token
+      @user_token = user_token
     end
 
     def preview
