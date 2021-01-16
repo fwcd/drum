@@ -3,11 +3,11 @@ class Drum::Service
     puts "ERROR: Service cannot be previewed (yet)!"
   end
 
-  def pull(library_name, options)
+  def pull(options)
     puts "ERROR: Service cannot be pulled (yet)!"
   end
 
-  def push(library_name, options)
+  def push(options)
     puts "ERROR: Service cannot be pushed to (yet)!"
   end
 end

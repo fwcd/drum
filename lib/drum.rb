@@ -68,7 +68,7 @@ module Drum
     def pull(raw)
       self.with_service(raw) do |name, service|
         puts "Pulling #{name}..."
-        service.pull(name, options)
+        service.pull(options)
         self.commit_changes
       end
     end
@@ -77,7 +77,7 @@ module Drum
     def push(raw)
       self.with_service(raw) do |name, service|
         puts "Pushing to #{name}..."
-        service.push(name, options)
+        service.push(options)
       end
     end
   end

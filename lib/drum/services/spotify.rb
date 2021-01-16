@@ -338,7 +338,7 @@ module Drum
       end
     end
 
-    def pull(library_name, options)
+    def pull(options)
       update_existing = options[:update_existing]
       if update_existing
         puts 'Updating existing tracks.'
