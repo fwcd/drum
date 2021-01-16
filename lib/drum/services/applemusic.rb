@@ -1,3 +1,4 @@
+require 'drum/services/service'
 require 'jwt'
 
 module Drum
@@ -55,7 +56,7 @@ module Drum
       payload = {:iss => "#{team_id}", :iat => iat, :exp => exp}
       @token = JWT.encode(payload, private_key, "ES256", { alg: "ES256", kid: "#{key_id}" })
 
-      puts "Generated MusicKit JTW #{@token}"
+      puts "Generated MusicKit JWT #{@token}"
     end
 
     def preview
