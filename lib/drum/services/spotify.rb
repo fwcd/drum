@@ -234,7 +234,8 @@ module Drum
       if update_existing || id.nil?
         begin
           features = track&.audio_features
-        rescue StandardError
+        rescue StandardError => e
+          puts "Got #{e} while querying audio features"
           features = nil
         end
         id = @db[:tracks].insert_conflict(:replace).insert(
