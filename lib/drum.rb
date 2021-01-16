@@ -1,4 +1,5 @@
 require 'drum/db'
+require 'drum/services/applemusic'
 require 'drum/services/dummy'
 require 'drum/services/service'
 require 'drum/services/spotify'
@@ -26,7 +27,8 @@ module Drum
 
       @services = {
         'dummy' => DummyService.new,
-        'spotify' => SpotifyService.new(@db)
+        'spotify' => SpotifyService.new(@db),
+        'applemusic' => AppleMusicService.new(@db)
       }
     end
 
