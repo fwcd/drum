@@ -3,6 +3,7 @@ PATH
   specs:
     drum (0.1.0)
       git (~> 1.8)
+      jwt (~> 2.2)
       launchy (~> 2.4)
       rest-client
       rspotify (~> 2.10)
