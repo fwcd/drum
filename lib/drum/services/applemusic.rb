@@ -8,6 +8,7 @@ module Drum
   class AppleMusicService < Service
     NAME = 'Apple Music'
     BASE_URL = 'https://api.music.apple.com/v1'
+    PLAYLISTS_CHUNK_SIZE = 50
 
     def initialize(db)
       @db = db
@@ -166,14 +167,32 @@ module Drum
       return JSON.parse(response.body)
     end
 
+    def playlists(offset: 0)
+      get_json("/me/library/playlists?limit=#{PLAYLISTS_CHUNK_SIZE}&offset=#{offset}", )['data']
+    end
+
+    def tracks(playlist)
+      # TODO: Figure out whether offset is supported here
+      get_json("/me/library/playlists/#{playlist}/tracks?limit=#{TRACKS_CHUNK_SIZE}")
+    end
+
+    # Utilities
+
+    def all_playlists(offset: 0)
+      playlists = self.playlists(offset: offset)
+      unless playlists.empty?
+        return playlists + self.all_playlists(offset: offset + PLAYLISTS_CHUNK_SIZE)
+      else
+        return []
+      end
+    end
+
     # CLI
 
     def preview
       self.authenticate
 
-      # TODO: Move to API-wrapping method
-      playlists = get_json('/me/library/playlists')['data']
-      playlists.each do |playlist|
+      self.all_playlists.each do |playlist|
         puts "Found playlist #{playlist['attributes']['name']}"
       end
     end
