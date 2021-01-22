@@ -5,6 +5,7 @@ require 'drum/services/service'
 require 'drum/services/spotify'
 require 'drum/version'
 require 'table_print'
+require 'highline'
 require 'thor'
 require 'git'
 
@@ -14,6 +15,8 @@ module Drum
   class CLI < Thor
     def initialize(*args)
       super
+
+      @hl = HighLine.new
 
       # Set up .drum directory
       @dot_dir = "#{Dir.home}/.drum"
@@ -57,6 +60,14 @@ module Drum
           # If repo is in a clean state and no changes were made, ignore
         end
       end
+
+      def confirm(prompt)
+        answer = @hl.ask "#{prompt} [y/n]"
+        unless answer == 'y'
+          puts 'Okay, exiting.'
+          exit
+        end
+      end
     end
 
     desc 'preview', 'Previews information from an external service (e.g. spotify)'
@@ -77,10 +88,22 @@ module Drum
     end
 
     desc 'push', 'Uploads a library to an external service (e.g. spotify)'
+    method_option :playlist, aliases: '-p'
     def push(raw)
+      playlist_id = options[:playlist]
       self.with_service(raw) do |name, service|
-        puts "Pushing to #{name}..."
-        service.push(options)
+        playlists = if playlist_id
+          @db[:playlists].where(
+            id: playlist_id
+          ).to_a
+        else
+          @db[:playlists].to_a
+        end
+        if playlists.length > 10
+          self.confirm "Are you sure you want to push #{playlists.length} playlists to #{name}?"
+        end
+        puts "Pushing #{playlists.length} playlist(s) to #{name}..."
+        service.push(options, playlists)
       end
     end
 
