@@ -171,9 +171,8 @@ module Drum
       get_json("/me/library/playlists?limit=#{PLAYLISTS_CHUNK_SIZE}&offset=#{offset}", )['data']
     end
 
-    def tracks(playlist)
-      # TODO: Figure out whether offset is supported here
-      get_json("/me/library/playlists/#{playlist}/tracks?limit=#{TRACKS_CHUNK_SIZE}")
+    def tracks(playlist, offset: 0)
+      get_json("/me/library/playlists/#{playlist['id']}/tracks?limit=#{PLAYLISTS_CHUNK_SIZE}&offset=#{offset}")
     end
 
     # Utilities
@@ -187,13 +186,22 @@ module Drum
       end
     end
 
+    def all_tracks(playlist, offset: 0)
+      tracks = self.tracks(playlist, offset: offset)
+      unless tracks.empty?
+        return tracks + self.all_tracks(playlist, offset: offset + PLAYLISTS_CHUNK_SIZE)
+      else
+        return []
+      end
+    end
+
     # CLI
 
     def preview
       self.authenticate
 
       self.all_playlists.each do |playlist|
-        puts "Found playlist #{playlist['attributes']['name']}"
+        puts "Found playlist #{playlist['attributes']['name']}."
       end
     end
   end
