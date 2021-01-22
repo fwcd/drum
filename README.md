@@ -43,7 +43,7 @@ This (private) p8 key can be obtained as described [here](https://help.apple.com
 
 ## Limitations
 
-* The Spotify API [does not](https://developer.spotify.com/documentation/general/guides/working-with-playlists/#folders) provide a way to access folders currently
+* Neither the [Spotify API](https://developer.spotify.com/documentation/general/guides/working-with-playlists/#folders) nor the [Apple Music API](https://github.com/Musish/Musish/issues/189#issuecomment-455749901) provide a way to access folders currently
 
 ## Contributing
 
