@@ -4,6 +4,7 @@ require 'drum/services/dummy'
 require 'drum/services/service'
 require 'drum/services/spotify'
 require 'drum/version'
+require 'table_print'
 require 'thor'
 require 'git'
 
@@ -81,6 +82,25 @@ module Drum
         puts "Pushing to #{name}..."
         service.push(options)
       end
+    end
+
+    desc 'playlists', 'Lists the stored playlists'
+    def playlists
+      tp @db[:playlists]
+    end
+
+    desc 'tracks', 'Lists the stored tracks'
+    method_option :playlist, aliases: '-p'
+    def tracks
+      playlist_id = options[:playlist]
+      tracks = if playlist_id
+        @db[:playlist_tracks].join(:tracks, id: :track_id).where(
+          playlist_id: playlist_id
+        ).order(:track_index)
+      else
+        @db[:tracks]
+      end
+      tp tracks
     end
   end
 end
