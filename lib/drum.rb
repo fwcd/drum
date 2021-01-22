@@ -100,7 +100,7 @@ module Drum
           @db[:playlists].to_a
         end
         if playlists.length > 10
-          self.confirm "Are you sure you want to push #{playlists.length} playlists to #{name}?"
+          self.confirm "Are you sure you want to push #{playlists.length} playlists to #{name}? You can specify a single playlist id using the '-p' flag!"
         end
         puts "Pushing #{playlists.length} playlist(s) to #{name}..."
         service.push(options, playlists)
@@ -121,6 +121,7 @@ module Drum
           playlist_id: playlist_id
         ).order(:track_index)
       else
+        self.confirm "Are you sure you want to query the entire library? (This could take some time.) You can specify a single playlist id using the '-p' flag!"
         @db[:tracks]
       end
       tp tracks
