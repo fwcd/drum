@@ -99,9 +99,11 @@ module Drum
         else
           @db[:playlists].to_a
         end
+
         if playlists.length > 10
           self.confirm "Are you sure you want to push #{playlists.length} playlists to #{name}? You can specify a single playlist id using the '-p' flag!"
         end
+
         puts "Pushing #{playlists.length} playlist(s) to #{name}..."
         service.push(options, playlists)
       end
@@ -114,16 +116,24 @@ module Drum
 
     desc 'tracks', 'Lists the stored tracks'
     method_option :playlist, aliases: '-p'
+    method_option :all, aliases: '-a'
     def tracks
       playlist_id = options[:playlist]
-      tracks = if playlist_id
-        @db[:playlist_tracks].join(:tracks, id: :track_id).where(
+      if playlist_id
+        tracks = @db[:playlist_tracks].join(:tracks, id: :track_id).where(
           playlist_id: playlist_id
         ).order(:track_index)
+        unless options[:all]
+          tracks = tracks.select(:track_index, :track_id, :name, :duration_ms, :added_at)
+        end
       else
         self.confirm "Are you sure you want to query the entire library? (This could take some time.) You can specify a single playlist id using the '-p' flag!"
-        @db[:tracks]
+        tracks = @db[:tracks]
+        unless options[:all]
+          tracks = tracks.select(:id, :name, :duration_ms)
+        end
       end
+
       tp tracks
     end
   end
