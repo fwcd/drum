@@ -167,40 +167,83 @@ module Drum
       return JSON.parse(response.body)
     end
 
-    def playlists(offset: 0)
-      get_json("/me/library/playlists?limit=#{PLAYLISTS_CHUNK_SIZE}&offset=#{offset}", )
+    def library_playlists(offset: 0)
+      get_json("/me/library/playlists?limit=#{PLAYLISTS_CHUNK_SIZE}&offset=#{offset}")
     end
 
-    def playlist_tracks(playlist, offset: 0)
-      puts playlist
+    def library_playlist_tracks(playlist, offset: 0)
       get_json("/me/library/playlists/#{playlist['id']}/tracks?limit=#{PLAYLISTS_CHUNK_SIZE}&offset=#{offset}")
     end
 
     # Utilities
 
-    def all_playlists(offset: 0, total: nil)
+    def all_library_playlists(offset: 0, total: nil)
       unless total != nil && offset >= total
-        response = self.playlists(offset: offset)
+        response = self.library_playlists(offset: offset)
         playlists = response['data']
         unless playlists.empty?
-          return playlists + self.all_playlists(offset: offset + PLAYLISTS_CHUNK_SIZE, total: response.dig('meta', 'total'))
+          return playlists + self.all_library_playlists(offset: offset + PLAYLISTS_CHUNK_SIZE, total: response.dig('meta', 'total'))
         end
       end
       return []
     end
 
-    def all_playlist_tracks(playlist, offset: 0, total: nil)
+    def all_library_playlist_tracks(playlist, offset: 0, total: nil)
       unless total != nil && offset >= total
-        response = self.playlist_tracks(playlist, offset: offset)
+        response = self.library_playlist_tracks(playlist, offset: offset)
         tracks = response['data']
         unless tracks.empty?
-          return tracks + self.all_playlist_tracks(playlist, offset: offset + PLAYLISTS_CHUNK_SIZE, total: response.dig('meta', 'total'))
+          return tracks + self.all_library_playlist_tracks(playlist, offset: offset + PLAYLISTS_CHUNK_SIZE, total: response.dig('meta', 'total'))
         end
       end
       return []
     end
 
-    def store_playlist(playlist, library_id, update_existing)
+    def store_library_track(track, library_id, update_existing)
+      # Check whether track already exists, i.e. find its
+      # internal id. If so, update it!
+
+      id = @db[:track_services].where(
+        :service_id => @service_id,
+        :external_id => track['id']
+      ).first&.dig(:track_id)
+
+      if update_existing || id.nil?
+        id = @db[:tracks].insert_conflict(:replace).insert(
+          :id => id,
+          :name => track.dig('attributes', 'name'),
+          :duration_ms => track.dig('attributes', 'durationInMillis'),
+        )
+      end
+
+      @db[:track_services].insert_conflict(:replace).insert(
+        :service_id => @service_id,
+        :track_id => id,
+        # We store the catalog ID rather than the (external) library-specific ID
+        # to make it easy to query more metadata later.
+        :external_id => track.dig('attributes', 'playParams', 'catalogId')
+      )
+
+      @db[:library_tracks].insert_ignore.insert(
+        :library_id => library_id,
+        :track_id => id
+      )
+
+      return id
+    end
+
+    # TODO: Make batch queries for catalog tracks to fetch details later
+    # (https://developer.apple.com/documentation/applemusicapi/get_multiple_catalog_songs_by_id)
+
+    def store_library_playlist_track(i, track, playlist_id, library_id, update_existing)
+      return @db[:library_playlist_tracks].insert_conflict(:replace).insert(
+        :playlist_id => playlist_id,
+        :track_id => self.store_library_track(track, library_id, update_existing),
+        :track_index => i
+      )
+    end
+
+    def store_library_playlist(playlist, library_id, update_existing)
       # Check whether playlist already exists, i.e. find its
       # internal id. If so, update it!
 
@@ -227,10 +270,10 @@ module Drum
         :playlist_id => id
       )
 
-      tracks = self.all_playlist_tracks(playlist)
+      tracks = self.all_library_playlist_tracks(playlist)
       tracks.each_with_index do |track, i|
         puts "  Storing track #{i + 1}/#{tracks.length}..."
-        self.store_playlist_track(i, track, update_existing)
+        self.store_library_playlist_track(i, track, id, library_id, update_existing)
       end
 
       return id
@@ -247,7 +290,7 @@ module Drum
     def preview
       self.authenticate
 
-      self.all_playlists.each do |playlist|
+      self.all_library_playlists.each do |playlist|
         puts "Found playlist #{playlist['attributes']['name']}."
       end
     end
@@ -262,8 +305,8 @@ module Drum
       
       library_id = self.store_library
 
-      self.all_playlists.each do |playlist|
-        self.store_playlist(playlist, library_id, update_existing)
+      self.all_library_playlists.each do |playlist|
+        self.store_library_playlist(playlist, library_id, update_existing)
       end
     end
   end
