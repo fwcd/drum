@@ -316,6 +316,8 @@ module Drum
       playlists.each_with_index do |playlist, i|
         puts "Storing playlist #{i + 1}/#{playlists.length} '#{playlist.dig('attributes', 'name')}'..."
         @db.transaction do
+          # TODO: Debug ForeignKeyConstraintViolation, apparently
+          # happens on line 275 in `store_library_playlist'
           self.store_library_playlist(playlist, library_id, update_existing)
         end
       end
