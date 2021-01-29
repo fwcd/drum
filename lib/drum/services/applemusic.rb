@@ -291,7 +291,7 @@ module Drum
       self.authenticate
 
       self.all_library_playlists.each do |playlist|
-        puts "Found playlist #{playlist['attributes']['name']}."
+        puts "Found playlist #{playlist.dig('attributes', 'name')}."
       end
     end
 
@@ -305,7 +305,9 @@ module Drum
       
       library_id = self.store_library
 
-      self.all_library_playlists.each do |playlist|
+      playlists = self.all_library_playlists
+      playlists.each_with_index do |playlist, i|
+        puts "Storing playlist #{i + 1}/#{playlists.length} '#{playlist.dig('attributes', 'name')}'..."
         @db.transaction do
           self.store_library_playlist(playlist, library_id, update_existing)
         end
