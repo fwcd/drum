@@ -168,31 +168,78 @@ module Drum
     end
 
     def playlists(offset: 0)
-      get_json("/me/library/playlists?limit=#{PLAYLISTS_CHUNK_SIZE}&offset=#{offset}", )['data']
+      get_json("/me/library/playlists?limit=#{PLAYLISTS_CHUNK_SIZE}&offset=#{offset}", )
     end
 
-    def tracks(playlist, offset: 0)
+    def playlist_tracks(playlist, offset: 0)
+      puts playlist
       get_json("/me/library/playlists/#{playlist['id']}/tracks?limit=#{PLAYLISTS_CHUNK_SIZE}&offset=#{offset}")
     end
 
     # Utilities
 
-    def all_playlists(offset: 0)
-      playlists = self.playlists(offset: offset)
-      unless playlists.empty?
-        return playlists + self.all_playlists(offset: offset + PLAYLISTS_CHUNK_SIZE)
-      else
-        return []
+    def all_playlists(offset: 0, total: nil)
+      unless total != nil && offset >= total
+        response = self.playlists(offset: offset)
+        playlists = response['data']
+        unless playlists.empty?
+          return playlists + self.all_playlists(offset: offset + PLAYLISTS_CHUNK_SIZE, total: response.dig('meta', 'total'))
+        end
       end
+      return []
     end
 
-    def all_tracks(playlist, offset: 0)
-      tracks = self.tracks(playlist, offset: offset)
-      unless tracks.empty?
-        return tracks + self.all_tracks(playlist, offset: offset + PLAYLISTS_CHUNK_SIZE)
-      else
-        return []
+    def all_playlist_tracks(playlist, offset: 0, total: nil)
+      unless total != nil && offset >= total
+        response = self.playlist_tracks(playlist, offset: offset)
+        tracks = response['data']
+        unless tracks.empty?
+          return tracks + self.all_playlist_tracks(playlist, offset: offset + PLAYLISTS_CHUNK_SIZE, total: response.dig('meta', 'total'))
+        end
       end
+      return []
+    end
+
+    def store_playlist(playlist, library_id, update_existing)
+      # Check whether playlist already exists, i.e. find its
+      # internal id. If so, update it!
+
+      id = @db[:playlist_services].where(
+        :service_id => @service_id,
+        :external_id => playlist['id']
+      ).first&.dig(:playlist_id)
+
+      id = @db[:playlists].insert_conflict(:replace).insert(
+        :id => id,
+        :name => playlist.dig('attributes', 'name'),
+        :description => playlist.dig('attributes', 'description', 'standard')
+      )
+
+      @db[:playlist_services].insert_conflict(:replace).insert(
+        :service_id => @service_id,
+        :playlist_id => id,
+        :external_id => playlist['id']
+        # TODO: URI/Images?
+      )
+
+      @db[:library_playlists].insert_ignore.insert(
+        :library_id => library_id,
+        :playlist_id => id
+      )
+
+      tracks = self.all_playlist_tracks(playlist)
+      tracks.each_with_index do |track, i|
+        puts "  Storing track #{i + 1}/#{tracks.length}..."
+        self.store_playlist_track(i, track, update_existing)
+      end
+
+      return id
+    end
+
+    def store_library
+      return @db[:libraries].insert_ignore.insert(
+        :name => "Apple Music"
+      )
     end
 
     # CLI
@@ -202,6 +249,21 @@ module Drum
 
       self.all_playlists.each do |playlist|
         puts "Found playlist #{playlist['attributes']['name']}."
+      end
+    end
+
+    def pull(options)
+      update_existing = options[:update_existing]
+      if update_existing
+        puts 'Updating existing tracks.'
+      end
+
+      self.authenticate
+      
+      library_id = self.store_library
+
+      self.all_playlists.each do |playlist|
+        self.store_playlist(playlist, library_id, update_existing)
       end
     end
   end
