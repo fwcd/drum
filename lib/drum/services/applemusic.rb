@@ -2,13 +2,20 @@ require 'drum/services/service'
 require 'jwt'
 require 'rest-client'
 require 'launchy'
+require 'ruby-limiter'
 require 'webrick'
 
 module Drum
   class AppleMusicService < Service
+    extend Limiter::Mixin
+
     NAME = 'Apple Music'
     BASE_URL = 'https://api.music.apple.com/v1'
     PLAYLISTS_CHUNK_SIZE = 50
+
+    # Rate-limiting for API-heavy methods
+    limit_method :library_playlists, rate: 60
+    limit_method :library_playlist_tracks, rate: 60
 
     def initialize(db)
       @db = db
