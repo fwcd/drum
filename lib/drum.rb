@@ -111,7 +111,16 @@ module Drum
 
     desc 'playlists', 'Lists the stored playlists'
     def playlists
-      tp @db[:playlists]
+      tp @db[:library_playlists]
+        .left_join(:libraries, id: :library_id)
+        .join(:playlists, id: Sequel[:library_playlists][:playlist_id])
+        .select(
+          :playlist_id,
+          Sequel[Sequel[:playlists][:name]].as(:playlist_name),
+          Sequel[Sequel[:playlists][:description]].as(:playlist_description),
+          Sequel[Sequel[:playlists][:user_id]].as(:playlist_user_id),
+          Sequel[Sequel[:libraries][:name]].as(:library_name)
+        )
     end
 
     desc 'tracks', 'Lists the stored tracks'
@@ -120,9 +129,10 @@ module Drum
     def tracks
       playlist_id = options[:playlist]
       if playlist_id
-        tracks = @db[:playlist_tracks].join(:tracks, id: :track_id).where(
-          playlist_id: playlist_id
-        ).order(:track_index)
+        tracks = @db[:playlist_tracks]
+          .join(:tracks, id: :track_id)
+          .where(playlist_id: playlist_id)
+          .order(:track_index)
         unless options[:all]
           tracks = tracks.select(:track_index, :track_id, :name, :duration_ms, :added_at)
         end
