@@ -306,7 +306,9 @@ module Drum
       library_id = self.store_library
 
       self.all_library_playlists.each do |playlist|
-        self.store_library_playlist(playlist, library_id, update_existing)
+        @db.transaction do
+          self.store_library_playlist(playlist, library_id, update_existing)
+        end
       end
     end
   end

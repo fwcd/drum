@@ -373,7 +373,9 @@ module Drum
       playlists = self.all_playlists
       playlists.each_with_index do |playlist, i|
         puts "Storing playlist #{i + 1}/#{playlists.length} '#{playlist.name}' (#{playlist.total} track(s))..."
-        self.store_playlist(playlist, library_id, update_existing)
+        @db.transaction do
+          self.store_playlist(playlist, library_id, update_existing)
+        end
       end
 
       puts "Pulled #{playlists.length} playlist(s) from Spotify."
