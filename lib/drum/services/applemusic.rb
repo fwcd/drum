@@ -236,7 +236,7 @@ module Drum
     # (https://developer.apple.com/documentation/applemusicapi/get_multiple_catalog_songs_by_id)
 
     def store_library_playlist_track(i, track, playlist_id, library_id, update_existing)
-      return @db[:library_playlist_tracks].insert_conflict(:replace).insert(
+      return @db[:playlist_tracks].insert_conflict(:replace).insert(
         :playlist_id => playlist_id,
         :track_id => self.store_library_track(track, library_id, update_existing),
         :track_index => i
