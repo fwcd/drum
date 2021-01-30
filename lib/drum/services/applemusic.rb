@@ -210,9 +210,13 @@ module Drum
       # Check whether track already exists, i.e. find its
       # internal id. If so, update it!
 
+      # We store the catalog ID rather than the (external) library-specific ID
+      # to make it easy to query more metadata later.
+      catalog_id = track.dig('attributes', 'playParams', 'catalogId')
+
       id = @db[:track_services].where(
         :service_id => @service_id,
-        :external_id => track['id']
+        :external_id => catalog_id
       ).first&.dig(:track_id)
 
       if update_existing || id.nil?
@@ -226,9 +230,7 @@ module Drum
       @db[:track_services].insert_conflict(:replace).insert(
         :service_id => @service_id,
         :track_id => id,
-        # We store the catalog ID rather than the (external) library-specific ID
-        # to make it easy to query more metadata later.
-        :external_id => track.dig('attributes', 'playParams', 'catalogId')
+        :external_id => catalog_id
       )
 
       @db[:library_tracks].insert_ignore.insert(
