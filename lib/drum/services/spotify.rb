@@ -332,11 +332,12 @@ module Drum
     end
 
     def store_library(user_id)
-      return @db[:libraries].insert_ignore.insert(
+      @db[:libraries].insert_ignore.insert(
         :service_id => @service_id,
         :user_id => user_id,
         :name => NAME
       )
+      return @db[:libraries].where(name: NAME, user_id: user_id, service_id: @service_id).first[:id]
     end
 
     # CLI

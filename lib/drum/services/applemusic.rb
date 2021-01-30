@@ -287,9 +287,11 @@ module Drum
     end
 
     def store_library
-      return @db[:libraries].insert_ignore.insert(
-        :name => "Apple Music"
+      @db[:libraries].insert_ignore.insert(
+        :service_id => @service_id,
+        :name => NAME
       )
+      return @db[:libraries].where(service_id: @service_id, name: NAME).first[:id]
     end
 
     # CLI
