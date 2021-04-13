@@ -1,4 +1,5 @@
 require 'drum/db'
+require 'drum/server'
 require 'drum/services/applemusic'
 require 'drum/services/dummy'
 require 'drum/services/service'
@@ -147,6 +148,12 @@ module Drum
       end
 
       tp tracks
+    end
+
+    desc 'serve', 'Serves up a web interface for managing the local library.'
+    method_option :port, aliases: '-p', desc: 'The port to run on.'
+    def serve
+      Drum.run_server(@db, options)
     end
   end
 end
