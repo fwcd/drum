@@ -14,7 +14,9 @@ sudo gem install sqlite3 -- --with-sqlite3-lib=/usr/lib
 
 To run the application, run `bundle exec bin/drum`. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To use the service integrations, e.g. with Spotify, set the following environment variables:
+### Spotify
+
+To use the service integration with Spotify, set the following environment variables:
 
 ```
 SPOTIFY_CLIENT_ID=...
@@ -27,9 +29,21 @@ The client ID and secret can be obtained by creating a Spotify application in th
 http://localhost:17998/callback
 ```
 
+### Apple Music
+
+To use the service integration with Apple Music, set the following environment variables:
+
+```
+MUSICKIT_KEY_P8_FILE_PATH=...
+MUSICKIT_KEY_ID=...
+MUSICKIT_TEAM_ID=...
+```
+
+This (private) p8 key can be obtained as described [here](https://help.apple.com/developer-account/#/devce5522674) or [here](https://developer.apple.com/documentation/applemusicapi/getting_keys_and_creating_tokens) (requires an Apple Developer Program membership).
+
 ## Limitations
 
-* The Spotify API [does not](https://developer.spotify.com/documentation/general/guides/working-with-playlists/#folders) provide a way to access folders currently
+* Neither the [Spotify API](https://developer.spotify.com/documentation/general/guides/working-with-playlists/#folders) nor the [Apple Music API](https://github.com/Musish/Musish/issues/189#issuecomment-455749901) provide a way to access folders currently
 
 ## Contributing
 

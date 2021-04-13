@@ -31,6 +31,8 @@ module Drum
       end
     end
 
+    # Authentication
+
     def authenticate_app(client_id, client_secret)
       RSpotify.authenticate(client_id, client_secret)
     end
@@ -330,11 +332,12 @@ module Drum
     end
 
     def store_library(user_id)
-      return @db[:libraries].insert_ignore.insert(
+      @db[:libraries].insert_ignore.insert(
         :service_id => @service_id,
         :user_id => user_id,
         :name => NAME
       )
+      return @db[:libraries].where(name: NAME, user_id: user_id, service_id: @service_id).first[:id]
     end
 
     # CLI
@@ -371,7 +374,9 @@ module Drum
       playlists = self.all_playlists
       playlists.each_with_index do |playlist, i|
         puts "Storing playlist #{i + 1}/#{playlists.length} '#{playlist.name}' (#{playlist.total} track(s))..."
-        self.store_playlist(playlist, library_id, update_existing)
+        @db.transaction do
+          self.store_playlist(playlist, library_id, update_existing)
+        end
       end
 
       puts "Pulled #{playlists.length} playlist(s) from Spotify."
