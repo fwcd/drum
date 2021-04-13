@@ -102,12 +102,12 @@ module Drum
           @db[:playlists].to_a
         end
 
-        if playlists.length > 10
+        if playlists.length > 4
           self.confirm "Are you sure you want to push #{playlists.length} playlists to #{name}? You can specify a single playlist id using the '-p' flag!"
         end
 
         puts "Pushing #{playlists.length} playlist(s) to #{name}..."
-        service.push(options, playlists)
+        service.push(playlists, options)
       end
     end
 

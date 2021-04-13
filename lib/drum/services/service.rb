@@ -7,7 +7,7 @@ class Drum::Service
     puts "ERROR: Service cannot be pulled (yet)!"
   end
 
-  def push(options, playlists)
+  def push(playlists, options)
     puts "ERROR: Service cannot be pushed to (yet)!"
   end
 end

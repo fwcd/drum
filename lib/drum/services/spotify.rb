@@ -15,6 +15,8 @@ module Drum
     PLAYLISTS_CHUNK_SIZE = 50
     TRACKS_CHUNK_SIZE = 100
     SAVED_TRACKS_CHUNKS_SIZE = 50
+    EXTERNALIZE_TRACKS_CHUNK_SIZE = 50
+    UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE = 100
 
     # Rate-limiting for API-heavy methods
     # 'rate' describes the max. number of calls per interval (seconds)
@@ -22,6 +24,9 @@ module Drum
     limit_method :all_playlist_tracks, rate: 15, interval: 5
     limit_method :all_saved_tracks, rate: 15, interval: 5
     limit_method :all_playlists, rate: 15, interval: 5
+    limit_method :externalize_tracks, rate: 15, interval: 5
+    limit_method :upload_playlist_tracks, rate: 15, interval: 5
+    limit_method :upload_playlists, rate: 15, interval: 5
 
     def initialize(db)
       @db = db
@@ -316,7 +321,7 @@ module Drum
       )
     end
 
-    def store_playlist(playlist, library_id, options)
+    def store_playlist(playlist, tracks = nil, library_id, options)
       # Check whether playlist already exists, i.e. find its
       # internal id. If so, update it!
 
@@ -349,7 +354,7 @@ module Drum
       added_by = playlist.tracks_added_by
       added_at = playlist.tracks_added_at
 
-      tracks = self.all_playlist_tracks(playlist)
+      tracks = tracks || self.all_playlist_tracks(playlist)
       tracks.each_with_index do |track, i|
         puts "  Storing track #{i + 1}/#{tracks.length}..."
         self.store_playlist_track(i, track, added_at[track.id], added_by[track.id], id, library_id, options)
@@ -364,7 +369,53 @@ module Drum
         :user_id => user_id,
         :name => NAME
       )
-      return @db[:libraries].where(name: NAME, user_id: user_id, service_id: @service_id).first[:id]
+
+      return @db[:libraries].where(
+        name: NAME,
+        user_id: user_id,
+        service_id: @service_id
+      ).first[:id]
+    end
+
+    def externalize_tracks(tracks)
+      unless tracks.empty?
+        # TODO: If track has no ID, match it using search
+        external_ids = tracks[...EXTERNALIZE_TRACKS_CHUNK_SIZE].flat_map do |track|
+          @db[:track_services].where(
+            service_id: @service_id,
+            track_id: track[:id]
+          ).select_map(:external_id)
+        end.to_a
+        external_tracks = RSpotify::Track.find(external_ids)
+        return external_tracks + externalize_tracks(tracks[EXTERNALIZE_TRACKS_CHUNK_SIZE...])
+      else
+        return []
+      end
+    end
+
+    def upload_playlist_tracks(external_tracks, external_playlist, options)
+      unless external_tracks.empty?
+        external_playlist.add_tracks!(external_tracks[...UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE])
+        upload_playlist_tracks(external_tracks[UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE...], external_playlist, options)
+      end
+    end
+
+    def upload_playlist(playlist, library_id, options)
+      # TODO: Use actual description
+      description = Time.now.strftime('Pushed with Drum on %Y-%m-%d.')
+      external_playlist = @me.create_playlist!(playlist[:name], description: description, public: false, collaborative: false)
+
+      tracks = @db[:playlist_tracks]
+        .join(:tracks, id: :track_id)
+        .to_a
+
+      puts "  Externalizing #{tracks.length} playlist track(s)..."
+      external_tracks = externalize_tracks(tracks)
+
+      puts "  Uploading #{external_tracks.length} playlist track(s)..."
+      upload_playlist_tracks(external_tracks, external_playlist, options)
+
+      self.store_playlist(external_playlist, external_tracks, library_id, options)
     end
 
     # CLI
@@ -421,6 +472,21 @@ module Drum
       puts "Pulled #{playlists.length} playlist(s) from Spotify."
 
       # TODO: Handle merging?
+    end
+
+    def push(playlists, options)
+      self.authenticate
+
+      user_id = self.store_user(@me)
+      library_id = self.store_library(user_id)
+
+      # Note that pushes intentionally always create a new playlist
+      # TODO: Flag for overwriting
+
+      playlists.each_with_index do |playlist, i|
+        puts "Uploading playlist #{i + 1}/#{playlists.length} '#{playlist[:name]}'..."
+        self.upload_playlist(playlist, library_id, options)
+      end
     end
   end
 end
