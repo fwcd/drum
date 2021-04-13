@@ -14,11 +14,13 @@ module Drum
     NAME = 'Spotify'    
     PLAYLISTS_CHUNK_SIZE = 50
     TRACKS_CHUNK_SIZE = 100
+    SAVED_TRACKS_CHUNKS_SIZE = 50
 
     # Rate-limiting for API-heavy methods
     # 'rate' describes the max. number of calls per minute
     limit_method :store_track, rate: 300
-    limit_method :all_tracks, rate: 300
+    limit_method :all_playlist_tracks, rate: 300
+    limit_method :all_saved_tracks, rate: 300
     limit_method :all_playlists, rate: 300
 
     def initialize(db)
@@ -189,10 +191,19 @@ module Drum
       end
     end
 
-    def all_tracks(playlist, offset: 0)
+    def all_playlist_tracks(playlist, offset: 0)
       tracks = playlist.tracks(limit: TRACKS_CHUNK_SIZE, offset: offset)
       unless tracks.empty?
-        return tracks + self.all_tracks(playlist, offset: offset + TRACKS_CHUNK_SIZE)
+        return tracks + self.all_playlist_tracks(playlist, offset: offset + TRACKS_CHUNK_SIZE)
+      else
+        return []
+      end
+    end
+
+    def all_saved_tracks(offset: 0)
+      tracks = @me.saved_tracks(limit: SAVED_TRACKS_CHUNKS_SIZE, offset: offset)
+      unless tracks.empty?
+        return tracks + self.all_saved_tracks(offset: offset + SAVED_TRACKS_CHUNKS_SIZE)
       else
         return []
       end
@@ -224,7 +235,7 @@ module Drum
       return id
     end
 
-    def store_track(track, library_id, update_existing)
+    def store_track(track, library_id = nil, update_existing)
       # Check whether track already exists, i.e. find its
       # internal id. If so, update it!
 
@@ -268,10 +279,12 @@ module Drum
         :external_id => track.id
       )
 
-      @db[:library_tracks].insert_ignore.insert(
-        :library_id => library_id,
-        :track_id => id
-      )
+      unless library_id.nil?
+        @db[:library_tracks].insert_ignore.insert(
+          :library_id => library_id,
+          :track_id => id
+        )
+      end
 
       return id
     end
@@ -282,7 +295,7 @@ module Drum
     def store_playlist_track(i, track, added_at, added_by, playlist_id, library_id, update_existing)
       return @db[:playlist_tracks].insert_conflict(:replace).insert(
         :playlist_id => playlist_id,
-        :track_id => self.store_track(track, library_id, update_existing),
+        :track_id => self.store_track(track, update_existing),
         :track_index => i,
         :added_at => added_at,
         :added_by => added_by && self.store_user(added_by)
@@ -322,7 +335,7 @@ module Drum
       added_by = playlist.tracks_added_by
       added_at = playlist.tracks_added_at
 
-      tracks = self.all_tracks(playlist)
+      tracks = self.all_playlist_tracks(playlist)
       tracks.each_with_index do |track, i|
         puts "  Storing track #{i + 1}/#{tracks.length}..."
         self.store_playlist_track(i, track, added_at[track.id], added_by[track.id], id, library_id, update_existing)
@@ -371,6 +384,16 @@ module Drum
       user_id = self.store_user(@me)
       library_id = self.store_library(user_id)
 
+      puts 'Querying saved tracks...'
+      saved_tracks = self.all_saved_tracks
+      @db.transaction do
+        saved_tracks.each_with_index do |track, i|
+          puts "Storing saved track #{i + 1}/#{saved_tracks.length}..."
+          self.store_track(track, library_id, update_existing)
+        end
+      end
+
+      puts 'Querying playlists...'
       playlists = self.all_playlists
       playlists.each_with_index do |playlist, i|
         puts "Storing playlist #{i + 1}/#{playlists.length} '#{playlist.name}' (#{playlist.total} track(s))..."
