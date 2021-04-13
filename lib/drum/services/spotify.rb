@@ -427,17 +427,6 @@ module Drum
 
       playlists = self.all_playlists
       puts playlists.map { |p| "Found playlist '#{p.name}' (#{p.total} track(s))" }
-
-      # DEBUG
-      unless self.all_playlists.empty?
-        p = playlists[0]
-        tracks = p.tracks
-        unless tracks.empty?
-          t = tracks[0]
-          puts "Snippet of #{p.name}'s first track: #{t.inspect} with features #{t.audio_features&.inspect}"
-        end
-        puts "Tracks added by: #{p.tracks_added_by}, added at: #{p.tracks_added_at}"
-      end
     end
 
     def pull(options)
