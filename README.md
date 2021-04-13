@@ -1,8 +1,25 @@
 # Drum
 
-A small tool for syncing your playlists across music streaming services and with your local library.
+A small CLI tool for syncing your playlists across music streaming services and with your local library.
 
 ![Icon](artwork/icon128.png)
+
+Drum supports a range of commands:
+
+* **Music streaming services**
+    * `drum preview [service]` outputs personal playlists from the given service that are available for `pull`
+    * `drum pull [service]` downloads all personal playlists and the user's stored tracks from the given service
+    * `drum push [service] -p [playlist id]` uploads a single playlist from the local library to the given service
+* **Local library management**
+    * `drum playlists` outputs the locally stored playlists
+    * `drum tracks -p [playlist id]` outputs the tracks in a locally stored playlist
+
+Currently, the following music streaming services are supported:
+
+* `spotify`
+* `applemusic` (partially, only `pull`)
+
+> Note that the tool only processes metadata, not the actual audio files.
 
 ## Development
 
