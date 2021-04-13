@@ -1,9 +1,9 @@
 require 'drum/db'
-require 'drum/server'
-require 'drum/services/applemusic'
-require 'drum/services/dummy'
-require 'drum/services/service'
-require 'drum/services/spotify'
+require 'drum/web/server'
+require 'drum/service/applemusic'
+require 'drum/service/dummy'
+require 'drum/service/service'
+require 'drum/service/spotify'
 require 'drum/version'
 require 'table_print'
 require 'highline'
@@ -11,6 +11,8 @@ require 'thor'
 require 'git'
 
 module Drum
+  TEST = 3
+
   class Error < StandardError; end
   
   class CLI < Thor
@@ -153,7 +155,7 @@ module Drum
     desc 'serve', 'Serves up a web interface for managing the local library.'
     method_option :port, aliases: '-p', desc: 'The port to run on.'
     def serve
-      Drum.run_server(@db, options)
+      Drum.run_web_server(@db, options)
     end
   end
 end

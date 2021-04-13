@@ -1,4 +1,4 @@
-require 'drum/services/service'
+require 'drum/service/service'
 require 'json'
 require 'launchy'
 require 'rest-client'

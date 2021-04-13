@@ -1,4 +1,4 @@
-require 'drum/services/service'
+require 'drum/service/service'
 require 'jwt'
 require 'rest-client'
 require 'launchy'

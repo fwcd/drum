@@ -1,4 +1,4 @@
-require 'drum/services/service'
+require 'drum/service/service'
 
 module Drum
   class DummyService < Service
