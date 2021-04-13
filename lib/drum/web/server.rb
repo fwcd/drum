@@ -8,6 +8,7 @@ module Drum
     server = WEBrick::HTTPServer.new Port: port, DocumentRoot: root
 
     # Slightly hacky approach to inject the database
+    # TODO: Add an API and use it instead
     WEBrick::HTTPServlet::ERBHandler.const_set('DB', db)
 
     trap 'INT' do server.shutdown end
