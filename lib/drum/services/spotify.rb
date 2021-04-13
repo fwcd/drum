@@ -243,10 +243,14 @@ module Drum
       # Check whether track already exists, i.e. find its
       # internal id. If so, update it!
 
-      id = @db[:track_services].where(
-        :service_id => @service_id,
-        :external_id => track.id
-      ).first&.dig(:track_id)
+      unless track.id.nil?
+        id = @db[:track_services].where(
+          :service_id => @service_id,
+          :external_id => track.id
+        ).first&.dig(:track_id)
+      else
+        id = nil
+      end
 
       if options[:update_existing] || id.nil?
         begin
@@ -280,12 +284,14 @@ module Drum
         )
       end
 
-      @db[:track_services].insert_conflict(:replace).insert(
-        :service_id => @service_id,
-        :track_id => id,
-        :uri => track.uri,
-        :external_id => track.id
-      )
+      unless track.id.nil?
+        @db[:track_services].insert_conflict(:replace).insert(
+          :service_id => @service_id,
+          :track_id => id,
+          :uri => track.uri,
+          :external_id => track.id
+        )
+      end
 
       unless library_id.nil?
         @db[:library_tracks].insert_ignore.insert(
