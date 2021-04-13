@@ -378,7 +378,7 @@ module Drum
     end
 
     def externalize_tracks(tracks)
-      unless tracks.empty?
+      unless tracks.nil? || tracks.empty?
         # TODO: If track has no ID, match it using search
         external_ids = tracks[...EXTERNALIZE_TRACKS_CHUNK_SIZE].flat_map do |track|
           @db[:track_services].where(
@@ -394,7 +394,7 @@ module Drum
     end
 
     def upload_playlist_tracks(external_tracks, external_playlist, options)
-      unless external_tracks.empty?
+      unless external_tracks.nil? || external_tracks.empty?
         external_playlist.add_tracks!(external_tracks[...UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE])
         upload_playlist_tracks(external_tracks[UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE...], external_playlist, options)
       end
@@ -407,6 +407,8 @@ module Drum
 
       tracks = @db[:playlist_tracks]
         .join(:tracks, id: :track_id)
+        .where(playlist_id: playlist[:id])
+        .order(:track_index)
         .to_a
 
       puts "  Externalizing #{tracks.length} playlist track(s)..."
