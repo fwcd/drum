@@ -17,11 +17,11 @@ module Drum
     SAVED_TRACKS_CHUNKS_SIZE = 50
 
     # Rate-limiting for API-heavy methods
-    # 'rate' describes the max. number of calls per minute
-    limit_method :store_track, rate: 300
-    limit_method :all_playlist_tracks, rate: 300
-    limit_method :all_saved_tracks, rate: 300
-    limit_method :all_playlists, rate: 300
+    # 'rate' describes the max. number of calls per interval (seconds)
+    limit_method :extract_features, rate: 15, interval: 5
+    limit_method :all_playlist_tracks, rate: 15, interval: 5
+    limit_method :all_saved_tracks, rate: 15, interval: 5
+    limit_method :all_playlists, rate: 15, interval: 5
 
     def initialize(db)
       @db = db
@@ -235,7 +235,11 @@ module Drum
       return id
     end
 
-    def store_track(track, library_id = nil, update_existing)
+    def extract_features(track)
+      return track&.audio_features
+    end
+
+    def store_track(track, library_id = nil, options)
       # Check whether track already exists, i.e. find its
       # internal id. If so, update it!
 
@@ -244,9 +248,13 @@ module Drum
         :external_id => track.id
       ).first&.dig(:track_id)
 
-      if update_existing || id.nil?
+      if options[:update_existing] || id.nil?
         begin
-          features = track&.audio_features
+          if options[:query_features]
+            features = extract_features(track)
+          else
+            features = nil
+          end
         rescue StandardError => e
           puts "Got #{e} while querying audio features"
           features = nil
@@ -292,17 +300,17 @@ module Drum
     # TODO: Store albums
     # TODO: Store artists
     
-    def store_playlist_track(i, track, added_at, added_by, playlist_id, library_id, update_existing)
+    def store_playlist_track(i, track, added_at, added_by, playlist_id, library_id, options)
       return @db[:playlist_tracks].insert_conflict(:replace).insert(
         :playlist_id => playlist_id,
-        :track_id => self.store_track(track, update_existing),
+        :track_id => self.store_track(track, options),
         :track_index => i,
         :added_at => added_at,
         :added_by => added_by && self.store_user(added_by)
       )
     end
 
-    def store_playlist(playlist, library_id, update_existing)
+    def store_playlist(playlist, library_id, options)
       # Check whether playlist already exists, i.e. find its
       # internal id. If so, update it!
 
@@ -338,7 +346,7 @@ module Drum
       tracks = self.all_playlist_tracks(playlist)
       tracks.each_with_index do |track, i|
         puts "  Storing track #{i + 1}/#{tracks.length}..."
-        self.store_playlist_track(i, track, added_at[track.id], added_by[track.id], id, library_id, update_existing)
+        self.store_playlist_track(i, track, added_at[track.id], added_by[track.id], id, library_id, options)
       end
 
       return id
@@ -374,9 +382,11 @@ module Drum
     end
 
     def pull(options)
-      update_existing = options[:update_existing]
-      if update_existing
-        puts 'Updating existing tracks.'
+      if options[:update_existing]
+        puts 'Updates to existing tracks enabled.'
+      end
+      if options[:query_features]
+        puts 'Audio feature querying enabled.'
       end
 
       self.authenticate
@@ -389,7 +399,7 @@ module Drum
       @db.transaction do
         saved_tracks.each_with_index do |track, i|
           puts "Storing saved track #{i + 1}/#{saved_tracks.length}..."
-          self.store_track(track, library_id, update_existing)
+          self.store_track(track, library_id, options)
         end
       end
 
@@ -398,7 +408,7 @@ module Drum
       playlists.each_with_index do |playlist, i|
         puts "Storing playlist #{i + 1}/#{playlists.length} '#{playlist.name}' (#{playlist.total} track(s))..."
         @db.transaction do
-          self.store_playlist(playlist, library_id, update_existing)
+          self.store_playlist(playlist, library_id, options)
         end
       end
 

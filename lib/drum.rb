@@ -79,6 +79,8 @@ module Drum
     end
     
     desc 'pull', 'Fetches a library from an external service (e.g. spotify)'
+    method_option :update_existing, aliases: '--update-existing', desc: 'Updates existing tracks in the database.'
+    method_option :query_features, aliases: '--query-features', desc: 'Queries audio features for each track.'
     def pull(raw)
       self.with_service(raw) do |name, service|
         puts "Pulling #{name}..."
@@ -88,7 +90,7 @@ module Drum
     end
 
     desc 'push', 'Uploads a library to an external service (e.g. spotify)'
-    method_option :playlist, aliases: '-p'
+    method_option :playlist, aliases: '-p', desc: 'A playlist to pull.'
     def push(raw)
       playlist_id = options[:playlist]
       self.with_service(raw) do |name, service|
@@ -124,8 +126,8 @@ module Drum
     end
 
     desc 'tracks', 'Lists the stored tracks'
-    method_option :playlist, aliases: '-p'
-    method_option :all, aliases: '-a'
+    method_option :playlist, aliases: '-p', desc: 'A playlist to query.'
+    method_option :all, aliases: '-a', desc: 'Whether to query all attributes.'
     def tracks
       playlist_id = options[:playlist]
       if playlist_id
