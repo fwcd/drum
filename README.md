@@ -31,6 +31,8 @@ sudo gem install sqlite3 -- --with-sqlite3-lib=/usr/lib
 
 To run the application, run `bundle exec bin/drum`. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
+> Note that you may need to run `bundle exec ruby bin/drum` on Windows
+
 ### Spotify
 
 To use the service integration with Spotify, set the following environment variables:
