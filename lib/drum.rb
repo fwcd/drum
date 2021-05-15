@@ -25,11 +25,18 @@ module Drum
       @dot_dir = "#{Dir.home}/.drum"
       Dir.mkdir(@dot_dir) unless File.exists?(@dot_dir)
 
+      db_url_path = "#{@dot_dir}/drum.sqlite3"
+
+      # Fix for Windows
+      unless db_url_path.start_with?('/')
+        db_url_path.prepend('/')
+      end
+
       # Set up Git repo and database
       @git = Git.init(@dot_dir)
       @git.config('user.name', 'drum')
       @git.config('user.email', '')
-      @db = Drum.setup_db("sqlite://#{@dot_dir}/drum.sqlite3")
+      @db = Drum.setup_db("sqlite://#{db_url_path}")
       self.commit_changes
 
       @services = {
