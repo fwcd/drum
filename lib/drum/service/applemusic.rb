@@ -13,6 +13,10 @@ module Drum
     BASE_URL = 'https://api.music.apple.com/v1'
     PLAYLISTS_CHUNK_SIZE = 50
 
+    MUSICKIT_P8_FILE_VAR = 'MUSICKIT_KEY_P8_FILE_PATH'
+    MUSICKIT_KEY_VAR = 'MUSICKIT_KEY_ID'
+    MUSICKIT_TEAM_ID_VAR = 'MUSICKIT_TEAM_ID'
+
     # Rate-limiting for API-heavy methods
     limit_method :library_playlists, rate: 60
     limit_method :library_playlist_tracks, rate: 60
@@ -135,12 +139,12 @@ module Drum
     end
 
     def authenticate
-      p8_file = ENV['MUSICKIT_KEY_P8_FILE_PATH']
-      key_id = ENV['MUSICKIT_KEY_ID']
-      team_id = ENV['MUSICKIT_TEAM_ID']
+      p8_file = ENV[MUSICKIT_P8_FILE_VAR]
+      key_id = ENV[MUSICKIT_KEY_VAR]
+      team_id = ENV[MUSICKIT_TEAM_ID_VAR]
 
       if p8_file.nil? || key_id.nil? || team_id.nil?
-        raise 'Please specify your MusicKit keys in your env vars!'
+        raise "Please specify your MusicKit keys (#{MUSICKIT_P8_FILE_VAR}, #{MUSICKIT_KEY_ID_VAR}, #{MUSICKIT_TEAM_ID_VAR}) in your env vars!"
       end
 
       token = self.authenticate_app(p8_file, key_id, team_id)

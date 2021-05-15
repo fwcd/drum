@@ -18,6 +18,9 @@ module Drum
     EXTERNALIZE_TRACKS_CHUNK_SIZE = 50
     UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE = 100
 
+    CLIENT_ID_VAR = 'SPOTIFY_CLIENT_ID'
+    CLIENT_SECRET_VAR = 'SPOTIFY_CLIENT_SECRET'
+
     # Rate-limiting for API-heavy methods
     # 'rate' describes the max. number of calls per interval (seconds)
     limit_method :extract_features, rate: 15, interval: 5
@@ -149,11 +152,12 @@ module Drum
     end
 
     def authenticate
-      client_id = ENV['SPOTIFY_CLIENT_ID']
-      client_secret = ENV['SPOTIFY_CLIENT_SECRET']
+
+      client_id = ENV[CLIENT_ID_VAR]
+      client_secret = ENV[CLIENT_SECRET_VAR]
       
       if client_id.nil? || client_secret.nil?
-        raise 'Please specify the Spotify client id and secret in your env vars!'
+        raise "Please specify the env vars #{CLIENT_ID_VAR} and #{CLIENT_SECRET_VAR}!"
       end
 
       # TODO: Perform refresh flow if a valid token is in the DB
