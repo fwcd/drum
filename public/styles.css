@@ -1,0 +1,18 @@
+body {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.sidebar {
+  max-width: 250px;
+  background-color: rgb(226, 226, 226);
+}
+
+main {
+  padding: 10px;
+}
+
+h1 {
+  margin: 0;
+}
