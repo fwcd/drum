@@ -37,5 +37,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'jwt', '~> 2.2'
   spec.add_dependency 'highline', '~> 2.0'
   spec.add_dependency 'table_print', '~> 1.5'
-  spec.add_dependency 'rest-client'
+  spec.add_dependency 'rest-client', '~> 2.0'
+  spec.add_dependency 'progress_bar', '~> 1.3'
 end
