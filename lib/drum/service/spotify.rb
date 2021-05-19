@@ -4,6 +4,7 @@ require 'launchy'
 require 'rest-client'
 require 'rspotify'
 require 'ruby-limiter'
+require 'progress_bar'
 require 'securerandom'
 require 'webrick'
 
@@ -248,7 +249,7 @@ module Drum
       return track&.audio_features
     end
 
-    def store_track(track, library_id = nil, options)
+    def store_track(track, library_id = nil, options, output: method(:puts))
       # Check whether track already exists, i.e. find its
       # internal id. If so, update it!
 
@@ -269,7 +270,7 @@ module Drum
             features = nil
           end
         rescue StandardError => e
-          puts "Got #{e} while querying audio features"
+          output.call "Got #{e} while querying audio features"
           features = nil
         end
         id = @db[:tracks].insert_conflict(:replace).insert(
@@ -315,17 +316,17 @@ module Drum
     # TODO: Store albums
     # TODO: Store artists
     
-    def store_playlist_track(i, track, added_at, added_by, playlist_id, library_id, options)
+    def store_playlist_track(i, track, added_at, added_by, playlist_id, library_id, options, output: method(:puts))
       return @db[:playlist_tracks].insert_conflict(:replace).insert(
         :playlist_id => playlist_id,
-        :track_id => self.store_track(track, options),
+        :track_id => self.store_track(track, options, output: output),
         :track_index => i,
         :added_at => added_at,
         :added_by => added_by && self.store_user(added_by)
       )
     end
 
-    def store_playlist(playlist, tracks = nil, library_id, options)
+    def store_playlist(playlist, tracks = nil, library_id, options, output: method(:puts))
       # Check whether playlist already exists, i.e. find its
       # internal id. If so, update it!
 
@@ -359,9 +360,9 @@ module Drum
       added_at = playlist.tracks_added_at
 
       tracks = tracks || self.all_playlist_tracks(playlist)
+      output.call "Storing #{tracks.length} playlist track(s)..."
       tracks.each_with_index do |track, i|
-        puts "  Storing track #{i + 1}/#{tracks.length}..."
-        self.store_playlist_track(i, track, added_at[track.id], added_by[track.id], id, library_id, options)
+        self.store_playlist_track(i, track, added_at[track.id], added_by[track.id], id, library_id, options, output: method(:puts))
       end
 
       return id
@@ -404,7 +405,7 @@ module Drum
       end
     end
 
-    def upload_playlist(playlist, library_id, options)
+    def upload_playlist(playlist, library_id, options, output: method(:puts))
       # TODO: Use actual description
       description = Time.now.strftime('Pushed with Drum on %Y-%m-%d.')
       external_playlist = @me.create_playlist!(playlist[:name], description: description, public: false, collaborative: false)
@@ -415,10 +416,10 @@ module Drum
         .order(:track_index)
         .to_a
 
-      puts "  Externalizing #{tracks.length} playlist track(s)..."
+      output.call "Externalizing #{tracks.length} playlist track(s)..."
       external_tracks = externalize_tracks(tracks)
 
-      puts "  Uploading #{external_tracks.length} playlist track(s)..."
+      output.call "Uploading #{external_tracks.length} playlist track(s)..."
       upload_playlist_tracks(external_tracks, external_playlist, options)
 
       self.store_playlist(external_playlist, external_tracks, library_id, options)
@@ -448,19 +449,25 @@ module Drum
 
       puts 'Querying saved tracks...'
       saved_tracks = self.all_saved_tracks
+
+      puts 'Storing saved tracks...'
+      bar = ProgressBar.new(saved_tracks.length)
       @db.transaction do
-        saved_tracks.each_with_index do |track, i|
-          puts "Storing saved track #{i + 1}/#{saved_tracks.length}..."
-          self.store_track(track, library_id, options)
+        saved_tracks.each do |track|
+          self.store_track(track, library_id, options, output: bar.method(:puts))
+          bar.increment!
         end
       end
 
       puts 'Querying playlists...'
       playlists = self.all_playlists
-      playlists.each_with_index do |playlist, i|
-        puts "Storing playlist #{i + 1}/#{playlists.length} '#{playlist.name}' (#{playlist.total} track(s))..."
+
+      puts 'Storing playlists...'
+      bar = ProgressBar.new(playlists.length)
+      playlists.each do |playlist|
         @db.transaction do
-          self.store_playlist(playlist, library_id, options)
+          self.store_playlist(playlist, library_id, options, output: bar.method(:puts))
+          bar.increment!
         end
       end
 
@@ -478,9 +485,11 @@ module Drum
       # Note that pushes intentionally always create a new playlist
       # TODO: Flag for overwriting
 
-      playlists.each_with_index do |playlist, i|
-        puts "Uploading playlist #{i + 1}/#{playlists.length} '#{playlist[:name]}'..."
-        self.upload_playlist(playlist, library_id, options)
+      puts 'Uploading playlists...'
+      bar = ProgressBar.new(playlists.length)
+      playlists.each do |playlist|
+        self.upload_playlist(playlist, library_id, options, output: bar.method(:puts))
+        bar.increment!
       end
     end
   end
