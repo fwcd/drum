@@ -422,7 +422,7 @@ module Drum
       output.call "Uploading #{external_tracks.length} playlist track(s)..."
       upload_playlist_tracks(external_tracks, external_playlist, options)
 
-      self.store_playlist(external_playlist, external_tracks, library_id, options)
+      self.store_playlist(external_playlist, external_tracks, library_id, options, output: output)
     end
 
     # CLI
