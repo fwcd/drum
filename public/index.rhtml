@@ -7,38 +7,49 @@
   </head>
   <body>
     <h1>Drum Library</h1>
-    <% DB[:playlists].select(:id, :name).each do |playlist| %>
-      <h2><%= playlist[:name] %></h2>
 
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Track Index</th>
-            <th>Name</th>
-            <th>Duration</th>
-          </tr>
-        </thead>
-        <tbody>
-          <%
-            DB[:playlist_tracks]
-              .join(:tracks, id: :track_id)
-              .where(playlist_id: playlist[:id])
-              .order(:track_index)
-              .each do |track|
-          %>
-          <tr>
-            <td><%= track[:id] %></td>
-            <td><%= track[:track_index] %></td>
-            <td><%= track[:name] %></td>
-            <td><%=
-              sec = track[:duration_ms] / 1000
-              "#{'%02d' % (sec / 60)}:#{'%02d' % (sec % 60)}"
-            %></td>
-          </tr>
-          <% end %>
-        </tbody>
-      </table>
+    <div class="sidebar">
+      <ul>
+        <% DB[:playlists].select(:id, :name).each do |playlist| %>
+          <li><%= "<a href=\"\#playlist-#{playlist[:id]}\">#{playlist[:name]}</a>" %></li>
+        <% end %>
+      </ul>
+    </div>
+
+    <% DB[:playlists].select(:id, :name).each do |playlist| %>
+      <%= "<div id=\"playlist-#{playlist[:id]}\">" %>
+        <h2><%= playlist[:name] %></h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Track Index</th>
+              <th>Name</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%
+              DB[:playlist_tracks]
+                .join(:tracks, id: :track_id)
+                .where(playlist_id: playlist[:id])
+                .order(:track_index)
+                .each do |track|
+            %>
+            <tr>
+              <td><%= track[:id] %></td>
+              <td><%= track[:track_index] %></td>
+              <td><%= track[:name] %></td>
+              <td><%=
+                sec = track[:duration_ms] / 1000
+                "#{'%02d' % (sec / 60)}:#{'%02d' % (sec % 60)}"
+              %></td>
+            </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
     <% end %>
   </body>
 </html>
