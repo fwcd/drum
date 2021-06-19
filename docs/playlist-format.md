@@ -20,7 +20,8 @@ name: string
 description: string?
 author: string? (references User.id)
 users: User[]?
-artist: Artist[]?
+artists: Artist[]?
+albums: Album[]?
 tracks: Track[]?
 ```
 
@@ -36,7 +37,16 @@ spotify: SpotifyRef?
 
 ```yaml
 id: string
-name: String
+name: string
+spotify: SpotifyRef?
+```
+
+### Album
+
+```yaml
+id: string
+name: string
+artists: string[] (references Artist.id)
 spotify: SpotifyRef?
 ```
 
@@ -44,7 +54,8 @@ spotify: SpotifyRef?
 
 ```yaml
 name: string
-artist: string (references Artist.id)
+artists: string[] (references Artist.id)
+album: string? (references Album.id)
 duration_ms: number?
 explicit: boolean?
 isrc: string?
@@ -57,4 +68,5 @@ spotify: SpotifyRef?
 id: string
 uri: string
 web_url: string
+image_url: string?
 ```
