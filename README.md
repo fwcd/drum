@@ -1,18 +1,41 @@
 # Drum
 
-A small CLI tool for syncing your playlists across music streaming services and with your local library.
+A small tool for copying your playlists across music streaming services. Think `rsync`, but for playlists.
 
 ![Icon](artwork/icon128.png)
 
-Drum supports a range of commands:
+## Usage
 
-* **Music streaming services**
-    * `drum preview [service]` outputs personal playlists from the given service that are available for `pull`
-    * `drum pull [service]` downloads all personal playlists and the user's stored tracks from the given service
-    * `drum push [service] -p [playlist id]` uploads a single playlist from the local library to the given service
-* **Local library management**
-    * `drum playlists` outputs the locally stored playlists
-    * `drum tracks -p [playlist id]` outputs the tracks in a locally stored playlist
+The basic usage pattern is always `drum [source] [destination]` where `source` and `destination` may be any of the following:
+
+* A file or folder, e.g. `.`, `some/folder`, `some-file.yaml`
+* A URI, e.g. `https://open.spotify.com/playlist/123456`, `spotify:playlist:123456`, `file:///path/to/list.yaml`
+* A special token, e.g. `@spotify-library`, `@spotify-liked-songs`
+
+> Note that if the source is folder-like, i.e. includes multiple playlists, the destination has to be folder-like too.
+
+### Examples
+
+**Download a playlist from Spotify.**
+
+* `drum https://open.spotify.com/playlist/123456 my-fancy-list.yaml`
+* `drum spotify:playlist:123456 my-fancy-list.yaml`
+* `drum spotify:playlist:123456 some/folder`
+
+**Download your liked songs playlist from Spotify.**
+
+* `drum @spotify-liked-songs liked-songs.yaml`
+
+**Download all playlists from your Spotify library.**
+
+* `drum https://open.spotify.com/library .`
+* `drum @spotify-library .`
+
+**Upload a playlist to Spotify.**
+
+* `drum my-fancy-list.yaml @spotify-library`
+
+## Supported Services
 
 Currently, the following music streaming services are supported:
 
