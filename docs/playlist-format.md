@@ -17,31 +17,44 @@ The top-level object in a playlist file.
 
 ```yaml
 name: string
-description: string
-author: number (index into 'users')
-users: User[]
-tracks: Track[]
+description: string?
+author: string? (references User.id)
+users: User[]?
+artist: Artist[]?
+tracks: Track[]?
 ```
 
 ### User
 
 ```yaml
-display_name: string
-spotify:
-  id: string
-  uri: string
-  web_url: string
+id: string
+display_name: string?
+spotify: SpotifyRef?
+```
+
+### Artist
+
+```yaml
+id: string
+name: String
+spotify: SpotifyRef?
 ```
 
 ### Track
 
 ```yaml
 name: string
-duration_ms: number
-explicit: boolean
-isrc: string
-spotify:
-  id: string
-  uri: string
-  web_url: string
+artist: string (references Artist.id)
+duration_ms: number?
+explicit: boolean?
+isrc: string?
+spotify: SpotifyRef?
+```
+
+### SpotifyRef
+
+```yaml
+id: string
+uri: string
+web_url: string
 ```
