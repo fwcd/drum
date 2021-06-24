@@ -14,7 +14,20 @@ module Drum
     :name,
     :artist_ids,
     :spotify
-  )
+  ) do
+    # Parses an album from a nested Hash that uses string keys.
+    #
+    # @param [Hash<String, Object>] h The Hash to be parsed
+    # @return [Album] The parsed album
+    def self.deserialize(h)
+      Album.new(
+        id: h['id'],
+        name: h['name'],
+        artist_ids: h['artist_ids'],
+        spotify: h['spotify'].try { |s| AlbumSpotify.deserialize(s) }
+      )
+    end
+  end
 
   # Spotify-specific metadata about the album.
   #
@@ -25,5 +38,16 @@ module Drum
   AlbumSpotify = Struct.new(
     :id,
     :image_url
-  )
+  ) do
+    # Parses spotify metadata from a Hash that uses string keys.
+    #
+    # @param [Hash<String, Object>] h The Hash to be parsed
+    # @return [AlbumSpotify] The parsed metadata
+    def self.deserialize(h)
+      AlbumSpotify.new(
+        id: h['id'],
+        image_url: h['image_url']
+      )
+    end
+  end
 end

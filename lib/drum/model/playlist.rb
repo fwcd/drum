@@ -44,7 +44,7 @@ module Drum
         artists: h['artists']&.map { |a| Artist.deserialize(a) } || [],
         albums: h['albums']&.map { |a| Album.deserialize(a) } || [],
         tracks: h['tracks']&.map { |t| Track.deserialize(t) } || [],
-        spotify: h['spotify'].try { |p| PlaylistSpotify.deserialize(p) }
+        spotify: h['spotify'].try { |s| PlaylistSpotify.deserialize(s) }
       )
     end
   end
