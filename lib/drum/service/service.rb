@@ -1,4 +1,12 @@
 class Drum::Service
+  # Previews some information about this service. Usually this is useful
+  # for debugging.
+  #
+  # @return [void]
+  def preview
+    puts "ERROR: Service does not support previewing (yet)!"
+  end
+
   # Downloads playlists from this service.
   #
   # @param [String] playlist_ref The playlist reference (see README for examples)
