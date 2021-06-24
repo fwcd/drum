@@ -1,13 +1,14 @@
 class Drum::Service
-  def preview
-    puts "ERROR: Service cannot be previewed (yet)!"
+  ##
+  # Downloads playlists from this service.
+  #
+  # @return [Hash] the playlists downloaded
+  def download(playlist_ref)
+    puts "ERROR: Service cannot download playlists (yet)!"
   end
 
-  def pull(options)
-    puts "ERROR: Service cannot be pulled (yet)!"
-  end
-
-  def push(playlists, options)
-    puts "ERROR: Service cannot be pushed to (yet)!"
+  # Uploads playlists to this service.
+  def upload(playlist_ref, playlists)
+    puts "ERROR: Service cannot upload playlists (yet)!"
   end
 end

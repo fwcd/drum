@@ -56,6 +56,10 @@ To run the application, run `bundle exec bin/drum`. You can also run `bin/consol
 
 > Note that you may need to run `bundle exec ruby bin/drum` on Windows
 
+To package the application into a gem, run `bundle exec rake build`. The built gem should then be located in `pkg`.
+
+To generate the documentation, run `bundle exec rake yard`.
+
 ### Spotify
 
 To use the service integration with Spotify, set the following environment variables:
