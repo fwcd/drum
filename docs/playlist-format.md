@@ -18,7 +18,7 @@ The top-level object in a playlist file.
 ```yaml
 name: string
 description: string?
-author: string? (references User.id)
+author_id: string? (references User.id)
 users: User[]?
 artists: Artist[]?
 albums: Album[]?
@@ -46,7 +46,7 @@ spotify: SpotifyRef?
 ```yaml
 id: string
 name: string
-artists: string[] (references Artist.id)
+artist_ids: string[] (references Artist.id)
 spotify: SpotifyRef?
 ```
 
@@ -54,8 +54,8 @@ spotify: SpotifyRef?
 
 ```yaml
 name: string
-artists: string[] (references Artist.id)
-album: string? (references Album.id)
+artist_ids: string[] (references Artist.id)
+album_id: string? (references Album.id)
 duration_ms: number?
 explicit: boolean?
 isrc: string?
