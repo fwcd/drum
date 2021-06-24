@@ -11,11 +11,12 @@ require 'thor'
 require 'git'
 
 module Drum
-  TEST = 3
-
   class Error < StandardError; end
   
   class CLI < Thor
+    default_task :cp
+
+    # Sets up the CLI by registering the services.
     def initialize(*args)
       super
 
@@ -51,6 +52,12 @@ module Drum
     end
 
     no_commands do
+      # Performs a block with the given service, if registered.
+      #
+      # @yield [name, service] The block to run
+      # @yieldparam [String] name The name of the service
+      # @yieldparam [Service] service The service
+      # @param [String] raw The name of the service
       def with_service(raw)
         name = raw.downcase
         service = @services[name]
@@ -61,16 +68,9 @@ module Drum
         end
       end
 
-      def commit_changes
-        # TODO: Make sure that we are on the correct (default?) branch
-        begin
-          @git.add(all: true)
-          @git.commit(Time.now.strftime('Snapshot %Y-%m-%d %H:%M:%S'))
-        rescue StandardError
-          # If repo is in a clean state and no changes were made, ignore
-        end
-      end
-
+      # Prompts the user for confirmation.
+      #
+      # @param [String] prompt The message to be displayed
       def confirm(prompt)
         answer = @hl.ask "#{prompt} [y/n]"
         unless answer == 'y'
