@@ -6,7 +6,7 @@ A small tool for copying your playlists across music streaming services. Think `
 
 ## Usage
 
-The basic usage pattern is always `drum [source] [destination]` where `source` and `destination` may be any of the following:
+The basic usage pattern is always `drum cp [source] [destination]` where `source` and `destination` may be any of the following:
 
 * A file or folder, e.g. `.`, `some/folder`, `some-file.yaml`
 * A URI, e.g. `https://open.spotify.com/playlist/123456`, `spotify:playlist:123456`, `file:///path/to/list.yaml`
@@ -18,22 +18,22 @@ The basic usage pattern is always `drum [source] [destination]` where `source` a
 
 **Download a playlist from Spotify.**
 
-* `drum https://open.spotify.com/playlist/123456 my-fancy-list.yaml`
-* `drum spotify:playlist:123456 my-fancy-list.yaml`
-* `drum spotify:playlist:123456 some/folder`
+* `drum cp https://open.spotify.com/playlist/123456 my-fancy-list.yaml`
+* `drum cp spotify:playlist:123456 my-fancy-list.yaml`
+* `drum cp spotify:playlist:123456 some/folder`
 
 **Download your liked songs playlist from Spotify.**
 
-* `drum @spotify-liked-songs liked-songs.yaml`
+* `drum cp @spotify-liked-songs liked-songs.yaml`
 
 **Download all playlists from your Spotify library.**
 
-* `drum https://open.spotify.com/library .`
-* `drum @spotify-library .`
+* `drum cp https://open.spotify.com/library .`
+* `drum cp @spotify-library .`
 
 **Upload a playlist to Spotify.**
 
-* `drum my-fancy-list.yaml @spotify-library`
+* `drum cp my-fancy-list.yaml @spotify-library`
 
 ## Supported Services
 

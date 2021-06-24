@@ -9,9 +9,8 @@ require 'thor'
 module Drum
   class Error < StandardError; end
   
+  # The command line interface for drum.
   class CLI < Thor
-    default_task :cp
-
     # Sets up the CLI by registering the services.
     def initialize(*args)
       super
@@ -42,9 +41,9 @@ module Drum
       # @yield [name, service] The block to run
       # @yieldparam [String] name The name of the service
       # @yieldparam [Service] service The service
-      # @param [String] raw The name of the service
-      def with_service(raw)
-        name = raw.downcase
+      # @param [String] raw_name The name of the service
+      def with_service(raw_name)
+        name = raw_name.downcase
         service = @services[name]
         unless service.nil?
           yield(name, service)
@@ -66,14 +65,18 @@ module Drum
     end
 
     desc 'preview', 'Previews information from an external service (e.g. spotify)'
-    def preview(raw)
-      self.with_service(raw) do |name, service|
+
+    # Previews information from an external service.
+    #
+    # @param [String] raw_name The (raw) name of the service
+    def preview(raw_name)
+      self.with_service(raw_name) do |name, service|
         puts "Previewing #{name}..."
         service.preview
       end
     end
     
-    desc 'cp', 'Copies a playlist from the source to the given destination.'
+    desc 'cp [SOURCE] [DEST]', 'Copies a playlist from the source to the given destination.'
     method_option :query_features, aliases: '--query-features', desc: 'Queries audio features for each track.'
 
     # Copies a playlist from the source to the given destination.
