@@ -2,7 +2,7 @@ module Drum
   # A user.
   #
   # @!attribute id
-  #  @return [String] The (internal) id of this user
+  #  @return [String] The (internal) id of the user
   # @!attribute display_name
   #  @return [optional, String] The displayed/formatted name of the user
   # @!attribute spotify
