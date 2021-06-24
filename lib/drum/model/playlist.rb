@@ -1,3 +1,5 @@
+require 'drum/utils/try'
+
 module Drum
   # TODO: Smart playlists!
 
@@ -26,8 +28,26 @@ module Drum
   #   @return [optional, PlaylistSpotify] Spotify-specific metadata
   Playlist = Struct.new(
     :name, :description,
-    :author_id, :users, :artists, :albums, :tracks
-  )
+    :author_id, :users, :artists, :albums, :tracks,
+    :spotify
+  ) do
+    # Parses a playlist from a nested Hash that uses string keys.
+    #
+    # @param [Hash<String, Object>] h The Hash to be parsed
+    # @return [Playlist] The parsed playlist
+    def self.deserialize(h)
+      Playlist.new(
+        name: h['name'],
+        description: h['description'],
+        author_id: h['author_id'],
+        users: h['users']&.map { |u| User.deserialize(u) } || [],
+        artists: h['artists']&.map { |a| Artist.deserialize(a) } || [],
+        albums: h['albums']&.map { |a| Album.deserialize(a) } || [],
+        tracks: h['tracks']&.map { |t| Track.deserialize(t) } || [],
+        spotify: h['spotify'].try { |p| PlaylistSpotify.deserialize(p) }
+      )
+    end
+  end
 
   # Spotify-specific metadata about the playlist.
   #
@@ -43,5 +63,18 @@ module Drum
     :id,
     :public, :collaborative,
     :image_url
-  )
+  ) do
+    # Parses spotify metadata from a Hash that uses string keys.
+    #
+    # @param [Hash<String, Object>] h The Hash to be parsed
+    # @return [PlaylistSpotify] The parsed metadata
+    def self.deserialize(h)
+      PlaylistSpotify.new(
+        id: h['id'],
+        public: h['public'],
+        collaborative: h['collaborative'],
+        image_url: h['image_url']
+      )
+    end
+  end
 end
