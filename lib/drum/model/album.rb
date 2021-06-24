@@ -8,11 +8,22 @@ module Drum
   # @!attribute artist_ids
   #  @return [Array<String>] The artist ids of the album
   # @!attribute spotify
-  #  @return [optional, SpotifyRef] The location on Spotify
+  #  @return [optional, AlbumSpotify] Spotify-specific metadata
   Album = Struct.new(
     :id,
     :name,
     :artist_ids,
     :spotify
+  )
+
+  # Spotify-specific metadata about the album.
+  #
+  # @!attribute id
+  #   @return [String] The id of the album on Spotify
+  # @!attribute image_url
+  #   @return [String] The URL of the album cover art on Spotify
+  AlbumSpotify = Struct.new(
+    :id,
+    :image_url
   )
 end

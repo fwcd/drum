@@ -8,9 +8,9 @@ module Drum
   # @!attribute service_name
   #   @return [String] The name of the service
   # @!attribute resource_type
-  #   @return [Symbol] The type of the resource, may be service-dependent
+  #   @return [Symbol] The type of the resource, service-dependent
   # @!attribute resource_location
-  #   @return [String] The path/id of the resource, may be service-dependent
+  #   @return [String] The path/id of the resource, service-dependent
   Ref = Struct.new(:service_name, :resource_type, :resource_location) do
     # TODO
   end

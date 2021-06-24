@@ -6,10 +6,18 @@ module Drum
   # @!attribute name
   #  @return [optional, String] The displayed/formatted name of the artist
   # @!attribute spotify
-  #  @return [optional, SpotifyRef] The Spotify location of the artist
+  #  @return [optional, ArtistSpotify] Spotify-specific metadata
   Artist = Struct.new(
     :id,
     :name,
     :spotify
+  )
+
+  # Spotify-specific metadata about the artist.
+  #
+  # @!attribute id
+  #   @return [String] The id of the artist on Spotify
+  ArtistSpotify = Struct.new(
+    :id
   )
 end

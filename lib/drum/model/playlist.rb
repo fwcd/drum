@@ -22,8 +22,26 @@ module Drum
   #   @return [optional, Array<Album>] A list of albums used anywhere in the playlist, order doesn't matter
   # @!attribute tracks
   #   @return [optional, Array<Track>] The list of tracks of the playlist, order matters here
+  # @!attribute spotify
+  #   @return [optional, PlaylistSpotify] Spotify-specific metadata
   Playlist = Struct.new(
     :name, :description,
     :author_id, :users, :artists, :albums, :tracks
+  )
+
+  # Spotify-specific metadata about the playlist.
+  #
+  # @!attribute id
+  #   @return [String] The id of the playlist on Spotify
+  # @!attribute public
+  #   @return [optional, Boolean] Whether the playlist is public on Spotify
+  # @!attribute collaborative
+  #   @return [optional, Boolean] Whether the playlist is collaborative on Spotify
+  # @!attribute image_url
+  #   @return [optional, String] The playlist cover URL
+  PlaylistSpotify = Struct.new(
+    :id,
+    :public, :collaborative,
+    :image_url
   )
 end

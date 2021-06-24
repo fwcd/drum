@@ -23,14 +23,20 @@ users: User[]?
 artists: Artist[]?
 albums: Album[]?
 tracks: Track[]?
+spotify:
+  id: string
+  public: boolean?
+  collaborative: boolean?
+  image_url: string?
 ```
 
 ### User
 
 ```yaml
 id: string
-display_name: string?
-spotify: SpotifyRef?
+spotify:
+  id: string
+  display_name: string?
 ```
 
 ### Artist
@@ -38,7 +44,8 @@ spotify: SpotifyRef?
 ```yaml
 id: string
 name: string
-spotify: SpotifyRef?
+spotify:
+  id: string
 ```
 
 ### Album
@@ -47,7 +54,9 @@ spotify: SpotifyRef?
 id: string
 name: string
 artist_ids: string[] (references Artist.id)
-spotify: SpotifyRef?
+spotify:
+  id: string
+  image_url: string?
 ```
 
 ### Track
@@ -59,14 +68,6 @@ album_id: string? (references Album.id)
 duration_ms: number?
 explicit: boolean?
 isrc: string?
-spotify: SpotifyRef?
-```
-
-### SpotifyRef
-
-```yaml
-id: string
-uri: string
-web_url: string
-image_url: string?
+spotify:
+  id: string
 ```
