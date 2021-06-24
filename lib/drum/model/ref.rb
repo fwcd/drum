@@ -1,4 +1,3 @@
-
 module Drum
   # A parsed reference to a resource, usually one or multiple playlists.
   # Can be a folder, a library or the like, located on the local machine
