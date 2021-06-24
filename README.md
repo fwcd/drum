@@ -46,11 +46,7 @@ Currently, the following music streaming services are supported:
 
 ## Development
 
-After checking out the repo, run `bin/setup` (or `bundle install`) to install dependencies. If you use macOS and the installation of the SQLite3 gem fails, try
-
-```
-sudo gem install sqlite3 -- --with-sqlite3-lib=/usr/lib
-```
+After checking out the repo, run `bin/setup` (or `bundle install`) to install dependencies.
 
 To run the application, run `bundle exec bin/drum`. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 

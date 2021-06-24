@@ -9,6 +9,7 @@ require 'securerandom'
 require 'webrick'
 
 module Drum
+  # A service implementation that uses the Spotify Web API to query playlists.
   class SpotifyService < Service
     extend Limiter::Mixin
 
@@ -24,6 +25,7 @@ module Drum
 
     # Rate-limiting for API-heavy methods
     # 'rate' describes the max. number of calls per interval (seconds)
+
     limit_method :extract_features, rate: 15, interval: 5
     limit_method :all_playlist_tracks, rate: 15, interval: 5
     limit_method :all_saved_tracks, rate: 15, interval: 5
@@ -32,14 +34,12 @@ module Drum
     limit_method :upload_playlist_tracks, rate: 15, interval: 5
     limit_method :upload_playlists, rate: 15, interval: 5
 
-    def initialize(db)
-      @db = db
-      service = db[:services].where(:name => NAME).first
-      if service.nil?
-        @service_id = db[:services].insert(:name => NAME)
-      else
-        @service_id = service[:id]
-      end
+    # Initializes the Spotify service.
+    #
+    # @param [String] cache_dir The path to the cache directory (shared by all services)
+    def initialize(cache_dir)
+      @cache_dir = "#{cache_dir}/spotify"
+      Dir.mkdir(@cache_dir) unless Dir.exist?(@cache_dir)
     end
 
     # Authentication
@@ -153,7 +153,6 @@ module Drum
     end
 
     def authenticate
-
       client_id = ENV[CLIENT_ID_VAR]
       client_secret = ENV[CLIENT_SECRET_VAR]
       
