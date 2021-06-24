@@ -2,7 +2,7 @@ module Drum
   # A track/song.
   #
   # @!attribute name
-  #  @return [String] The name of the 
+  #  @return [String] The name of the track
   # @!attribute artist_ids
   #  @return [Array<String>] The (internal) artist ids
   # @!attribute album_id
