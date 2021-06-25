@@ -21,6 +21,10 @@ module Drum
     :duration_ms, :explicit,
     :isrc, :spotify
   ) do
+    # Parses a track from a nested Hash that uses string keys.
+    #
+    # @param [Hash<String, Object>] h The Hash to be parsed
+    # @return [Track] The parsed track
     def self.deserialize(h)
       Track.new(
         name: h['name'],

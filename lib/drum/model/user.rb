@@ -9,7 +9,19 @@ module Drum
     :id,
     :display_name,
     :spotify
-  )
+  ) do
+    # Parses a user from a nested Hash that uses string keys.
+    #
+    # @param [Hash<String, Object>] h The Hash to be parsed
+    # @param [User] The parsed user
+    def self.deserialize(h)
+      User.new(
+        id: h['id'],
+        display_name: h['display_name'],
+        spotify: h['spotify'].try { |s| UserSpotify.deserialize(s) }
+      )
+    end
+  end
 
   # Spotify-specific metadata about the user.
   #
@@ -20,5 +32,16 @@ module Drum
   UserSpotify = Struct.new(
     :id,
     :display_name
-  )
+  ) do
+    # Parses Spotify metadata from a Hash that uses string keys.
+    #
+    # @param [Hash<String, Object>] h The Hash to be parsed
+    # @return [UserSpotify] The parsed user
+    def self.deserialize(h)
+      UserSpotify.new(
+        id: h['id'],
+        display_name: h['display_name']
+      )
+    end
+  end
 end
