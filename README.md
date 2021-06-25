@@ -56,6 +56,8 @@ To package the application into a gem, run `bundle exec rake build`. The built g
 
 To generate the documentation, run `bundle exec rake yard`.
 
+To run tests, run `bundle exec rake spec`.
+
 ### Spotify
 
 To use the service integration with Spotify, set the following environment variables:
