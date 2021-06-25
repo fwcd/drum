@@ -37,7 +37,7 @@ module Drum
     # @param [Hash<String, Object>] h The Hash to be parsed
     # @return [ArtistSpotify] The parsed metadata
     def self.deserialize(h)
-      AlbumSpotify.new(
+      ArtistSpotify.new(
         id: h['id']
       )
     end

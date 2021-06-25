@@ -20,7 +20,19 @@ module Drum
     :artist_ids, :album_id,
     :duration_ms, :explicit,
     :isrc, :spotify
-  )
+  ) do
+    def self.deserialize(h)
+      Track.new(
+        name: h['name'],
+        artist_ids: h['artist_ids'],
+        album_id: h['album_id'],
+        duration_ms: h['duration_ms'],
+        explicit: h['explicit'],
+        isrc: h['isrc'],
+        spotify: h['spotify'].try { |s| TrackSpotify.deserialize(s) }
+      )
+    end
+  end
 
   # Spotify-specific metadata about the track.
   #
@@ -28,5 +40,15 @@ module Drum
   #   @return [String] The id of the track on Spotify
   TrackSpotify = Struct.new(
     :id
-  )
+  ) do
+    # Parses spotify metadata from a Hash that uses string keys.
+    #
+    # @param [Hash<String, Object>] h The Hash to be parsed
+    # @return [TrackSpotify] The parsed metadata
+    def self.deserialize(h)
+      TrackSpotify.new(
+        id: h['id']
+      )
+    end
+  end
 end
