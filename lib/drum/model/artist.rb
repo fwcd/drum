@@ -1,3 +1,5 @@
+require 'drum/utils/kwstruct'
+
 module Drum
   # An artist.
   #
@@ -7,7 +9,7 @@ module Drum
   #  @return [optional, String] The displayed/formatted name of the artist
   # @!attribute spotify
   #  @return [optional, ArtistSpotify] Spotify-specific metadata
-  Artist = Struct.new(
+  Artist = KeywordStruct.new(
     :id,
     :name,
     :spotify
@@ -29,7 +31,7 @@ module Drum
   #
   # @!attribute id
   #   @return [String] The id of the artist on Spotify
-  ArtistSpotify = Struct.new(
+  ArtistSpotify = KeywordStruct.new(
     :id
   ) do
     # Parses spotify metadata from a Hash that uses string keys.

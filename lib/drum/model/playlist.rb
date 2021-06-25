@@ -1,4 +1,5 @@
 require 'drum/utils/try'
+require 'drum/utils/kwstruct'
 
 module Drum
   # TODO: Smart playlists!
@@ -26,7 +27,7 @@ module Drum
   #   @return [optional, Array<Track>] The list of tracks of the playlist, order matters here
   # @!attribute spotify
   #   @return [optional, PlaylistSpotify] Spotify-specific metadata
-  Playlist = Struct.new(
+  Playlist = KeywordStruct.new(
     :name, :description,
     :author_id, :users, :artists, :albums, :tracks,
     :spotify
@@ -40,10 +41,10 @@ module Drum
         name: h['name'],
         description: h['description'],
         author_id: h['author_id'],
-        users: h['users']&.map { |u| User.deserialize(u) } || [],
-        artists: h['artists']&.map { |a| Artist.deserialize(a) } || [],
-        albums: h['albums']&.map { |a| Album.deserialize(a) } || [],
-        tracks: h['tracks']&.map { |t| Track.deserialize(t) } || [],
+        users: h['users']&.map { |u| User.deserialize(u) },
+        artists: h['artists']&.map { |a| Artist.deserialize(a) },
+        albums: h['albums']&.map { |a| Album.deserialize(a) },
+        tracks: h['tracks']&.map { |t| Track.deserialize(t) },
         spotify: h['spotify'].try { |s| PlaylistSpotify.deserialize(s) }
       )
     end
@@ -59,7 +60,7 @@ module Drum
   #   @return [optional, Boolean] Whether the playlist is collaborative on Spotify
   # @!attribute image_url
   #   @return [optional, String] The playlist cover URL
-  PlaylistSpotify = Struct.new(
+  PlaylistSpotify = KeywordStruct.new(
     :id,
     :public, :collaborative,
     :image_url
