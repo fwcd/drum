@@ -1,4 +1,3 @@
-require 'drum/utils/kwstruct'
 
 module Drum
   # A track/song.
@@ -17,11 +16,12 @@ module Drum
   #  @return [optional, String] The International Standard Recording Code of this track
   # @!attribute spotify
   #  @return [optional, TrackSpotify] Spotify-specific metadata
-  Track = KeywordStruct.new(
+  Track = Struct.new(
     :name,
     :artist_ids, :album_id,
     :duration_ms, :explicit,
-    :isrc, :spotify
+    :isrc, :spotify,
+    keyword_init: true
   ) do
     # Parses a track from a nested Hash that uses string keys.
     #
@@ -44,8 +44,9 @@ module Drum
   #
   # @!attribute id
   #   @return [String] The id of the track on Spotify
-  TrackSpotify = KeywordStruct.new(
-    :id
+  TrackSpotify = Struct.new(
+    :id,
+    keyword_init: true
   ) do
     # Parses spotify metadata from a Hash that uses string keys.
     #

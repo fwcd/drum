@@ -1,5 +1,4 @@
 require 'drum/utils/try'
-require 'drum/utils/kwstruct'
 
 module Drum
   # TODO: Smart playlists!
@@ -27,10 +26,11 @@ module Drum
   #   @return [optional, Array<Track>] The list of tracks of the playlist, order matters here
   # @!attribute spotify
   #   @return [optional, PlaylistSpotify] Spotify-specific metadata
-  Playlist = KeywordStruct.new(
+  Playlist = Struct.new(
     :name, :description,
     :author_id, :users, :artists, :albums, :tracks,
-    :spotify
+    :spotify,
+    keyword_init: true
   ) do
     # Parses a playlist from a nested Hash that uses string keys.
     #
@@ -60,10 +60,11 @@ module Drum
   #   @return [optional, Boolean] Whether the playlist is collaborative on Spotify
   # @!attribute image_url
   #   @return [optional, String] The playlist cover URL
-  PlaylistSpotify = KeywordStruct.new(
+  PlaylistSpotify = Struct.new(
     :id,
     :public, :collaborative,
-    :image_url
+    :image_url,
+    keyword_init: true
   ) do
     # Parses spotify metadata from a Hash that uses string keys.
     #

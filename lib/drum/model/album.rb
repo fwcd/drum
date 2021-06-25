@@ -1,5 +1,3 @@
-require 'drum/utils/kwstruct'
-
 module Drum
   # A album, i.e. a composition of tracks by an artist.
   #
@@ -11,11 +9,12 @@ module Drum
   #  @return [Array<String>] The artist ids of the album
   # @!attribute spotify
   #  @return [optional, AlbumSpotify] Spotify-specific metadata
-  Album = KeywordStruct.new(
+  Album = Struct.new(
     :id,
     :name,
     :artist_ids,
-    :spotify
+    :spotify,
+    keyword_init: true
   ) do
     # Parses an album from a nested Hash that uses string keys.
     #
@@ -37,9 +36,10 @@ module Drum
   #   @return [String] The id of the album on Spotify
   # @!attribute image_url
   #   @return [String] The URL of the album cover art on Spotify
-  AlbumSpotify = KeywordStruct.new(
+  AlbumSpotify = Struct.new(
     :id,
-    :image_url
+    :image_url,
+    keyword_init: true
   ) do
     # Parses spotify metadata from a Hash that uses string keys.
     #
