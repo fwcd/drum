@@ -27,16 +27,12 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   
   spec.add_dependency 'thor', '~> 0.20'
-  spec.add_dependency 'git', '~> 1.8'
-  spec.add_dependency 'sequel', '~> 5.39'
-  spec.add_dependency 'sqlite3', '~> 1.4'
   spec.add_dependency 'rspotify', '~> 2.10'
   spec.add_dependency 'launchy', '~> 2.4'
   spec.add_dependency 'ruby-limiter', '~> 1.0'
   spec.add_dependency 'webrick', '~> 1.7'
   spec.add_dependency 'jwt', '~> 2.2'
   spec.add_dependency 'highline', '~> 2.0'
-  spec.add_dependency 'table_print', '~> 1.5'
   spec.add_dependency 'rest-client', '~> 2.0'
   spec.add_dependency 'progress_bar', '~> 1.3'
 end

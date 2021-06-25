@@ -6,6 +6,7 @@ require 'ruby-limiter'
 require 'webrick'
 
 module Drum
+  # A service implementation that uses the Apple Music API to query playlists.
   class AppleMusicService < Service
     extend Limiter::Mixin
 
@@ -18,17 +19,16 @@ module Drum
     MUSICKIT_TEAM_ID_VAR = 'MUSICKIT_TEAM_ID'
 
     # Rate-limiting for API-heavy methods
+
     limit_method :library_playlists, rate: 60
     limit_method :library_playlist_tracks, rate: 60
 
-    def initialize(db)
-      @db = db
-      service = db[:services].where(:name => NAME).first
-      if service.nil?
-        @service_id = db[:services].insert(:name => NAME)
-      else
-        @service_id = service[:id]
-      end
+    # Initializes the Apple Music service.
+    #
+    # @param [String] cache_dir The path to the cache directory (shared by all services)
+    def initialize(cache_dir)
+      @cache_dir = "#{cache_dir}/applemusic"
+      Dir.mkdir(@cache_dir) unless Dir.exist?(@cache_dir)
     end
 
     # Authentication
