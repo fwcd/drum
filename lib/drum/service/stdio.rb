@@ -15,14 +15,16 @@ module Drum
           when 'stdin' then :stdin
           else return nil
         end
-        Ref.new(self.name, :any, location)
+        Ref.new(self.name, :any, [location])
+      elsif raw_ref.text == '-'
+        Ref.new(self.name, :any, [:stdin, :stdout])
       else
         nil
       end
     end
 
     def download(playlist_ref)
-      if playlist_ref.resource_location == :stdin
+      if playlist_ref.resource_location.include?(:stdin)
         # TODO: Support multiple, --- delimited playlists?
         [Playlist.deserialize(YAML.load(STDIN.read))]
       else
@@ -31,7 +33,7 @@ module Drum
     end
 
     def upload(playlist_ref, playlists)
-      if playlist_ref.resource_location == :stdout
+      if playlist_ref.resource_location.include?(:stdout)
         playlists.each do |playlist|
           puts playlist.serialize.to_yaml
         end
