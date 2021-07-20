@@ -1,3 +1,8 @@
+require 'drum/model/artist'
+require 'drum/model/ref'
+require 'drum/model/playlist'
+require 'drum/model/track'
+
 module Drum
   class MockService < Service
     def name
@@ -18,12 +23,12 @@ module Drum
           name: 'My Playlist',
           description: 'Lots of great songs',
           artists: [
-            Drum::Artist.new(id: '0', name: 'Queen'),
-            Drum::Artist.new(id: '1', name: 'The Beatles')
+            Artist.new(id: '0', name: 'Queen'),
+            Artist.new(id: '1', name: 'The Beatles')
           ],
           tracks: [
-            Drum::Track.new(name: 'Bohemian Rhapsody', artist_ids: ['0']),
-            Drum::Track.new(name: 'Let it be', artist_ids: ['1'])
+            Track.new(name: 'Bohemian Rhapsody', artist_ids: ['0']),
+            Track.new(name: 'Let it be', artist_ids: ['1'])
           ]
         )]
       else

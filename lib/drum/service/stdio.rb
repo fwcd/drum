@@ -1,4 +1,5 @@
 require 'drum/model/playlist'
+require 'drum/model/ref'
 require 'yaml'
 
 module Drum
@@ -7,7 +8,7 @@ module Drum
       'stdio'
     end
 
-    def parse_ref(raw)
+    def parse_ref(raw_ref)
       if raw_ref.is_token
         location = case raw_ref.text
           when 'stdout' then :stdout
@@ -28,15 +29,15 @@ module Drum
         []
       end
     end
-  end
 
-  def upload(playlist_ref, playlists)
-    if playlist_ref.resource_location == :stdout
-      playlists.each do |playlist|
-        puts playlists.serialize.to_yaml
+    def upload(playlist_ref, playlists)
+      if playlist_ref.resource_location == :stdout
+        playlists.each do |playlist|
+          puts playlist.serialize.to_yaml
+        end
+      else
+        raise 'Cannot upload to somewhere other than stdout!'
       end
-    else
-      raise 'Cannot upload to somewhere other than stdout!'
     end
   end
 end

@@ -22,7 +22,7 @@ class Drum::Service
   # @param [Ref] playlist_ref A ref to the playlists to be previewed.
   # @return [void]
   def preview(playlist_ref)
-    raise "ERROR: Service does not support previewing (yet)!"
+    raise "ERROR: Service #{self.name} does not support previewing (yet)!"
   end
 
   # Downloads playlists from this service.
@@ -30,7 +30,7 @@ class Drum::Service
   # @param [Ref] playlist_ref A ref to the playlists (see README for examples)
   # @return [Array<Playlist>] The playlists downloaded
   def download(playlist_ref)
-    raise "ERROR: Service cannot download playlists (yet)!"
+    raise "ERROR: Service #{self.name} cannot download playlists (yet)!"
   end
 
   # Uploads playlists to this service.
@@ -39,6 +39,6 @@ class Drum::Service
   # @param [Array<Playlist>] playlists The list of playlists to be uploaded
   # @return [void]
   def upload(playlist_ref, playlists)
-    raise "ERROR: Service cannot upload playlists (yet)!"
+    raise "ERROR: Service #{self.name} cannot upload playlists (yet)!"
   end
 end

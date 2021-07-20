@@ -1,8 +1,9 @@
+require 'drum/model/raw_ref'
 require 'drum/service/applemusic'
 require 'drum/service/mock'
-require 'drum/service/stdio'
 require 'drum/service/service'
 require 'drum/service/spotify'
+require 'drum/service/stdio'
 require 'drum/version'
 require 'highline'
 require 'thor'
@@ -56,10 +57,12 @@ module Drum
 
       # Parses a ref using the registered services.
       #
+      # @param [String] raw The raw ref to parse
       # @return [optional, Ref] The ref, if parsed successfully with any of the services
       def parse_ref(raw)
+        raw_ref = RawRef.parse(raw)
         @services.each_value do |service|
-          ref = service.parse_ref(ref)
+          ref = service.parse_ref(raw_ref)
           unless ref.nil?
             return ref
           end
@@ -96,13 +99,20 @@ module Drum
 
     # Copies a playlist from the source to the given destination.
     #
-    # @param [String] source_ref The source playlist ref.
-    # @param [String] dest_ref The destination playlist ref.
+    # @param [String] raw_src_ref The source playlist ref.
+    # @param [String] raw_dest_ref The destination playlist ref.
     # @return [void]
-    def cp(source_ref, dest_ref)
-      self.with_service(raw) do |name, service|
-        puts "Copying from #{source_ref} to #{dest_ref}..."
-        # TODO: Implement this!
+    def cp(raw_src_ref, raw_dest_ref)
+      src_ref = self.parse_ref(raw_src_ref)
+      dest_ref = self.parse_ref(raw_dest_ref)
+
+      self.with_service(src_ref.service_name) do |src_name, src_service|
+        self.with_service(dest_ref.service_name) do |dest_name, dest_service|
+          puts "Copying from #{src_name} to #{dest_name}..."
+
+          playlists = src_service.download(src_ref)
+          dest_service.upload(dest_ref, playlists)
+        end
       end
     end
   end
