@@ -30,4 +30,28 @@ describe Drum::Playlist do
       )
     end
   end
+
+  describe 'Playlist::serialize' do
+    it 'should serialize correctly' do
+      expect(Drum::Playlist.new(
+        name: 'My Playlist 2',
+        description: 'More great songs',
+        artists: [
+          Drum::Artist.new(id: '0', name: 'Elvis Presley')
+        ],
+        tracks: [
+          Drum::Track.new(name: 'Jailhouse Rock', artist_ids: ['0'])
+        ]
+      ).serialize).to eq({
+        'name' => 'My Playlist 2',
+        'description' => 'More great songs',
+        'artists' => [
+          { 'id' => '0', 'name' => 'Elvis Presley' }
+        ],
+        'tracks' => [
+          { 'name' => 'Jailhouse Rock', 'artist_ids' => ['0'] }
+        ]
+      })
+    end
+  end
 end

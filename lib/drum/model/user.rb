@@ -31,7 +31,7 @@ module Drum
         'id' => self.id,
         'display_name' => self.display_name,
         'spotify' => self.spotify&.serialize
-      }
+      }.compact
     end
   end
 
@@ -64,7 +64,7 @@ module Drum
       {
         'id' => self.id,
         'display_name' => self.display_name
-      }
+      }.compact
     end
   end
 end

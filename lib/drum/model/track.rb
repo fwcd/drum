@@ -51,7 +51,7 @@ module Drum
         'explicit' => self.explicit,
         'isrc' => self.isrc,
         'spotify' => self.spotify&.serialize
-      }
+      }.compact
     end
   end
 
@@ -79,7 +79,7 @@ module Drum
     def serialize
       {
         'id' => self.id
-      }
+      }.compact
     end
   end
 end

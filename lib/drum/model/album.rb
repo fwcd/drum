@@ -38,7 +38,7 @@ module Drum
         'name' => self.name,
         'artist_ids' => self.artist_ids,
         'spotify' => self.spotify&.serialize
-      }
+      }.compact
     end
   end
 
@@ -71,7 +71,7 @@ module Drum
       {
         'id' => self.id,
         'image_url' => self.image_url
-      }
+      }.compact
     end
   end
 end

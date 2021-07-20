@@ -33,7 +33,7 @@ module Drum
         'id' => self.id,
         'name' => self.name,
         'spotify' => self.spotify&.serialize
-      }
+      }.compact
     end
   end
 
@@ -61,7 +61,7 @@ module Drum
     def serialize
       {
         'id' => self.id
-      }
+      }.compact
     end
   end
 end

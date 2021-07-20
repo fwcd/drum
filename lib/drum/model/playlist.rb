@@ -62,7 +62,7 @@ module Drum
         'albums' => self.albums&.map { |a| a.serialize },
         'tracks' => self.tracks&.map { |t| t.serialize },
         'spotify' => self.spotify&.serialize
-      }
+      }.compact
     end
   end
 
@@ -104,7 +104,7 @@ module Drum
         'public' => self.public,
         'collaborative' => self.collaborative,
         'image_url' => self.image_url
-      }
+      }.compact
     end
   end
 end
