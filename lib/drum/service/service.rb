@@ -1,6 +1,13 @@
 # A wrapper around a music streaming service's API providing methods
 # for downloading/uploading playlists.
 class Drum::Service
+  # Tries to parse a ref from this service.
+  #
+  # @return [optional, Ref] The ref, if parsed successfully, otherwise nil
+  def parse_ref(raw)
+    nil
+  end
+
   # Previews a playlist from a service. Usually this is useful
   # for debugging.
   #

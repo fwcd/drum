@@ -52,6 +52,19 @@ module Drum
         end
       end
 
+      # Parses a ref using the registered services.
+      #
+      # @return [optional, Ref] The ref, if parsed successfully with any of the services
+      def parse_ref(raw)
+        @services.each_value do |service|
+          ref = service.parse_ref(ref)
+          unless ref.nil?
+            return ref
+          end
+        end
+        return nil
+      end
+
       # Prompts the user for confirmation.
       #
       # @param [String] prompt The message to be displayed
