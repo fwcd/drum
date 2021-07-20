@@ -1,5 +1,6 @@
 require 'drum/service/applemusic'
-require 'drum/service/dummy'
+require 'drum/service/mock'
+require 'drum/service/stdio'
 require 'drum/service/service'
 require 'drum/service/spotify'
 require 'drum/version'
@@ -26,6 +27,7 @@ module Drum
 
       @services = [
         MockService.new,
+        StdioService.new,
         SpotifyService.new(@cache_dir),
         AppleMusicService.new(@cache_dir)
       ].map { |s| [s.name, s] }.to_h

@@ -6,14 +6,15 @@ module Drum
 
     def parse_ref(raw_ref)
       if raw_ref.is_token && raw_ref.text == 'mock'
-        return Ref.new(self.name, :playlist, '')
+        Ref.new(self.name, :playlist, '')
+      else
+        nil
       end
-      return nil
     end
 
     def download(playlist_ref)
       if playlist_ref.resource_type == :playlist
-        return [Playlist.new(
+        [Playlist.new(
           name: 'My Playlist',
           description: 'Lots of great songs',
           artists: [
@@ -26,7 +27,7 @@ module Drum
           ]
         )]
       else
-        return []
+        []
       end
     end
   end

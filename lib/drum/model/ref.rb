@@ -10,7 +10,7 @@ module Drum
   # @!attribute resource_type
   #   @return [Symbol] The type of the resource, service-dependent
   # @!attribute resource_location
-  #   @return [String] The path/id of the resource, service-dependent
+  #   @return [Object] The path/id of the resource, service-dependent (usually a String or Symbol)
   Ref = Struct.new(
     :service_name,
     :resource_type,

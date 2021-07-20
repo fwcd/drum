@@ -20,9 +20,9 @@ module Drum
     # @return [RawRef] The parsed RawRef
     def self.parse(raw)
       if raw.start_with?(TOKEN_PREFIX)
-        return RawRef.new(text: raw.delete_prefix(TOKEN_PREFIX), is_token: true)
+        RawRef.new(text: raw.delete_prefix(TOKEN_PREFIX), is_token: true)
       else
-        return RawRef.new(text: raw, is_token: false)
+        RawRef.new(text: raw, is_token: false)
       end
     end
   end
