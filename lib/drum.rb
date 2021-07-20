@@ -24,11 +24,11 @@ module Drum
       @cache_dir = "#{@dot_dir}/cache"
       Dir.mkdir(@cache_dir) unless Dir.exist?(@cache_dir)
 
-      @services = {
-        'dummy' => DummyService.new,
-        'spotify' => SpotifyService.new(@cache_dir),
-        'applemusic' => AppleMusicService.new(@cache_dir)
-      }
+      @services = [
+        MockService.new,
+        SpotifyService.new(@cache_dir),
+        AppleMusicService.new(@cache_dir)
+      ].map { |s| [s.name, s] }.to_h
     end
 
     def self.exit_on_failure?

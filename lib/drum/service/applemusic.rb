@@ -10,7 +10,6 @@ module Drum
   class AppleMusicService < Service
     extend Limiter::Mixin
 
-    NAME = 'Apple Music'
     BASE_URL = 'https://api.music.apple.com/v1'
     PLAYLISTS_CHUNK_SIZE = 50
 
@@ -29,6 +28,10 @@ module Drum
     def initialize(cache_dir)
       @cache_dir = "#{cache_dir}/applemusic"
       Dir.mkdir(@cache_dir) unless Dir.exist?(@cache_dir)
+    end
+
+    def name
+      'applemusic'
     end
 
     # Authentication
@@ -295,9 +298,9 @@ module Drum
     def store_library
       @db[:libraries].insert_ignore.insert(
         :service_id => @service_id,
-        :name => NAME
+        :name => self.name
       )
-      return @db[:libraries].where(service_id: @service_id, name: NAME).first[:id]
+      return @db[:libraries].where(service_id: @service_id, name: self.name).first[:id]
     end
 
     # CLI

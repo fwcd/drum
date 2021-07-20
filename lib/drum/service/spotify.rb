@@ -13,7 +13,6 @@ module Drum
   class SpotifyService < Service
     extend Limiter::Mixin
 
-    NAME = 'Spotify'    
     PLAYLISTS_CHUNK_SIZE = 50
     TRACKS_CHUNK_SIZE = 100
     SAVED_TRACKS_CHUNKS_SIZE = 50
@@ -40,6 +39,10 @@ module Drum
     def initialize(cache_dir)
       @cache_dir = "#{cache_dir}/spotify"
       Dir.mkdir(@cache_dir) unless Dir.exist?(@cache_dir)
+    end
+
+    def name
+      'spotify'
     end
 
     # Authentication
@@ -371,11 +374,11 @@ module Drum
       @db[:libraries].insert_ignore.insert(
         :service_id => @service_id,
         :user_id => user_id,
-        :name => NAME
+        :name => self.name
       )
 
       return @db[:libraries].where(
-        name: NAME,
+        name: self.name,
         user_id: user_id,
         service_id: @service_id
       ).first[:id]
