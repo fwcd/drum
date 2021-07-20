@@ -22,6 +22,17 @@ module Drum
         spotify: h['spotify'].try { |s| UserSpotify.deserialize(s) }
       )
     end
+
+    # Serializes the user to a nested Hash that uses string keys.
+    #
+    # @return [Hash<String, Object>] The serialized representation
+    def serialize
+      {
+        'id' => self.id,
+        'display_name' => self.display_name,
+        'spotify' => self.spotify&.serialize
+      }
+    end
   end
 
   # Spotify-specific metadata about the user.
@@ -44,6 +55,16 @@ module Drum
         id: h['id'],
         display_name: h['display_name']
       )
+    end
+
+    # Serializes the metadata to a Hash that uses string keys.
+    #
+    # @return [Hash<String, Object>] The serialized representation
+    def serialize
+      {
+        'id' => self.id,
+        'display_name' => self.display_name
+      }
     end
   end
 end
