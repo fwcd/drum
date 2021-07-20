@@ -14,7 +14,7 @@ module Drum
     # Parses a user from a nested Hash that uses string keys.
     #
     # @param [Hash<String, Object>] h The Hash to be parsed
-    # @param [User] The parsed user
+    # @return [User] The parsed user
     def self.deserialize(h)
       User.new(
         id: h['id'],

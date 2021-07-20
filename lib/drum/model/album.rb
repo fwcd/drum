@@ -28,6 +28,18 @@ module Drum
         spotify: h['spotify'].try { |s| AlbumSpotify.deserialize(s) }
       )
     end
+
+    # Serializes the album to a nested Hash that uses string keys.
+    #
+    # @return [Hash<String, Object>] The serialized representation
+    def serialize
+      {
+        'id' => self.id,
+        'name' => self.name,
+        'artist_ids' => self.artist_ids,
+        'spotify' => self.spotify&.serialize
+      }
+    end
   end
 
   # Spotify-specific metadata about the album.
@@ -50,6 +62,16 @@ module Drum
         id: h['id'],
         image_url: h['image_url']
       )
+    end
+
+    # Serializes the metadata to a Hash that uses string keys.
+    #
+    # @return [Hash<String, Object>] The serialized representation
+    def serialize
+      {
+        'id' => self.id,
+        'image_url' => self.image_url
+      }
     end
   end
 end
