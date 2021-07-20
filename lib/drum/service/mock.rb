@@ -4,8 +4,8 @@ module Drum
       'mock'
     end
 
-    def parse_ref(raw)
-      if raw == '@mock'
+    def parse_ref(raw_ref)
+      if raw_ref.is_token && raw_ref.text == 'mock'
         return Ref.new(self.name, :playlist, '')
       end
       return nil

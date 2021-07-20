@@ -10,8 +10,9 @@ class Drum::Service
 
   # Tries to parse a ref from this service.
   #
+  # @param [RawRef] The raw reference to be parsed.
   # @return [optional, Ref] The ref, if parsed successfully, otherwise nil
-  def parse_ref(raw)
+  def parse_ref(raw_ref)
     nil
   end
 
