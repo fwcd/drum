@@ -48,6 +48,22 @@ module Drum
         spotify: h['spotify'].try { |s| PlaylistSpotify.deserialize(s) }
       )
     end
+
+    # Serializes the playlist to a nested Hash that uses string keys.
+    #
+    # @return [Hash<String, Object>] The serialized representation
+    def serialize
+      {
+        'name' => self.name,
+        'description' => self.description,
+        'author_id' => self.author_id,
+        'users' => self.users&.map { |u| u.serialize },
+        'artists' => self.artists&.map { |a| a.serialize },
+        'albums' => self.albums&.map { |a| a.serialize },
+        'tracks' => self.tracks&.map { |t| t.serialize },
+        'spotify' => self.spotify&.serialize
+      }
+    end
   end
 
   # Spotify-specific metadata about the playlist.
@@ -77,6 +93,18 @@ module Drum
         collaborative: h['collaborative'],
         image_url: h['image_url']
       )
+    end
+
+    # Serializes the metadata to a Hash that uses string keys.
+    #
+    # @return [Hash<String, Object>] The serialized representation
+    def serialize
+      {
+        'id' => self.id,
+        'public' => self.public,
+        'collaborative' => self.collaborative,
+        'image_url' => self.image_url
+      }
     end
   end
 end
