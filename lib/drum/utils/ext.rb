@@ -15,8 +15,24 @@ module Drum
       end
     end
   end
+
+  module Casings
+    # Converts a string to kebab-case.
+    #
+    # @return [String] The kebab-cased version of the string
+    def kebabcase
+      self.gsub(/([A-Z]+)([A-Z][a-z])/,'\1-\2')
+          .gsub(/([a-z\d])([A-Z])/,'\1-\2')
+          .tr('_', '-')
+          .downcase
+    end
+  end
 end
 
 class Object
   include Drum::Try
+end
+
+class String
+  include Drum::Casings
 end

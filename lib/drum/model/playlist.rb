@@ -1,4 +1,4 @@
-require 'drum/utils/try'
+require 'drum/utils/ext'
 
 module Drum
   # TODO: Smart playlists!
