@@ -48,11 +48,10 @@ module Drum
       def with_service(raw_name)
         name = raw_name.downcase
         service = @services[name]
-        unless service.nil?
-          yield(name, service)
-        else
+        if service.nil?
           raise "Sorry, #{name} is not a valid service! Try one of these: #{@services.keys}"
         end
+        yield(name, service)
       end
 
       # Parses a ref using the registered services.
@@ -105,6 +104,13 @@ module Drum
     def cp(raw_src_ref, raw_dest_ref)
       src_ref = self.parse_ref(raw_src_ref)
       dest_ref = self.parse_ref(raw_dest_ref)
+
+      if src_ref.nil?
+        raise "Could not parse src ref: #{raw_src_ref}"
+      end
+      if dest_ref.nil?
+        raise "Could not parse dest ref: #{raw_dest_ref}"
+      end
 
       self.with_service(src_ref.service_name) do |src_name, src_service|
         self.with_service(dest_ref.service_name) do |dest_name, dest_service|
