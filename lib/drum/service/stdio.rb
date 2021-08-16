@@ -11,9 +11,9 @@ module Drum
     def parse_ref(raw_ref)
       if raw_ref.is_token
         location = case raw_ref.text
-          when 'stdout' then :stdout
-          when 'stdin' then :stdin
-          else return nil
+        when 'stdout' then :stdout
+        when 'stdin' then :stdin
+        else return nil
         end
         Ref.new(self.name, :any, [location])
       elsif raw_ref.text == '-'

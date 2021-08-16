@@ -1,5 +1,6 @@
 require 'drum/model/raw_ref'
 require 'drum/service/applemusic'
+require 'drum/service/file'
 require 'drum/service/mock'
 require 'drum/service/service'
 require 'drum/service/spotify'
@@ -26,11 +27,16 @@ module Drum
       @cache_dir = "#{@dot_dir}/cache"
       Dir.mkdir(@cache_dir) unless Dir.exist?(@cache_dir)
 
+      # Declare services in descending order of parse priority
       @services = [
         MockService.new,
         StdioService.new,
         SpotifyService.new(@cache_dir),
-        AppleMusicService.new(@cache_dir)
+        AppleMusicService.new(@cache_dir),
+        # The file service should be last since it may
+        # successfully parse refs that overlap with other
+        # services.
+        FileService.new
       ].map { |s| [s.name, s] }.to_h
     end
 
