@@ -3,6 +3,7 @@ require 'drum/model/ref'
 require 'yaml'
 
 module Drum
+  # A service that reads from stdin and writes to stdout.
   class StdioService < Service
     def name
       'stdio'

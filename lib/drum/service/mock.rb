@@ -4,6 +4,7 @@ require 'drum/model/playlist'
 require 'drum/model/track'
 
 module Drum
+  # A service that provides a mock playlist for ease of manual testing.
   class MockService < Service
     def name
       'mock'

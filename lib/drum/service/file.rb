@@ -4,6 +4,7 @@ require 'pathname'
 require 'yaml'
 
 module Drum
+  # A service that reads/writes playlists to/from YAML files.
   class FileService < Service
     def name
       'file'
