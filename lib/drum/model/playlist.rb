@@ -50,6 +50,9 @@ module Drum
     def store_user(user)
       unless @user_ids.include?(user.id)
         @user_ids.add(user.id)
+        if self.users.nil?
+          self.users = []
+        end
         self.users << user
       end
     end
@@ -60,6 +63,9 @@ module Drum
     def store_artist(artist)
       unless @artist_ids.include?(artist.id)
         @artist_ids.add(artist.id)
+        if self.artists.nil?
+          self.artists = []
+        end
         self.artists << artist
       end
     end
@@ -70,6 +76,9 @@ module Drum
     def store_album(album)
       unless @album_ids.include?(album.id)
         @album_ids.add(album.id)
+        if self.albums.nil?
+          self.albums = []
+        end
         self.albums << album
       end
     end
@@ -80,6 +89,9 @@ module Drum
     def store_track(track)
       unless @track_ids.include?(track.id)
         @track_ids.add(track.id)
+        if self.tracks.nil?
+          self.tracks = []
+        end
         self.tracks << track
       end
     end
