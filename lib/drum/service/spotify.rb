@@ -493,13 +493,14 @@ module Drum
 
           puts 'Fetching playlists...'
           bar = ProgressBar.new(playlists.length)
-          new_playlists = playlists.map do |playlist|
-            new_playlist = self.from_spotify_playlist(playlist, output: bar.method(:puts))
-            bar.increment!
-            new_playlist
-          end
 
-          new_playlists
+          Enumerator.new do |enum|
+            playlists.each do |playlist|
+              new_playlist = self.from_spotify_playlist(playlist, output: bar.method(:puts))
+              bar.increment!
+              enum.yield new_playlist
+            end
+          end
         when :tracks
           puts 'Querying saved tracks...'
           saved_tracks = self.all_spotify_saved_tracks
