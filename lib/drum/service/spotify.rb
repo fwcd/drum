@@ -234,9 +234,8 @@ module Drum
 
     # Download helpers
 
-    def from_spotify_track(track, library_id = nil, options, output: method(:puts))
+    def from_spotify_track(track = nil, output: method(:puts))
       new_track = Track.new(
-        id: self.hexdigest(track.id),
         name: track.name,
         artist_ids: []
       )
@@ -275,7 +274,7 @@ module Drum
       )
     end
 
-    def from_spotify_playlist(playlist, tracks = nil, library_id, options, output: method(:puts))
+    def from_spotify_playlist(playlist, tracks = nil, output: method(:puts))
       new_playlist = Playlist.new(
         name: playlist.name,
         description: playlist&.description,
@@ -295,14 +294,14 @@ module Drum
       tracks.each_with_index do |track, i|
         # TODO: Make sure that added_at has the right type
 
-        new_track, new_artists = self.from_spotify_track(track, playlist, options, output: method(:puts))
+        new_track, new_artists = self.from_spotify_track(track, output: output)
         new_track.added_at = added_ats[track.id]
 
         added_by = added_bys[track.id]
         unless added_by.nil?
           new_added_by = self.from_spotify_user(added_by)
           new_track.added_by = new_added_by.id
-          new_track.store_user(new_added_by)
+          new_playlist.store_user(new_added_by)
         end
 
         new_artists.each do |new_artist|
@@ -333,14 +332,14 @@ module Drum
       end
     end
 
-    def upload_playlist_tracks(external_tracks, external_playlist, options)
+    def upload_playlist_tracks(external_tracks, external_playlist)
       unless external_tracks.nil? || external_tracks.empty?
         external_playlist.add_tracks!(external_tracks[...UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE])
-        self.upload_playlist_tracks(external_tracks[UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE...], external_playlist, options)
+        self.upload_playlist_tracks(external_tracks[UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE...], external_playlist)
       end
     end
 
-    def upload_playlist(playlist, library_id, options, output: method(:puts))
+    def upload_playlist(playlist, output: method(:puts))
       # TODO: Use actual description
       description = Time.now.strftime('Pushed with Drum on %Y-%m-%d.')
       external_playlist = @me.create_playlist!(playlist[:name], description: description, public: false, collaborative: false)
@@ -355,10 +354,10 @@ module Drum
       external_tracks = self.to_spotify_tracks(tracks)
 
       output.call "Uploading #{external_tracks.length} playlist track(s)..."
-      self.upload_playlist_tracks(external_tracks, external_playlist, options)
+      self.upload_playlist_tracks(external_tracks, external_playlist)
 
-      # TODO: Merging?
-      self.from_spotify_playlist(external_playlist, external_tracks, library_id, options, output: output)
+      # TODO: Clone the original playlist and insert potentially new Spotify ids
+      nil
     end
 
     # Ref parsing
@@ -427,69 +426,80 @@ module Drum
       "Playlist '#{playlist.name}': #{playlist.total} track(s)"
     end
 
-    def preview(playlist_ref)
+    def preview(ref)
       # TODO: Album, track, etc previewing
 
       self.authenticate
 
-      case playlist_ref.resource_type
+      case ref.resource_type
       when :special
-        case playlist_ref.resource_location
+        case ref.resource_location
         when :playlists
           playlists = self.all_spotify_playlists
           puts playlists.map { |p| self.preview_playlist(p) }
-        else raise "Special resource location '#{playlist_ref.resource_location}' cannot be previewed (yet)"
+        else raise "Special resource location '#{ref.resource_location}' cannot be previewed (yet)"
         end
       when :playlist
-        playlist = RSpotify::Playlist.find(playlist_ref.resource_location)
+        playlist = RSpotify::Playlist.find(ref.resource_location)
         self.preview_playlist(playlist)
-      else raise "Resource type '#{playlist_ref.resource_type}' cannot be previewed (yet)"
+      else raise "Resource type '#{ref.resource_type}' cannot be previewed (yet)"
       end
     end
 
-    def pull(options)
-      if options[:update_existing]
-        puts 'Updates to existing tracks enabled.'
-      end
-      if options[:query_features]
-        puts 'Audio feature querying enabled.'
-      end
-
+    def download(ref)
       self.authenticate
 
-      user_id = self.store_user(@me)
-      library_id = self.store_library(user_id)
+      case ref.resource_type
+      when :special
+        case ref.resource_location
+        when :playlists
+          puts 'Querying playlists...'
+          playlists = self.all_spotify_playlists
 
-      puts 'Querying saved tracks...'
-      saved_tracks = self.all_spotify_saved_tracks
+          puts 'Fetching playlists...'
+          bar = ProgressBar.new(playlists.length)
+          new_playlists = playlists.map do |playlist|
+            new_playlist = self.from_spotify_playlist(playlist, output: bar.method(:puts))
+            bar.increment!
+            new_playlist
+          end
 
-      puts 'Storing saved tracks...'
-      bar = ProgressBar.new(saved_tracks.length)
-      @db.transaction do
-        saved_tracks.each do |track|
-          self.from_spotify_track(track, library_id, options, output: bar.method(:puts))
-          bar.increment!
+          new_playlists
+        when :tracks
+          puts 'Querying saved tracks...'
+          saved_tracks = self.all_spotify_saved_tracks
+
+          puts 'Fetching saved tracks...'
+          bar = ProgressBar.new(saved_tracks.length)
+          new_tracks = saved_tracks.map do |track|
+            new_track = self.from_spotify_track(track, output: bar.method(:puts))
+            bar.increment!
+            new_track
+          end
+
+          new_me = self.from_spotify_user(@me)
+          new_playlist = Playlist.new(
+            name: 'Saved Tracks',
+            author_id: new_me.id,
+            users: [new_me],
+            tracks: new_tracks
+          )
+
+          [new_playlist]
+        else raise "Special resource location '#{ref.resource_location}' cannot be downloaded (yet)"
         end
+      when :playlist
+        playlist = RSpotify::Playlist.find_by_id(ref.resource_location)
+        new_playlist = self.from_spotify_playlist(playlist)
+
+        [new_playlist]
+      else raise "Resource type '#{ref.resource_type}' cannot be downloaded (yet)"
       end
-
-      puts 'Querying playlists...'
-      playlists = self.all_spotify_playlists
-
-      puts 'Storing playlists...'
-      bar = ProgressBar.new(playlists.length)
-      playlists.each do |playlist|
-        @db.transaction do
-          self.from_spotify_playlist(playlist, library_id, options, output: bar.method(:puts))
-          bar.increment!
-        end
-      end
-
-      puts "Pulled #{playlists.length} playlist(s) from Spotify."
-
-      # TODO: Handle merging?
     end
 
-    def push(playlists, options)
+    def push(playlists)
+      # FIXME: Rewrite
+
       self.authenticate
 
       user_id = self.store_user(@me)
@@ -501,7 +511,7 @@ module Drum
       puts 'Uploading playlists...'
       bar = ProgressBar.new(playlists.length)
       playlists.each do |playlist|
-        self.upload_playlist(playlist, library_id, options, output: bar.method(:puts))
+        self.upload_playlist(playlist, output: bar.method(:puts))
         bar.increment!
       end
     end

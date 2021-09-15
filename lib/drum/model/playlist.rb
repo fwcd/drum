@@ -83,17 +83,14 @@ module Drum
       end
     end
 
-    # Stores a track if it does not exist already.
+    # Stores a track.
     #
     # @param [Track] The track to store.
     def store_track(track)
-      unless @track_ids.include?(track.id)
-        @track_ids.add(track.id)
-        if self.tracks.nil?
-          self.tracks = []
-        end
-        self.tracks << track
+      if self.tracks.nil?
+        self.tracks = []
       end
+      self.tracks << track
     end
 
     # Parses a playlist from a nested Hash that uses string keys.

@@ -16,6 +16,8 @@ class Drum::Service
     nil
   end
 
+  # TODO: Update docs to be more general (e.g. ref instead of playlist_ref)
+
   # Previews a playlist from a service. Usually this is useful
   # for debugging.
   #
