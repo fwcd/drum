@@ -10,7 +10,7 @@ The basic usage pattern is always `drum cp [source] [destination]` where `source
 
 * A file or folder, e.g. `.`, `some/folder`, `some-file.yaml`
 * A URI, e.g. `https://open.spotify.com/playlist/123456`, `spotify:playlist:123456`, `file:///path/to/list.yaml`
-* A special token, e.g. `@spotify/playlists`, `@spotify/liked`, `@stdin`, `@stdout`
+* A special token, e.g. `@spotify/playlists`, `@spotify/tracks`, `@stdin`, `@stdout`
 * A dash `-`, synonymous with `@stdin` and `@stdout`, depending on usage
 
 > Note that if the source is folder-like, i.e. includes multiple playlists, the destination has to be folder-like too. (The reverse is not true though.)
@@ -27,7 +27,7 @@ The basic usage pattern is always `drum cp [source] [destination]` where `source
 
 **Download your liked songs playlist from Spotify.**
 
-* `drum cp @spotify/liked liked.yaml`
+* `drum cp @spotify/tracks liked.yaml`
 
 **Download all playlists from your Spotify library.**
 

@@ -60,8 +60,8 @@ module Drum
     
     def authenticate_user(client_id, client_secret)
       existing = @auth_tokens[:latest]
-      
-      unless existing.nil? || existing[:expires_at] > (DateTime.now + (1800 / 86400.0)) # half an hour in days
+
+      unless existing.nil? || existing[:expires_at] < DateTime.now
         return existing[:access_token], existing[:refresh_token], existing[:token_type]
       end
 
@@ -136,7 +136,6 @@ module Drum
       expires_at = DateTime.now + (expires_in / 86400.0)
       
       @auth_tokens[:latest] = {
-        service_id: @service_id,
         access_token: access_token,
         refresh_token: refresh_token,
         token_type: token_type,
@@ -369,6 +368,8 @@ module Drum
       when 'playlist' then :playlist
       when 'album' then :album
       when 'track' then :track
+      when 'user' then :user
+      when 'artist' then :artist
       else nil
       end
     end
@@ -410,7 +411,7 @@ module Drum
     def parse_ref(raw_ref)
       if raw_ref.is_token
         location = case raw_ref.text
-        when "#{self.name}/liked" then :liked
+        when "#{self.name}/tracks" then :tracks
         when "#{self.name}/playlists" then :playlists
         else return nil
         end
@@ -422,13 +423,28 @@ module Drum
 
     # Service
 
+    def preview_playlist(playlist)
+      "Playlist '#{playlist.name}': #{playlist.total} track(s)"
+    end
+
     def preview(playlist_ref)
-      puts(playlist_ref)
+      # TODO: Album, track, etc previewing
 
-      # self.authenticate
+      self.authenticate
 
-      # playlists = self.all_spotify_playlists
-      # puts playlists.map { |p| "Found playlist '#{p.name}' (#{p.total} track(s))" }
+      case playlist_ref.resource_type
+      when :special
+        case playlist_ref.resource_location
+        when :playlists
+          playlists = self.all_spotify_playlists
+          puts playlists.map { |p| self.preview_playlist(p) }
+        else raise "Special resource location '#{playlist_ref.resource_location}' cannot be previewed (yet)"
+        end
+      when :playlist
+        playlist = RSpotify::Playlist.find(playlist_ref.resource_location)
+        self.preview_playlist(playlist)
+      else raise "Resource type '#{playlist_ref.resource_type}' cannot be previewed (yet)"
+      end
     end
 
     def pull(options)
