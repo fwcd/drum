@@ -13,7 +13,9 @@ The basic usage pattern is always `drum cp [source] [destination]` where `source
 * A special token, e.g. `@spotify/library`, `@spotify/liked-songs`, `@stdin`, `@stdout`
 * A dash `-`, synonymous with `@stdin` and `@stdout`, depending on usage
 
-> Note that if the source is folder-like, i.e. includes multiple playlists, the destination has to be folder-like too.
+> Note that if the source is folder-like, i.e. includes multiple playlists, the destination has to be folder-like too. (The reverse is not true though.)
+
+> Note that copying may have side-effects on the source playlist, e.g. pushing a new local playlist to `@spotify/library` will add the corresponding Spotify ID to the local playlist.
 
 ### Examples
 
