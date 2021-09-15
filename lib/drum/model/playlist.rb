@@ -1,4 +1,5 @@
 require 'drum/utils/ext'
+require 'set'
 
 module Drum
   # TODO: Smart playlists!
