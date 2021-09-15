@@ -230,7 +230,11 @@ module Drum
     end
 
     def hexdigest(x)
-      Digest::SHA1.hexdigest(x)
+      unless x.nil?
+        Digest::SHA1.hexdigest(x)
+      else
+        nil
+      end
     end
 
     # Download helpers
