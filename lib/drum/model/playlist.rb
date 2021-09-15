@@ -46,7 +46,7 @@ module Drum
 
     # Stores a user if it does not exist already.
     #
-    # @param [User] The user to store.
+    # @param [User] user The user to store.
     def store_user(user)
       unless @user_ids.include?(user.id)
         @user_ids.add(user.id)
@@ -59,7 +59,7 @@ module Drum
 
     # Stores an artist if it does not exist already.
     #
-    # @param [Artist] The artist to store.
+    # @param [Artist] artist The artist to store.
     def store_artist(artist)
       unless @artist_ids.include?(artist.id)
         @artist_ids.add(artist.id)
@@ -72,7 +72,7 @@ module Drum
 
     # Stores an album if it does not exist already.
     #
-    # @param [Album] The album to store.
+    # @param [Album] album The album to store.
     def store_album(album)
       unless @album_ids.include?(album.id)
         @album_ids.add(album.id)
@@ -85,7 +85,7 @@ module Drum
 
     # Stores a track.
     #
-    # @param [Track] The track to store.
+    # @param [Track] track The track to store.
     def store_track(track)
       if self.tracks.nil?
         self.tracks = []

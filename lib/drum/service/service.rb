@@ -10,7 +10,7 @@ class Drum::Service
 
   # Tries to parse a ref from this service.
   #
-  # @param [RawRef] The raw reference to be parsed.
+  # @param [RawRef] raw_ref The raw reference to be parsed.
   # @return [optional, Ref] The ref, if parsed successfully, otherwise nil
   def parse_ref(raw_ref)
     nil
@@ -38,7 +38,7 @@ class Drum::Service
   # Uploads playlists to this service.
   # 
   # @param [Ref] playlist_ref A ref to the upload location (see README for examples)
-  # @param [Array<Playlist>] playlists The list of playlists to be uploaded
+  # @param [Array<Playlist>, Enumerator<Playlist>] playlists The list of playlists to be uploaded
   # @return [optional, Array<Playlist>] The list of playlists to be updated in the source or nil, if there are no updates
   def upload(playlist_ref, playlists)
     raise "ERROR: Service #{self.name} cannot upload playlists (yet)!"
