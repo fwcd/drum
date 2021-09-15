@@ -123,7 +123,11 @@ module Drum
           puts "Copying from #{src_name} to #{dest_name}..."
 
           playlists = src_service.download(src_ref)
-          dest_service.upload(dest_ref, playlists)
+          updated_playlists = dest_service.upload(dest_ref, playlists)
+
+          unless updated_playlists.nil?
+            src_service.upload(src_ref, updated_playlists)
+          end
         end
       end
     end

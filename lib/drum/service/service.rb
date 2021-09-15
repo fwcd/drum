@@ -37,7 +37,7 @@ class Drum::Service
   # 
   # @param [Ref] playlist_ref A ref to the upload location (see README for examples)
   # @param [Array<Playlist>] playlists The list of playlists to be uploaded
-  # @return [void]
+  # @return [optional, Array<Playlist>] The list of playlists to be updated in the source or nil, if there are no updates
   def upload(playlist_ref, playlists)
     raise "ERROR: Service #{self.name} cannot upload playlists (yet)!"
   end

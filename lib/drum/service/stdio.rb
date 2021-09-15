@@ -38,6 +38,7 @@ module Drum
         playlists.each do |playlist|
           puts playlist.serialize.to_yaml
         end
+        nil
       else
         raise 'Cannot upload to somewhere other than stdout!'
       end
