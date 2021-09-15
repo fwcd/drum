@@ -3,6 +3,8 @@ module Drum
   #
   # @!attribute id
   #   @return [String] The (internal) id of the user
+  # @!attribute display_name
+  #   @return [optional, String] The general formatted name of the user
   # @!attribute spotify
   #   @return [optional, UserSpotify] Spotify-specific metadata
   User = Struct.new(
@@ -40,7 +42,7 @@ module Drum
   # @!attribute id
   #   @return [String] The id of the artist on Spotify
   # @!attribute display_name
-  #   @return [optional, String] The displayed/formatted name of the user
+  #   @return [optional, String] The displayed/formatted name of the user on Spotify
   UserSpotify = Struct.new(
     :id,
     :display_name,

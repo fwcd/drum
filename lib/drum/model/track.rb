@@ -1,5 +1,7 @@
 
 module Drum
+  # TODO: Add Spotify's audio features
+
   # A track/song.
   #
   # @!attribute name

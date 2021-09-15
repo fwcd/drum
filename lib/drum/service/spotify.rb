@@ -1,6 +1,9 @@
 require 'drum/model/playlist'
+require 'drum/model/user'
+require 'drum/model/track'
 require 'drum/service/service'
 require 'drum/utils/persist'
+require 'digest'
 require 'json'
 require 'launchy'
 require 'rest-client'
@@ -18,7 +21,7 @@ module Drum
     PLAYLISTS_CHUNK_SIZE = 50
     TRACKS_CHUNK_SIZE = 100
     SAVED_TRACKS_CHUNKS_SIZE = 50
-    EXTERNALIZE_TRACKS_CHUNK_SIZE = 50
+    TO_SPOTIFY_TRACKS_CHUNK_SIZE = 50
     UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE = 100
 
     CLIENT_ID_VAR = 'SPOTIFY_CLIENT_ID'
@@ -27,11 +30,11 @@ module Drum
     # Rate-limiting for API-heavy methods
     # 'rate' describes the max. number of calls per interval (seconds)
 
-    limit_method :extract_features, rate: 15, interval: 5
+    limit_method :extract_spotify_features, rate: 15, interval: 5
     limit_method :all_spotify_playlist_tracks, rate: 15, interval: 5
     limit_method :all_spotify_saved_tracks, rate: 15, interval: 5
     limit_method :all_spotify_playlists, rate: 15, interval: 5
-    limit_method :externalize_tracks, rate: 15, interval: 5
+    limit_method :to_spotify_tracks, rate: 15, interval: 5
     limit_method :upload_playlist_tracks, rate: 15, interval: 5
     limit_method :upload_playlists, rate: 15, interval: 5
 
@@ -69,7 +72,7 @@ module Drum
       # HTTP server as a 'callback'.
 
       port = 17998
-      server = WEBrick::HTTPServer.new :Port => port
+      server = WEBrick::HTTPServer.new Port: port
       csrf_state = SecureRandom.hex
       auth_code = nil
       error = nil
@@ -146,7 +149,7 @@ module Drum
     
     def fetch_me(access_token, token_type)
       auth_response = RestClient.get('https://api.spotify.com/v1/me', {
-        :Authorization => "#{token_type} #{access_token}"
+        Authorization: "#{token_type} #{access_token}"
       })
       
       unless auth_response.code >= 200 && auth_response.code < 300
@@ -179,11 +182,11 @@ module Drum
             new_expiry = DateTime.now + (token_lifetime / 86400.0)
             # TODO: Clean up old token
             @db[:auth_tokens].insert(
-              :service_id => @service_id,
-              :access_token => new_token,
-              :refresh_token => refresh_token, # TODO: Refresh token might change too
-              :token_type => token_type,
-              :expires_at => new_expiry
+              service_id: @service_id,
+              access_token: new_token,
+              refresh_token: refresh_token, # TODO: Refresh token might change too
+              token_type: token_type,
+              expires_at: new_expiry
             )
           end
         },
@@ -198,176 +201,136 @@ module Drum
     def all_spotify_playlists(offset: 0)
       playlists = @me.playlists(limit: PLAYLISTS_CHUNK_SIZE, offset: offset)
       unless playlists.empty?
-        return playlists + self.all_spotify_playlists(offset: offset + PLAYLISTS_CHUNK_SIZE)
+        playlists + self.all_spotify_playlists(offset: offset + PLAYLISTS_CHUNK_SIZE)
       else
-        return []
+        []
       end
     end
 
     def all_spotify_playlist_tracks(playlist, offset: 0)
       tracks = playlist.tracks(limit: TRACKS_CHUNK_SIZE, offset: offset)
       unless tracks.empty?
-        return tracks + self.all_spotify_playlist_tracks(playlist, offset: offset + TRACKS_CHUNK_SIZE)
+        tracks + self.all_spotify_playlist_tracks(playlist, offset: offset + TRACKS_CHUNK_SIZE)
       else
-        return []
+        []
       end
     end
 
     def all_spotify_saved_tracks(offset: 0)
       tracks = @me.saved_tracks(limit: SAVED_TRACKS_CHUNKS_SIZE, offset: offset)
       unless tracks.empty?
-        return tracks + self.all_spotify_saved_tracks(offset: offset + SAVED_TRACKS_CHUNKS_SIZE)
+        tracks + self.all_spotify_saved_tracks(offset: offset + SAVED_TRACKS_CHUNKS_SIZE)
       else
-        return []
+        []
       end
     end
 
-    def extract_features(track)
-      return track&.audio_features
+    def extract_spotify_features(track)
+      track&.audio_features
+    end
+
+    def hexdigest(x)
+      Digest::SHA1.hexdigest(x)
     end
 
     # Download helpers
 
     def from_spotify_track(track, library_id = nil, options, output: method(:puts))
-      # Check whether track already exists, i.e. find its
-      # internal id. If so, update it!
+      new_track = Track.new(
+        id: self.hexdigest(track.id),
+        name: track.name,
+        artist_ids: []
+      )
+      new_artists = []
 
-      unless track.id.nil?
-        id = @db[:track_services].where(
-          :service_id => @service_id,
-          :external_id => track.id
-        ).first&.dig(:track_id)
-      else
-        id = nil
+      track.artists.each do |artist|
+        new_artist = from_spotify_artist(artist)
+        new_track.artist_ids << new_artist.id
       end
 
-      if options[:update_existing] || id.nil?
-        begin
-          if options[:query_features]
-            features = extract_features(track)
-          else
-            features = nil
-          end
-        rescue StandardError => e
-          output.call "Got #{e} while querying audio features"
-          features = nil
-        end
-        id = @db[:tracks].insert_conflict(:replace).insert(
-          :id => id,
-          :name => track.name,
-          :duration_ms => track.duration_ms,
-          :explicit => track.explicit,
-          :isrc => track.external_ids['isrc'],
-          :tempo => features&.tempo,
-          :key => features&.key,
-          :mode => features&.mode,
-          :time_signature => features&.time_signature,
-          :acousticness => features&.acousticness,
-          :danceability => features&.danceability,
-          :energy => features&.energy,
-          :instrumentalness => features&.instrumentalness,
-          :liveness => features&.liveness,
-          :loudness => features&.loudness,
-          :speechiness => features&.speechiness,
-          :valence => features&.valence
-        )
-      end
+      # TODO: Audio features
 
-      unless track.id.nil?
-        @db[:track_services].insert_conflict(:replace).insert(
-          :service_id => @service_id,
-          :track_id => id,
-          :uri => track.uri,
-          :external_id => track.id
-        )
-      end
-
-      unless library_id.nil?
-        @db[:library_tracks].insert_ignore.insert(
-          :library_id => library_id,
-          :track_id => id
-        )
-      end
-
-      return id
+      new_track, new_artists
     end
 
     # TODO: Store albums
     # TODO: Store artists
+
+    def from_spotify_artist(artist)
+      Artist.new(
+        id: self.hexdigest(artist.id),
+        name: artist.name,
+        spotify: ArtistSpotify.new(
+          id: artist.id
+        )
+      )
+    end
     
-    def from_spotify_playlist_track(i, track, added_at, added_by, playlist_id, library_id, options, output: method(:puts))
-      return @db[:playlist_tracks].insert_conflict(:replace).insert(
-        :playlist_id => playlist_id,
-        :track_id => self.from_spotify_track(track, options, output: output),
-        :track_index => i,
-        :added_at => added_at,
-        :added_by => added_by && self.store_user(added_by)
+    def from_spotify_user(user)
+      # TODO: Fetch and store display name
+      User.new(
+        id: self.hexdigest(user.id),
+        spotify: UserSpotify.new(
+          id: user.id
+        )
       )
     end
 
     def from_spotify_playlist(playlist, tracks = nil, library_id, options, output: method(:puts))
-      Playlist.new(
+      new_playlist = Playlist.new(
         name: playlist.name,
         description: playlist&.description,
-
+        spotify: PlaylistSpotify.new(
+          id: playlist.id,
+          public: playlist.public,
+          collaborative: playlist.collaborative,
+          image_url: playlist&.images.first&.dig('url')
+        )
       )
 
-      # Check whether playlist already exists, i.e. find its
-      # internal id. If so, update it!
-
-      id = @db[:playlist_services].where(
-        :service_id => @service_id,
-        :external_id => playlist.id
-      ).first&.dig(:playlist_id)
-
-      id = @db[:playlists].insert_conflict(:replace).insert(
-        :id => id,
-        :name => playlist.name,
-        :description => playlist&.description,
-        :user_id => self.store_user(playlist.owner)
-      )
-
-      @db[:playlist_services].insert_conflict(:replace).insert(
-        :service_id => @service_id,
-        :playlist_id => id,
-        :external_id => playlist.id,
-        :uri => playlist.uri,
-        :image_uri => playlist&.images.first&.dig('url'),
-        :collaborative => playlist&.collaborative
-      )
-
-      @db[:library_playlists].insert_ignore.insert(
-        :library_id => library_id,
-        :playlist_id => id
-      )
-
-      added_by = playlist.tracks_added_by
-      added_at = playlist.tracks_added_at
+      added_bys = playlist.tracks_added_by
+      added_ats = playlist.tracks_added_at
 
       tracks = tracks || self.all_spotify_playlist_tracks(playlist)
       output.call "Storing #{tracks.length} playlist track(s)..."
       tracks.each_with_index do |track, i|
-        self.from_spotify_playlist_track(i, track, added_at[track.id], added_by[track.id], id, library_id, options, output: method(:puts))
+        # TODO: Make sure that added_at has the right type
+
+        new_track, new_artists = self.from_spotify_track(track, playlist, options, output: method(:puts))
+        new_track.added_at = added_ats[track.id]
+
+        added_by = added_bys[track.id]
+        unless added_by.nil?
+          new_added_by = from_spotify_user(added_by)
+          new_track.added_by = new_added_by.id
+          new_track.store_user(new_added_by)
+        end
+
+        new_artists.each do |new_artist|
+          new_playlist.store_artist(new_artist)
+        end
+
+        new_playlist.store_track(new_track)
       end
 
-      return id
+      new_playlist
     end
 
     # Upload helpers
 
-    def externalize_tracks(tracks)
+    def to_spotify_tracks(tracks)
       unless tracks.nil? || tracks.empty?
         # TODO: If track has no ID, match it using search
-        external_ids = tracks[...EXTERNALIZE_TRACKS_CHUNK_SIZE].flat_map do |track|
+        external_ids = tracks[...TO_SPOTIFY_TRACKS_CHUNK_SIZE].flat_map do |track|
           @db[:track_services].where(
             service_id: @service_id,
             track_id: track[:id]
           ).select_map(:external_id)
         end.to_a
         external_tracks = RSpotify::Track.find(external_ids)
-        return external_tracks + externalize_tracks(tracks[EXTERNALIZE_TRACKS_CHUNK_SIZE...])
+        external_tracks + to_spotify_tracks(tracks[TO_SPOTIFY_TRACKS_CHUNK_SIZE...])
       else
-        return []
+        []
       end
     end
 
@@ -390,11 +353,12 @@ module Drum
         .to_a
 
       output.call "Externalizing #{tracks.length} playlist track(s)..."
-      external_tracks = externalize_tracks(tracks)
+      external_tracks = to_spotify_tracks(tracks)
 
       output.call "Uploading #{external_tracks.length} playlist track(s)..."
       upload_playlist_tracks(external_tracks, external_playlist, options)
 
+      # TODO: Merging?
       self.from_spotify_playlist(external_playlist, external_tracks, library_id, options, output: output)
     end
 
