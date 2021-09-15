@@ -1,3 +1,4 @@
+require 'drum/model/album'
 require 'drum/model/playlist'
 require 'drum/model/user'
 require 'drum/model/track'
@@ -234,26 +235,56 @@ module Drum
 
     # Download helpers
 
-    def from_spotify_track(track = nil, output: method(:puts))
+    # TODO: Replace hexdigest id generation with something
+    #       that matches e.g. artists or albums with those
+    #       already in the playlist.
+
+    def from_spotify_album(album, output: method(:puts))
+      new_album = Album.new(
+        id: self.hexdigest(album.id),
+        name: album.name,
+        artist_ids: [],
+        spotify: AlbumSpotify.new(
+          id: album.id,
+          image_url: album&.images.first&.dig('url')
+        )
+      )
+
+      new_artists = album.artists.map do |artist|
+        new_artist = self.from_spotify_artist(artist)
+        new_album.artist_ids << new_artist.id
+        new_artist
+      end
+
+      [new_album, new_artists]
+    end
+
+    def from_spotify_track(track, output: method(:puts))
       new_track = Track.new(
         name: track.name,
-        artist_ids: []
+        artist_ids: [],
+        duration_ms: track.duration_ms,
+        explicit: track.explicit,
+        isrc: track.external_ids&.dig('isrc'),
+        spotify: TrackSpotify.new(
+          id: track.id
+        )
       )
-      new_artists = []
 
-      track.artists.each do |artist|
+      new_artists = track.artists.map do |artist|
         new_artist = self.from_spotify_artist(artist)
         new_track.artist_ids << new_artist.id
-        new_artists << new_artist
+        new_artist
       end
+
+      new_album, new_album_artists = self.from_spotify_album(track.album, output: output)
+      new_track.album_id = new_album.id
+      new_artists += new_album_artists
 
       # TODO: Audio features
 
-      [new_track, new_artists]
+      [new_track, new_artists, new_album]
     end
-
-    # TODO: Store albums
-    # TODO: Store artists
 
     def from_spotify_artist(artist)
       Artist.new(
@@ -293,7 +324,7 @@ module Drum
       tracks = tracks || self.all_spotify_playlist_tracks(playlist)
       output.call "Storing #{tracks.length} playlist track(s)..."
       tracks.each_with_index do |track, i|
-        new_track, new_artists = self.from_spotify_track(track, output: output)
+        new_track, new_artists, new_album = self.from_spotify_track(track, output: output)
         new_track.added_at = added_ats[track.id]
 
         added_by = added_bys[track.id]
@@ -307,6 +338,7 @@ module Drum
           new_playlist.store_artist(new_artist)
         end
 
+        new_playlist.store_album(new_album)
         new_playlist.store_track(new_track)
       end
 
@@ -470,19 +502,25 @@ module Drum
 
           puts 'Fetching saved tracks...'
           bar = ProgressBar.new(saved_tracks.length)
-          new_tracks = saved_tracks.map do |track|
-            new_track = self.from_spotify_track(track, output: bar.method(:puts))
-            bar.increment!
-            new_track
-          end
-
           new_me = self.from_spotify_user(@me)
           new_playlist = Playlist.new(
             name: 'Saved Tracks',
             author_id: new_me.id,
-            users: [new_me],
-            tracks: new_tracks
+            users: [new_me]
           )
+
+          saved_tracks.each do |track|
+            new_track, new_artists, new_album = self.from_spotify_track(track, output: bar.method(:puts))
+
+            new_artists.each do |new_artist|
+              new_playlist.store_artist(new_artist)
+            end
+
+            new_playlist.store_album(new_album)
+            new_playlist.store_track(new_track)
+
+            bar.increment!
+          end
 
           [new_playlist]
         else raise "Special resource location '#{ref.resource_location}' cannot be downloaded (yet)"
