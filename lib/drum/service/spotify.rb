@@ -1,4 +1,5 @@
 require 'drum/service/service'
+require 'drum/utils/persist'
 require 'json'
 require 'launchy'
 require 'rest-client'
@@ -39,6 +40,8 @@ module Drum
     def initialize(cache_dir)
       @cache_dir = cache_dir / 'spotify'
       @cache_dir.mkdir unless @cache_dir.directory?
+
+      @auth_tokens = PersistentHash.new(@cache_dir / 'auth-tokens.yaml')
     end
 
     def name
@@ -52,12 +55,9 @@ module Drum
     end
     
     def authenticate_user(client_id, client_secret)
-      existing = @db[:auth_tokens]
-        .where(:service_id => @service_id)
-        .where{expires_at > (DateTime.now + (1800 / 86400.0))} # half an hour in days
-        .first
+      existing = @auth_tokens[:latest]
       
-      unless existing.nil?
+      unless existing.nil? || existing[:expires_at] > (DateTime.now + (1800 / 86400.0)) # half an hour in days
         return existing[:access_token], existing[:refresh_token], existing[:token_type]
       end
 
@@ -131,13 +131,13 @@ module Drum
       expires_in = auth_json['expires_in'] # seconds
       expires_at = DateTime.now + (expires_in / 86400.0)
       
-      @db[:auth_tokens].insert(
-        :service_id => @service_id,
-        :access_token => access_token,
-        :refresh_token => refresh_token,
-        :token_type => token_type,
-        :expires_at => expires_at
-      )
+      @auth_tokens[:latest] = {
+        service_id: @service_id,
+        access_token: access_token,
+        refresh_token: refresh_token,
+        token_type: token_type,
+        expires_at: expires_at
+      }
       puts "Successfully added access token that expires at #{expires_at}."
       
       return access_token, refresh_token, token_type
