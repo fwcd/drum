@@ -87,15 +87,21 @@ module Drum
       end
     end
 
-    desc 'preview', 'Previews information from an external service (e.g. spotify)'
+    desc 'preview [REF]', 'Previews a playlist from an external service (e.g. spotify)'
 
-    # Previews information from an external service.
+    # Previews a playlist from an external service.
     #
-    # @param [String] raw_name The (raw) name of the service
-    def preview(raw_name)
-      self.with_service(raw_name) do |name, service|
-        puts "Previewing #{name}..."
-        service.preview
+    # @param [String] raw_ref The (raw) playlist ref.
+    def preview(raw_ref)
+      ref = self.parse_ref(raw_ref)
+
+      if ref.nil?
+        raise "Could not parse ref: #{raw_ref}"
+      end
+
+      self.with_service(ref.service_name) do |name, service|
+        puts "Previewing from #{name}..."
+        service.preview(ref)
       end
     end
     

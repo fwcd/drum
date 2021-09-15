@@ -5,6 +5,8 @@ require 'launchy'
 require 'ruby-limiter'
 require 'webrick'
 
+# FIXME: Rewrite the AppleMusicService to use the new Service API
+
 module Drum
   # A service implementation that uses the Apple Music API to query playlists.
   class AppleMusicService < Service

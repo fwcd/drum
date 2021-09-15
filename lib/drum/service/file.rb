@@ -13,7 +13,7 @@ module Drum
     def parse_ref(raw_ref)
       unless raw_ref.is_token
         path = Pathname.new(raw_ref.text)
-        Ref.new(self.name, :playlists, path)
+        Ref.new(self.name, :any, path)
       else
         nil
       end

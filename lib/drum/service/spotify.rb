@@ -244,13 +244,13 @@ module Drum
       new_artists = []
 
       track.artists.each do |artist|
-        new_artist = from_spotify_artist(artist)
+        new_artist = self.from_spotify_artist(artist)
         new_track.artist_ids << new_artist.id
       end
 
       # TODO: Audio features
 
-      new_track, new_artists
+      [new_track, new_artists]
     end
 
     # TODO: Store albums
@@ -301,7 +301,7 @@ module Drum
 
         added_by = added_bys[track.id]
         unless added_by.nil?
-          new_added_by = from_spotify_user(added_by)
+          new_added_by = self.from_spotify_user(added_by)
           new_track.added_by = new_added_by.id
           new_track.store_user(new_added_by)
         end
@@ -337,7 +337,7 @@ module Drum
     def upload_playlist_tracks(external_tracks, external_playlist, options)
       unless external_tracks.nil? || external_tracks.empty?
         external_playlist.add_tracks!(external_tracks[...UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE])
-        upload_playlist_tracks(external_tracks[UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE...], external_playlist, options)
+        self.upload_playlist_tracks(external_tracks[UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE...], external_playlist, options)
       end
     end
 
@@ -353,22 +353,82 @@ module Drum
         .to_a
 
       output.call "Externalizing #{tracks.length} playlist track(s)..."
-      external_tracks = to_spotify_tracks(tracks)
+      external_tracks = self.to_spotify_tracks(tracks)
 
       output.call "Uploading #{external_tracks.length} playlist track(s)..."
-      upload_playlist_tracks(external_tracks, external_playlist, options)
+      self.upload_playlist_tracks(external_tracks, external_playlist, options)
 
       # TODO: Merging?
       self.from_spotify_playlist(external_playlist, external_tracks, library_id, options, output: output)
     end
 
+    # Ref parsing
+
+    def parse_resource_type(raw)
+      case raw
+      when 'playlist' then :playlist
+      when 'album' then :album
+      when 'track' then :track
+      else nil
+      end
+    end
+
+    def parse_spotify_link(raw)
+      uri = URI(raw)
+      unless ['http', 'https'].include?(uri&.scheme) && uri&.host == 'open.spotify.com'
+        return nil
+      end
+
+      parsed_path = uri.path.split('/')
+      unless parsed_path.length == 3
+        return nil
+      end
+
+      resource_type = self.parse_resource_type(parsed_path[1])
+      resource_location = parsed_path[2]
+
+      Ref.new(self.name, resource_type, resource_location)
+    end
+
+    def parse_spotify_uri(raw)
+      uri = URI(raw)
+      unless uri&.scheme == 'spotify'
+        return nil
+      end
+
+      parsed_path = uri.opaque.split(':')
+      unless parsed_path.length == 2
+        return nil
+      end
+
+      resource_type = self.parse_resource_type(parsed_path[0])
+      resource_location = parsed_path[1]
+
+      Ref.new(self.name, resource_type, resource_location)
+    end
+
+    def parse_ref(raw_ref)
+      if raw_ref.is_token
+        location = case raw_ref.text
+        when "#{self.name}/liked" then :liked
+        when "#{self.name}/playlists" then :playlists
+        else return nil
+        end
+        Ref.new(self.name, :special, location)
+      else
+        self.parse_spotify_link(raw_ref.text) || self.parse_spotify_uri(raw_ref.text)
+      end
+    end
+
     # Service
 
-    def preview
-      self.authenticate
+    def preview(playlist_ref)
+      puts(playlist_ref)
 
-      playlists = self.all_spotify_playlists
-      puts playlists.map { |p| "Found playlist '#{p.name}' (#{p.total} track(s))" }
+      # self.authenticate
+
+      # playlists = self.all_spotify_playlists
+      # puts playlists.map { |p| "Found playlist '#{p.name}' (#{p.total} track(s))" }
     end
 
     def pull(options)

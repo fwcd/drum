@@ -10,12 +10,12 @@ The basic usage pattern is always `drum cp [source] [destination]` where `source
 
 * A file or folder, e.g. `.`, `some/folder`, `some-file.yaml`
 * A URI, e.g. `https://open.spotify.com/playlist/123456`, `spotify:playlist:123456`, `file:///path/to/list.yaml`
-* A special token, e.g. `@spotify/library`, `@spotify/liked-songs`, `@stdin`, `@stdout`
+* A special token, e.g. `@spotify/playlists`, `@spotify/liked`, `@stdin`, `@stdout`
 * A dash `-`, synonymous with `@stdin` and `@stdout`, depending on usage
 
 > Note that if the source is folder-like, i.e. includes multiple playlists, the destination has to be folder-like too. (The reverse is not true though.)
 
-> Note that copying may have side-effects on the source playlist, e.g. pushing a new local playlist to `@spotify/library` will add the corresponding Spotify ID to the local playlist.
+> Note that copying may have side-effects on the source playlist, e.g. pushing a new local playlist to `@spotify/playlists` will add the corresponding Spotify ID to the local playlist.
 
 ### Examples
 
@@ -27,16 +27,15 @@ The basic usage pattern is always `drum cp [source] [destination]` where `source
 
 **Download your liked songs playlist from Spotify.**
 
-* `drum cp @spotify/liked-songs liked-songs.yaml`
+* `drum cp @spotify/liked liked.yaml`
 
 **Download all playlists from your Spotify library.**
 
-* `drum cp https://open.spotify.com/library .`
-* `drum cp @spotify/library .`
+* `drum cp @spotify/playlists .`
 
 **Upload a playlist to Spotify.**
 
-* `drum cp my-fancy-list.yaml @spotify/library`
+* `drum cp my-fancy-list.yaml @spotify/playlists`
 
 ## Supported Services
 
