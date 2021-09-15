@@ -1,3 +1,4 @@
+require 'drum/model/playlist'
 require 'drum/service/service'
 require 'drum/utils/persist'
 require 'json'
@@ -27,9 +28,9 @@ module Drum
     # 'rate' describes the max. number of calls per interval (seconds)
 
     limit_method :extract_features, rate: 15, interval: 5
-    limit_method :all_playlist_tracks, rate: 15, interval: 5
-    limit_method :all_saved_tracks, rate: 15, interval: 5
-    limit_method :all_playlists, rate: 15, interval: 5
+    limit_method :all_spotify_playlist_tracks, rate: 15, interval: 5
+    limit_method :all_spotify_saved_tracks, rate: 15, interval: 5
+    limit_method :all_spotify_playlists, rate: 15, interval: 5
     limit_method :externalize_tracks, rate: 15, interval: 5
     limit_method :upload_playlist_tracks, rate: 15, interval: 5
     limit_method :upload_playlists, rate: 15, interval: 5
@@ -194,64 +195,40 @@ module Drum
 
     # Utilities
     
-    def all_playlists(offset: 0)
+    def all_spotify_playlists(offset: 0)
       playlists = @me.playlists(limit: PLAYLISTS_CHUNK_SIZE, offset: offset)
       unless playlists.empty?
-        return playlists + self.all_playlists(offset: offset + PLAYLISTS_CHUNK_SIZE)
+        return playlists + self.all_spotify_playlists(offset: offset + PLAYLISTS_CHUNK_SIZE)
       else
         return []
       end
     end
 
-    def all_playlist_tracks(playlist, offset: 0)
+    def all_spotify_playlist_tracks(playlist, offset: 0)
       tracks = playlist.tracks(limit: TRACKS_CHUNK_SIZE, offset: offset)
       unless tracks.empty?
-        return tracks + self.all_playlist_tracks(playlist, offset: offset + TRACKS_CHUNK_SIZE)
+        return tracks + self.all_spotify_playlist_tracks(playlist, offset: offset + TRACKS_CHUNK_SIZE)
       else
         return []
       end
     end
 
-    def all_saved_tracks(offset: 0)
+    def all_spotify_saved_tracks(offset: 0)
       tracks = @me.saved_tracks(limit: SAVED_TRACKS_CHUNKS_SIZE, offset: offset)
       unless tracks.empty?
-        return tracks + self.all_saved_tracks(offset: offset + SAVED_TRACKS_CHUNKS_SIZE)
+        return tracks + self.all_spotify_saved_tracks(offset: offset + SAVED_TRACKS_CHUNKS_SIZE)
       else
         return []
       end
-    end
-
-    def store_user(user)
-      # Check whether user already exists, i.e. find its
-      # internal id. If so, update it!
-      
-      id = @db[:user_services].where(
-        :service_id => @service_id,
-        :external_id => user.id
-      ).first&.dig(:user_id)
-
-      if id.nil?
-        id = @db[:users].insert(
-          :id => id
-        )
-      end
-
-      @db[:user_services].insert_ignore.insert(
-        :service_id => @service_id,
-        :user_id => id,
-        :external_id => user.id
-        # TODO: Currently 404s
-        # :display_name => user&.display_name
-      )
-
-      return id
     end
 
     def extract_features(track)
       return track&.audio_features
     end
 
-    def store_track(track, library_id = nil, options, output: method(:puts))
+    # Download helpers
+
+    def from_spotify_track(track, library_id = nil, options, output: method(:puts))
       # Check whether track already exists, i.e. find its
       # internal id. If so, update it!
 
@@ -318,17 +295,23 @@ module Drum
     # TODO: Store albums
     # TODO: Store artists
     
-    def store_playlist_track(i, track, added_at, added_by, playlist_id, library_id, options, output: method(:puts))
+    def from_spotify_playlist_track(i, track, added_at, added_by, playlist_id, library_id, options, output: method(:puts))
       return @db[:playlist_tracks].insert_conflict(:replace).insert(
         :playlist_id => playlist_id,
-        :track_id => self.store_track(track, options, output: output),
+        :track_id => self.from_spotify_track(track, options, output: output),
         :track_index => i,
         :added_at => added_at,
         :added_by => added_by && self.store_user(added_by)
       )
     end
 
-    def store_playlist(playlist, tracks = nil, library_id, options, output: method(:puts))
+    def from_spotify_playlist(playlist, tracks = nil, library_id, options, output: method(:puts))
+      Playlist.new(
+        name: playlist.name,
+        description: playlist&.description,
+
+      )
+
       # Check whether playlist already exists, i.e. find its
       # internal id. If so, update it!
 
@@ -361,28 +344,16 @@ module Drum
       added_by = playlist.tracks_added_by
       added_at = playlist.tracks_added_at
 
-      tracks = tracks || self.all_playlist_tracks(playlist)
+      tracks = tracks || self.all_spotify_playlist_tracks(playlist)
       output.call "Storing #{tracks.length} playlist track(s)..."
       tracks.each_with_index do |track, i|
-        self.store_playlist_track(i, track, added_at[track.id], added_by[track.id], id, library_id, options, output: method(:puts))
+        self.from_spotify_playlist_track(i, track, added_at[track.id], added_by[track.id], id, library_id, options, output: method(:puts))
       end
 
       return id
     end
 
-    def store_library(user_id)
-      @db[:libraries].insert_ignore.insert(
-        :service_id => @service_id,
-        :user_id => user_id,
-        :name => self.name
-      )
-
-      return @db[:libraries].where(
-        name: self.name,
-        user_id: user_id,
-        service_id: @service_id
-      ).first[:id]
-    end
+    # Upload helpers
 
     def externalize_tracks(tracks)
       unless tracks.nil? || tracks.empty?
@@ -424,15 +395,15 @@ module Drum
       output.call "Uploading #{external_tracks.length} playlist track(s)..."
       upload_playlist_tracks(external_tracks, external_playlist, options)
 
-      self.store_playlist(external_playlist, external_tracks, library_id, options, output: output)
+      self.from_spotify_playlist(external_playlist, external_tracks, library_id, options, output: output)
     end
 
-    # CLI
+    # Service
 
     def preview
       self.authenticate
 
-      playlists = self.all_playlists
+      playlists = self.all_spotify_playlists
       puts playlists.map { |p| "Found playlist '#{p.name}' (#{p.total} track(s))" }
     end
 
@@ -450,25 +421,25 @@ module Drum
       library_id = self.store_library(user_id)
 
       puts 'Querying saved tracks...'
-      saved_tracks = self.all_saved_tracks
+      saved_tracks = self.all_spotify_saved_tracks
 
       puts 'Storing saved tracks...'
       bar = ProgressBar.new(saved_tracks.length)
       @db.transaction do
         saved_tracks.each do |track|
-          self.store_track(track, library_id, options, output: bar.method(:puts))
+          self.from_spotify_track(track, library_id, options, output: bar.method(:puts))
           bar.increment!
         end
       end
 
       puts 'Querying playlists...'
-      playlists = self.all_playlists
+      playlists = self.all_spotify_playlists
 
       puts 'Storing playlists...'
       bar = ProgressBar.new(playlists.length)
       playlists.each do |playlist|
         @db.transaction do
-          self.store_playlist(playlist, library_id, options, output: bar.method(:puts))
+          self.from_spotify_playlist(playlist, library_id, options, output: bar.method(:puts))
           bar.increment!
         end
       end

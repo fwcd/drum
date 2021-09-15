@@ -26,12 +26,64 @@ module Drum
   #   @return [optional, Array<Track>] The list of tracks of the playlist, order matters here
   # @!attribute spotify
   #   @return [optional, PlaylistSpotify] Spotify-specific metadata
-  Playlist = Struct.new(
+  class Playlist < Struct.new(
     :name, :description,
     :author_id, :users, :artists, :albums, :tracks,
     :spotify,
     keyword_init: true
-  ) do
+  )
+    def initialize(**kwargs)
+      super(**kwargs)
+
+      # Internal sets for fast lookups in the store_x methods
+      @user_ids = Set[]
+      @artist_ids = Set[]
+      @album_ids = Set[]
+      @track_ids = Set[]
+    end
+
+    # TODO: Handle merging in the store_x methods?
+
+    # Stores a user if it does not exist already.
+    #
+    # @param [User] The user to store.
+    def store_user(user)
+      unless @user_ids.include?(user.id)
+        @user_ids.add(user.id)
+        self.users << user
+      end
+    end
+
+    # Stores an artist if it does not exist already.
+    #
+    # @param [Artist] The artist to store.
+    def store_artist(artist)
+      unless @artist_ids.include?(artist.id)
+        @artist_ids.add(artist.id)
+        self.artists << artist
+      end
+    end
+
+    # Stores an album if it does not exist already.
+    #
+    # @param [Album] The album to store.
+    def store_album(album)
+      unless @album_ids.include?(album.id)
+        @album_ids.add(album.id)
+        self.albums << album
+      end
+    end
+
+    # Stores a track if it does not exist already.
+    #
+    # @param [Track] The track to store.
+    def store_track(track)
+      unless @track_ids.include?(track.id)
+        @track_ids.add(track.id)
+        self.tracks << track
+      end
+    end
+
     # Parses a playlist from a nested Hash that uses string keys.
     #
     # @param [Hash<String, Object>] h The Hash to be parsed

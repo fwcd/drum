@@ -122,6 +122,10 @@ module Drum
         self.with_service(dest_ref.service_name) do |dest_name, dest_service|
           puts "Copying from #{src_name} to #{dest_name}..."
 
+          # TODO: Investigate where to handle merging. Should each service
+          #       be responsible for doing so, e.g. should the file service
+          #       merge playlists and return the result from 'upload'?
+
           playlists = src_service.download(src_ref)
           updated_playlists = dest_service.upload(dest_ref, playlists)
 
