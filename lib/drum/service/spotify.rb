@@ -37,8 +37,8 @@ module Drum
     #
     # @param [String] cache_dir The path to the cache directory (shared by all services)
     def initialize(cache_dir)
-      @cache_dir = "#{cache_dir}/spotify"
-      Dir.mkdir(@cache_dir) unless Dir.exist?(@cache_dir)
+      @cache_dir = cache_dir / 'spotify'
+      @cache_dir.mkdir unless @cache_dir.directory?
     end
 
     def name

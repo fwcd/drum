@@ -21,11 +21,11 @@ module Drum
       @hl = HighLine.new
 
       # Set up .drum directory
-      @dot_dir = "#{Dir.home}/.drum"
-      Dir.mkdir(@dot_dir) unless Dir.exist?(@dot_dir)
+      @dot_dir = Pathname.new(Dir.home) / '.drum'
+      @dot_dir.mkdir unless @dot_dir.directory?
 
-      @cache_dir = "#{@dot_dir}/cache"
-      Dir.mkdir(@cache_dir) unless Dir.exist?(@cache_dir)
+      @cache_dir = @dot_dir / 'cache'
+      @cache_dir.mkdir unless @cache_dir.directory?
 
       # Declare services in descending order of parse priority
       @services = [
