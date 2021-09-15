@@ -56,6 +56,8 @@ To run the application, run `bundle exec bin/drum`. You can also run `bin/consol
 
 To package the application into a gem, run `bundle exec rake build`. The built gem should then be located in `pkg`.
 
+To install the gem, run `bundle exec rake install`.
+
 To generate the documentation, run `bundle exec rake yard`.
 
 To run tests, run `bundle exec rake spec`.
