@@ -293,8 +293,6 @@ module Drum
       tracks = tracks || self.all_spotify_playlist_tracks(playlist)
       output.call "Storing #{tracks.length} playlist track(s)..."
       tracks.each_with_index do |track, i|
-        # TODO: Make sure that added_at has the right type
-
         new_track, new_artists = self.from_spotify_track(track, output: output)
         new_track.added_at = added_ats[track.id]
 

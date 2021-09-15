@@ -15,7 +15,7 @@ module Drum
   # @!attribute explicit
   #  @return [optional, Boolean] Whether the track is explicit
   # @!attribute added_at
-  #  @return [optional, DateTime] The date/time the this track was added to the playlist
+  #  @return [optional, Object] The date/time the this track was added to the playlist
   # @!attribute added_by
   #  @return [optional, String] The user id of the user who added this track to the playlist
   # @!attribute isrc
