@@ -244,6 +244,7 @@ module Drum
       track.artists.each do |artist|
         new_artist = self.from_spotify_artist(artist)
         new_track.artist_ids << new_artist.id
+        new_artists << new_artist
       end
 
       # TODO: Audio features
