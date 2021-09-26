@@ -47,6 +47,7 @@ module Drum
       @cache_dir.mkdir unless @cache_dir.directory?
 
       @auth_tokens = PersistentHash.new(@cache_dir / 'auth-tokens.yaml')
+      @authenticated = false
     end
 
     def name
@@ -160,6 +161,10 @@ module Drum
     end
 
     def authenticate
+      if @authenticated
+        return
+      end
+
       client_id = ENV[CLIENT_ID_VAR]
       client_secret = ENV[CLIENT_SECRET_VAR]
       
@@ -193,6 +198,7 @@ module Drum
         'id' => @me_id
       })
       
+      @authenticated = true
       puts "Successfully logged in to Spotify API as #{me_json['id']}."
     end
 
