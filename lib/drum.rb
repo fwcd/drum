@@ -108,7 +108,7 @@ module Drum
             'name' => playlist.name,
             'description' => playlist&.description,
             'tracks' => playlist.tracks.each_with_index.map do |track, i|
-              artists = (track.artist_ids&.filter_map { |id| playlist.artists_by_id[id]&.name } || []).join(', ')
+              artists = (track.artist_ids&.filter_map { |id| playlist.artists[id]&.name } || []).join(', ')
               "#{i + 1}. #{artists} - #{track.name}"
             end
           }.compact.to_yaml)

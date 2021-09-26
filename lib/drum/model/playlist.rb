@@ -6,11 +6,6 @@ module Drum
 
   # A list of tracks with metadata.
   #
-  # Note that arrays are intentionally used internally to represent
-  # unordered collections of objects that are actually identified
-  # by their internal ids so the structure of this classes objects
-  # are isomorphic to their serialized (JSON/YAML) representations.
-  #
   # @!attribute name
   #   @return [String] The name of the playlist
   # @!attribute description
@@ -18,11 +13,11 @@ module Drum
   # @!attribute author_id
   #   @return [optional, String] The author id
   # @!attribute users
-  #   @return [optional, Array<User>] A list of users used anywhere in the playlist, order doesn't matter
+  #   @return [optional, Hash<String, User>] A hash of ids to users used somewhere in the playlist
   # @!attribute artists
-  #   @return [optional, Array<Artist>] A list of artists used anywhere in the playlist, order doesn't matter
+  #   @return [optional, Hash<String, Artist>] A hash of ids to artists used somewhere in the playlist
   # @!attribute albums
-  #   @return [optional, Array<Album>] A list of albums used anywhere in the playlist, order doesn't matter
+  #   @return [optional, Hash<String, Album>] A hash of ids to albums used somewhere in the playlist
   # @!attribute tracks
   #   @return [optional, Array<Track>] The list of tracks of the playlist, order matters here
   # @!attribute spotify
@@ -31,31 +26,20 @@ module Drum
     :name, :description,
     :author_id,
     :users, :artists, :albums, :tracks,
-    :users_by_id, :artists_by_id, :albums_by_id, :tracks_by_id,
     :spotify,
     keyword_init: true
   )
-    def initialize(**kwargs)
-      super(**kwargs)
-
-      self.users_by_id = users&.group_by(&:id) || {}
-      self.artists_by_id = artists&.group_by(&:id) || {}
-      self.albums_by_id = albums&.group_by(&:id) || {}
-      self.tracks_by_id = tracks&.group_by(&:id) || {}
-    end
-
     # TODO: Handle merging in the store_x methods?
 
     # Stores a user if it does not exist already.
     #
     # @param [User] user The user to store.
     def store_user(user)
-      unless self.users_by_id.key?(user.id)
-        self.users_by_id[user.id] = user
-        if self.users.nil?
-          self.users = []
-        end
-        self.users << user
+      if self.users.nil?
+        self.users = {}
+      end
+      unless self.users.key?(user.id)
+        self.users[user.id] = user
       end
     end
 
@@ -63,12 +47,11 @@ module Drum
     #
     # @param [Artist] artist The artist to store.
     def store_artist(artist)
-      unless self.artists_by_id.key?(artist.id)
-        self.artists_by_id[artist.id] = artist
-        if self.artists.nil?
-          self.artists = []
-        end
-        self.artists << artist
+      if self.artists.nil?
+        self.artists = {}
+      end
+      unless self.artists.key?(artist.id)
+        self.artists[artist.id] = artist
       end
     end
 
@@ -76,12 +59,11 @@ module Drum
     #
     # @param [Album] album The album to store.
     def store_album(album)
-      unless self.albums_by_id.key?(album.id)
-        self.albums_by_id[album.id] = album
-        if self.albums.nil?
-          self.albums = []
-        end
-        self.albums << album
+      if self.albums.nil?
+        self.albums = {}
+      end
+      unless self.albums.key?(album.id)
+        self.albums[album.id] = album
       end
     end
 
@@ -104,9 +86,9 @@ module Drum
         name: h['name'],
         description: h['description'],
         author_id: h['author_id'],
-        users: h['users']&.map { |u| User.deserialize(u) },
-        artists: h['artists']&.map { |a| Artist.deserialize(a) },
-        albums: h['albums']&.map { |a| Album.deserialize(a) },
+        users: h['users']&.map { |u| User.deserialize(u) }&.group_by(&:id),
+        artists: h['artists']&.map { |a| Artist.deserialize(a) }&.group_by(&:id),
+        albums: h['albums']&.map { |a| Album.deserialize(a) }&.group_by(&:id),
         tracks: h['tracks']&.map { |t| Track.deserialize(t) },
         spotify: h['spotify'].try { |s| PlaylistSpotify.deserialize(s) }
       )
@@ -120,9 +102,9 @@ module Drum
         'name' => self.name,
         'description' => self.description,
         'author_id' => self.author_id,
-        'users' => self.users&.map { |u| u.serialize },
-        'artists' => self.artists&.map { |a| a.serialize },
-        'albums' => self.albums&.map { |a| a.serialize },
+        'users' => self.users&.each_value&.map { |u| u.serialize },
+        'artists' => self.artists&.each_value&.map { |a| a.serialize },
+        'albums' => self.albums&.each_value&.map { |a| a.serialize },
         'tracks' => self.tracks&.map { |t| t.serialize },
         'spotify' => self.spotify&.serialize
       }.compact
