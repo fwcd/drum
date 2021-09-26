@@ -6,6 +6,8 @@ module Drum
 
   # A list of tracks with metadata.
   #
+  # @!attribute id
+  #   @return [String] An internal id for the playlist
   # @!attribute name
   #   @return [String] The name of the playlist
   # @!attribute description
@@ -23,7 +25,7 @@ module Drum
   # @!attribute spotify
   #   @return [optional, PlaylistSpotify] Spotify-specific metadata
   class Playlist < Struct.new(
-    :name, :description,
+    :id, :name, :description,
     :author_id,
     :users, :artists, :albums, :tracks,
     :spotify,
@@ -83,6 +85,7 @@ module Drum
     # @return [Playlist] The parsed playlist
     def self.deserialize(h)
       Playlist.new(
+        id: h['id'],
         name: h['name'],
         description: h['description'],
         author_id: h['author_id'],
@@ -99,6 +102,7 @@ module Drum
     # @return [Hash<String, Object>] The serialized representation
     def serialize
       {
+        'id' => self.id,
         'name' => self.name,
         'description' => self.description,
         'author_id' => self.author_id,

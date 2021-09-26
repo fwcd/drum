@@ -6,6 +6,7 @@ describe Drum::Playlist do
   describe 'Playlist::deserialize' do
     it 'should deserialize correctly' do
       expect(Drum::Playlist.deserialize({
+        'id' => '9',
         'name' => 'My Playlist',
         'description' => 'Lots of great songs',
         'artists' => [
@@ -17,6 +18,7 @@ describe Drum::Playlist do
           { 'name' => 'Let it be', 'artist_ids' => ['1'] }
         ]
       })).to eq Drum::Playlist.new(
+        id: '9',
         name: 'My Playlist',
         description: 'Lots of great songs',
         artists: {
@@ -34,6 +36,7 @@ describe Drum::Playlist do
   describe 'Playlist::serialize' do
     it 'should serialize correctly' do
       expect(Drum::Playlist.new(
+        id: '7',
         name: 'My Playlist 2',
         description: 'More great songs',
         artists: {
@@ -43,6 +46,7 @@ describe Drum::Playlist do
           Drum::Track.new(name: 'Jailhouse Rock', artist_ids: ['0'])
         ]
       ).serialize).to eq({
+        'id' => '7',
         'name' => 'My Playlist 2',
         'description' => 'More great songs',
         'artists' => [

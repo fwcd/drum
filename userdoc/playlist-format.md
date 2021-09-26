@@ -16,6 +16,7 @@ A playlist is 'smart' if and only if it contains `filter`s.
 The top-level object in a playlist file.
 
 ```yaml
+id: string
 name: string
 description: string?
 author_id: string? (references User.id)
