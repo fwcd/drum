@@ -26,6 +26,13 @@ class Drum::Service
 
   # TODO: Update docs to be more general (e.g. ref instead of playlist_ref)
 
+  # Removes playlists from this service.
+  #
+  # @param [Ref] playlist_ref A ref to the playlists (see README for examples)
+  def remove(playlist_ref)
+    raise "ERROR: Service #{self.name} cannot remove playlists (yet)!"
+  end
+
   # Downloads playlists from this service.
   #
   # @param [Ref] playlist_ref A ref to the playlists (see README for examples)

@@ -151,5 +151,24 @@ module Drum
         end
       end
     end
+
+    desc 'rm [REF]', 'Removes a playlist from the corresponding service.'
+
+    # Removes a playlist from the corresponding service.
+    #
+    # @param [String] raw_ref The playlist ref.
+    # @return [void]
+    def rm(raw_ref)
+      ref = self.parse_ref(raw_ref)
+
+      if ref.nil?
+        raise "Could not parse ref: #{raw_ref}"
+      end
+
+      self.with_service(ref.service_name) do |name, service|
+        puts "Removing from #{name}..."
+        service.remove(ref)
+      end
+    end
   end
 end
