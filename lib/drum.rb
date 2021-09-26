@@ -88,7 +88,7 @@ module Drum
       end
     end
 
-    desc 'show [REF]', 'Previews a playlist in a simplified format.'
+    desc 'show [REF]', 'Preview a playlist in a simplified format'
 
     # Previews a playlist in a simplified format.
     #
@@ -116,7 +116,7 @@ module Drum
       end
     end
     
-    desc 'cp [SOURCE] [DEST]', 'Copies a playlist from the source to the given destination.'
+    desc 'cp [SOURCE] [DEST]', 'Copy a playlist from the source to the given destination'
 
     # Copies a playlist from the source to the given destination.
     #
@@ -152,7 +152,7 @@ module Drum
       end
     end
 
-    desc 'rm [REF]', 'Removes a playlist from the corresponding service.'
+    desc 'rm [REF]', 'Remove a playlist from the corresponding service'
 
     # Removes a playlist from the corresponding service.
     #
