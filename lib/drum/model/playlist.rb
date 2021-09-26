@@ -86,9 +86,9 @@ module Drum
         name: h['name'],
         description: h['description'],
         author_id: h['author_id'],
-        users: h['users']&.map { |u| User.deserialize(u) }&.group_by(&:id),
-        artists: h['artists']&.map { |a| Artist.deserialize(a) }&.group_by(&:id),
-        albums: h['albums']&.map { |a| Album.deserialize(a) }&.group_by(&:id),
+        users: h['users']&.map { |u| User.deserialize(u) }&.map { |u| [u.id, u] }&.to_h,
+        artists: h['artists']&.map { |a| Artist.deserialize(a) }&.map { |a| [a.id, a] }&.to_h,
+        albums: h['albums']&.map { |a| Album.deserialize(a) }&.map { |a| [a.id, a] }&.to_h,
         tracks: h['tracks']&.map { |t| Track.deserialize(t) },
         spotify: h['spotify'].try { |s| PlaylistSpotify.deserialize(s) }
       )

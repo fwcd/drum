@@ -19,10 +19,10 @@ describe Drum::Playlist do
       })).to eq Drum::Playlist.new(
         name: 'My Playlist',
         description: 'Lots of great songs',
-        artists: [
-          Drum::Artist.new(id: '0', name: 'Queen'),
-          Drum::Artist.new(id: '1', name: 'The Beatles')
-        ],
+        artists: {
+          '0' => Drum::Artist.new(id: '0', name: 'Queen'),
+          '1' => Drum::Artist.new(id: '1', name: 'The Beatles')
+        },
         tracks: [
           Drum::Track.new(name: 'Bohemian Rhapsody', artist_ids: ['0']),
           Drum::Track.new(name: 'Let it be', artist_ids: ['1'])
@@ -36,9 +36,9 @@ describe Drum::Playlist do
       expect(Drum::Playlist.new(
         name: 'My Playlist 2',
         description: 'More great songs',
-        artists: [
-          Drum::Artist.new(id: '0', name: 'Elvis Presley')
-        ],
+        artists: {
+          '0' => Drum::Artist.new(id: '0', name: 'Elvis Presley')
+        },
         tracks: [
           Drum::Track.new(name: 'Jailhouse Rock', artist_ids: ['0'])
         ]
