@@ -354,12 +354,7 @@ module Drum
     def to_spotify_tracks(tracks)
       unless tracks.nil? || tracks.empty?
         # TODO: If track has no ID, match it using search
-        external_ids = tracks[...TO_SPOTIFY_TRACKS_CHUNK_SIZE].flat_map do |track|
-          @db[:track_services].where(
-            service_id: @service_id,
-            track_id: track[:id]
-          ).select_map(:external_id)
-        end.to_a
+        external_ids = tracks[...TO_SPOTIFY_TRACKS_CHUNK_SIZE].filter_map { |t| t&.spotify&.id }
         external_tracks = RSpotify::Track.find(external_ids)
         external_tracks + to_spotify_tracks(tracks[TO_SPOTIFY_TRACKS_CHUNK_SIZE...])
       else
@@ -377,13 +372,9 @@ module Drum
     def upload_playlist(playlist, output: method(:puts))
       # TODO: Use actual description
       description = Time.now.strftime('Pushed with Drum on %Y-%m-%d.')
-      external_playlist = @me.create_playlist!(playlist[:name], description: description, public: false, collaborative: false)
+      external_playlist = @me.create_playlist!(playlist.name, description: description, public: false, collaborative: false)
 
-      tracks = @db[:playlist_tracks]
-        .join(:tracks, id: :track_id)
-        .where(playlist_id: playlist[:id])
-        .order(:track_index)
-        .to_a
+      tracks = playlist.tracks
 
       output.call "Externalizing #{tracks.length} playlist track(s)..."
       external_tracks = self.to_spotify_tracks(tracks)
@@ -515,18 +506,17 @@ module Drum
       end
     end
 
-    def push(playlists)
-      # FIXME: Rewrite
-
+    def upload(ref, playlists)
       self.authenticate
 
-      user_id = self.store_user(@me)
-      library_id = self.store_library(user_id)
+      # Note that pushes currently intentionally always create a new playlist
+      # TODO: Flag for overwriting (something like -f, --force?)
 
-      # Note that pushes intentionally always create a new playlist
-      # TODO: Flag for overwriting
+      unless ref.resource_type == :special && ref.resource_location == :playlists
+        raise 'Cannot upload to anything other than @spotify/playlists yet!'
+      end
 
-      puts 'Uploading playlists...'
+      puts "Uploading #{playlists.length} playlist(s)..."
       bar = ProgressBar.new(playlists.length)
       playlists.each do |playlist|
         self.upload_playlist(playlist, output: bar.method(:puts))
