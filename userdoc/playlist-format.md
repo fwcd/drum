@@ -67,6 +67,8 @@ artist_ids: string[] (references Artist.id)
 album_id: string? (references Album.id)
 duration_ms: number?
 explicit: boolean?
+added_at: string? (ISO8601 date)
+added_by: string? (references User.id)
 isrc: string?
 spotify:
   id: string
