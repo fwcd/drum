@@ -10,6 +10,10 @@ module Drum
       'file'
     end
 
+    def supports_source_mutations
+      true
+    end
+
     def parse_ref(raw_ref)
       unless raw_ref.is_token
         path = Pathname.new(raw_ref.text)

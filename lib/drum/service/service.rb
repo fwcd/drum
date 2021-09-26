@@ -8,6 +8,14 @@ class Drum::Service
     raise "ERROR: Service does not specify a name!"
   end
 
+  # Whether the service supports updates ('mutations') to the playlist
+  # when used as a source.
+  #
+  # @return [Boolean] Whether 'mutations' to the playlist are supported
+  def supports_source_mutations
+    false
+  end
+
   # Tries to parse a ref from this service.
   #
   # @param [RawRef] raw_ref The raw reference to be parsed.
