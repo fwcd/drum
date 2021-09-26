@@ -23,6 +23,15 @@ module Drum
       end
     end
 
+    def remove(playlist_ref)
+      path = playlist_ref.resource_location
+      if path.directory?
+        raise 'Removing directories is not supported!'
+      end
+      puts "Removing #{path}..."
+      path.delete
+    end
+
     def download(playlist_ref)
       path = playlist_ref.resource_location
       paths = if path.directory?
