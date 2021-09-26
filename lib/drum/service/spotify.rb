@@ -457,30 +457,6 @@ module Drum
 
     # Service
 
-    def preview_playlist(playlist)
-      "Playlist '#{playlist.name}': #{playlist.total} track(s)"
-    end
-
-    def preview(ref)
-      # TODO: Album, track, etc previewing
-
-      self.authenticate
-
-      case ref.resource_type
-      when :special
-        case ref.resource_location
-        when :playlists
-          playlists = self.all_spotify_playlists
-          puts playlists.map { |p| self.preview_playlist(p) }
-        else raise "Special resource location '#{ref.resource_location}' cannot be previewed (yet)"
-        end
-      when :playlist
-        playlist = RSpotify::Playlist.find(ref.resource_location)
-        self.preview_playlist(playlist)
-      else raise "Resource type '#{ref.resource_type}' cannot be previewed (yet)"
-      end
-    end
-
     def download(ref)
       self.authenticate
 
