@@ -27,6 +27,16 @@ module Drum
           .downcase
     end
   end
+
+  module ToHashById
+    # Initializes a hash from the array grouping by ids as keys
+    # (which are assumed to be unique).
+    #
+    # @return [Hash<Object, Object>] The resulting hash
+    def to_h_by_id
+      self.map { |v| [v.id, v] }.to_h
+    end
+  end
 end
 
 class Object
@@ -35,4 +45,8 @@ end
 
 class String
   include Drum::Casings
+end
+
+class Array
+  include Drum::ToHashById
 end
