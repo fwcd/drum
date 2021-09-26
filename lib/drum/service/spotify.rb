@@ -326,7 +326,7 @@ module Drum
       added_ats = playlist.tracks_added_at
 
       tracks = tracks || self.all_spotify_playlist_tracks(playlist)
-      output.call "Storing #{tracks.length} playlist track(s)..."
+      output.call "Got #{tracks.length} playlist track(s)..."
       tracks.each_with_index do |track, i|
         new_track, new_artists, new_album = self.from_spotify_track(track, output: output)
         new_track.added_at = added_ats[track.id]
