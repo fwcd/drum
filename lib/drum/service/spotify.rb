@@ -318,6 +318,7 @@ module Drum
 
     def from_spotify_playlist(playlist, tracks = nil, output: method(:puts))
       new_playlist = Playlist.new(
+        id: self.hexdigest(playlist.id),
         name: playlist.name,
         description: playlist&.description,
         spotify: PlaylistSpotify.new(

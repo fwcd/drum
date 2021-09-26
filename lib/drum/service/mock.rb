@@ -21,6 +21,7 @@ module Drum
     def download(playlist_ref)
       if playlist_ref.resource_type == :playlist
         [Playlist.new(
+          id: '95d5e24cde85a09ce2ac0ae381179dabacee0202',
           name: 'My Playlist',
           description: 'Lots of great songs',
           artists: [

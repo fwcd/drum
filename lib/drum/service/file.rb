@@ -39,8 +39,16 @@ module Drum
         yaml = playlist.serialize.to_yaml
 
         if path.directory?
-          name = "#{playlist.name.kebabcase}.yaml"
-          path.join(name).write(yaml)
+          playlist_path = lambda do |length|
+            path.join("#{playlist.name.kebabcase}-#{playlist.id[...length]}.yaml")
+          end
+
+          length = 6
+          while playlist_path[length].exist?
+            length += 1
+          end
+
+          playlist_path[length].write(yaml)
         else
           path.write(yaml)
         end
