@@ -8,6 +8,7 @@ require 'drum/service/stdio'
 require 'drum/version'
 require 'highline'
 require 'thor'
+require 'yaml'
 
 module Drum
   class Error < StandardError; end
@@ -87,12 +88,12 @@ module Drum
       end
     end
 
-    desc 'preview [REF]', 'Previews a playlist from an external service (e.g. spotify)'
+    desc 'show [REF]', 'Previews a playlist in a simplified format.'
 
-    # Previews a playlist from an external service.
+    # Previews a playlist in a simplified format.
     #
     # @param [String] raw_ref The (raw) playlist ref.
-    def preview(raw_ref)
+    def show(raw_ref)
       ref = self.parse_ref(raw_ref)
 
       if ref.nil?
@@ -100,13 +101,22 @@ module Drum
       end
 
       self.with_service(ref.service_name) do |name, service|
-        puts "Previewing from #{name}..."
-        service.preview(ref)
+        playlists = service.download(ref)
+        
+        playlists.each do |playlist|
+          puts({
+            'name' => playlist.name,
+            'description' => playlist&.description,
+            'tracks' => playlist.tracks.each_with_index.map do |track, i|
+              artists = (track.artist_ids&.filter_map { |id| playlist.artists_by_id[id]&.name } || []).join(', ')
+              "#{i + 1}. #{artists} - #{track.name}"
+            end
+          }.compact.to_yaml)
+        end
       end
     end
     
     desc 'cp [SOURCE] [DEST]', 'Copies a playlist from the source to the given destination.'
-    method_option :query_features, aliases: '--query-features', desc: 'Queries audio features for each track.'
 
     # Copies a playlist from the source to the given destination.
     #

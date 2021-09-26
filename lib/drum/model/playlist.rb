@@ -29,18 +29,19 @@ module Drum
   #   @return [optional, PlaylistSpotify] Spotify-specific metadata
   class Playlist < Struct.new(
     :name, :description,
-    :author_id, :users, :artists, :albums, :tracks,
+    :author_id,
+    :users, :artists, :albums, :tracks,
+    :users_by_id, :artists_by_id, :albums_by_id, :tracks_by_id,
     :spotify,
     keyword_init: true
   )
     def initialize(**kwargs)
       super(**kwargs)
 
-      # Internal sets for fast lookups in the store_x methods
-      @user_ids = Set[]
-      @artist_ids = Set[]
-      @album_ids = Set[]
-      @track_ids = Set[]
+      self.users_by_id = users&.group_by(&:id) || {}
+      self.artists_by_id = artists&.group_by(&:id) || {}
+      self.albums_by_id = albums&.group_by(&:id) || {}
+      self.tracks_by_id = tracks&.group_by(&:id) || {}
     end
 
     # TODO: Handle merging in the store_x methods?
@@ -49,8 +50,8 @@ module Drum
     #
     # @param [User] user The user to store.
     def store_user(user)
-      unless @user_ids.include?(user.id)
-        @user_ids.add(user.id)
+      unless self.users_by_id.key?(user.id)
+        self.users_by_id[user.id] = user
         if self.users.nil?
           self.users = []
         end
@@ -62,8 +63,8 @@ module Drum
     #
     # @param [Artist] artist The artist to store.
     def store_artist(artist)
-      unless @artist_ids.include?(artist.id)
-        @artist_ids.add(artist.id)
+      unless self.artists_by_id.key?(artist.id)
+        self.artists_by_id[artist.id] = artist
         if self.artists.nil?
           self.artists = []
         end
@@ -75,8 +76,8 @@ module Drum
     #
     # @param [Album] album The album to store.
     def store_album(album)
-      unless @album_ids.include?(album.id)
-        @album_ids.add(album.id)
+      unless self.albums_by_id.key?(album.id)
+        self.albums_by_id[album.id] = album
         if self.albums.nil?
           self.albums = []
         end
