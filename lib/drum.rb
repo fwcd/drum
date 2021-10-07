@@ -1,5 +1,4 @@
 require 'drum/model/raw_ref'
-require 'drum/service/applemusic'
 require 'drum/service/file'
 require 'drum/service/mock'
 require 'drum/service/service'
@@ -33,7 +32,6 @@ module Drum
         MockService.new,
         StdioService.new,
         SpotifyService.new(@cache_dir),
-        AppleMusicService.new(@cache_dir),
         # The file service should be last since it may
         # successfully parse refs that overlap with other
         # services.
