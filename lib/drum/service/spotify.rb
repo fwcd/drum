@@ -147,7 +147,7 @@ module Drum
         client_secret: client_secret
       })
       
-      consume_authentication_response(auth_response)
+      self.consume_authentication_response(auth_response)
     end
 
     def authenticate_user_via_refresh(client_id, client_secret, refresh_token)
@@ -165,7 +165,7 @@ module Drum
         'Authorization' => "Basic #{encoded}"
       })
 
-      consume_authentication_response(auth_response)
+      self.consume_authentication_response(auth_response)
     end
 
     def authenticate_user(client_id, client_secret)
@@ -176,9 +176,9 @@ module Drum
       end
 
       unless existing[:refresh_token].nil?
-        authenticate_user_via_refresh(client_id, client_secret, existing[:refresh_token])
+        self.authenticate_user_via_refresh(client_id, client_secret, existing[:refresh_token])
       else
-        authenticate_user_via_browser(client_id, client_secret)
+        self.authenticate_user_via_browser(client_id, client_secret)
       end
     end
     
