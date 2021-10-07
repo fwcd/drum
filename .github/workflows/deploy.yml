@@ -1,0 +1,27 @@
+name: Test
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7.0
+    - name: Install dependencies
+      run: |
+        gem install bundler -v 2.2.0
+        bundle install
+    - name: Build gem
+      run: bundle exec rake build
+    - name: Push gem to GitHub Packages
+      run: |
+        mkdir -p ~/.gem
+        echo ":github: Bearer ${{ secrets.GITHUB_TOKEN }}" > ~/.gem/credentials
+        bundle exec gem push --key github --host "https://rubygems.pkg.github.com/fwcd" pkg/drum-*.gem
