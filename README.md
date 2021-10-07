@@ -1,18 +1,43 @@
 # Drum
 
-A small CLI tool for syncing your playlists across music streaming services and with your local library.
+A small tool for copying your playlists across music streaming services. Think `rsync`, but for playlists.
 
 ![Icon](artwork/icon128.png)
 
-Drum supports a range of commands:
+## Usage
 
-* **Music streaming services**
-    * `drum preview [service]` outputs personal playlists from the given service that are available for `pull`
-    * `drum pull [service]` downloads all personal playlists and the user's stored tracks from the given service
-    * `drum push [service] -p [playlist id]` uploads a single playlist from the local library to the given service
-* **Local library management**
-    * `drum playlists` outputs the locally stored playlists
-    * `drum tracks -p [playlist id]` outputs the tracks in a locally stored playlist
+The basic usage pattern is always `drum cp [source] [destination]` where `source` and `destination` may be any of the following:
+
+* A file or folder, e.g. `.`, `some/folder`, `some-file.yaml`
+* A URI, e.g. `https://open.spotify.com/playlist/123456`, `spotify:playlist:123456`, `file:///path/to/list.yaml`
+* A special token, e.g. `@spotify/playlists`, `@spotify/tracks`, `@stdin`, `@stdout`
+* A dash `-`, synonymous with `@stdin` and `@stdout`, depending on usage
+
+> Note that if the source is folder-like, i.e. includes multiple playlists, the destination has to be folder-like too. (The reverse is not true though.)
+
+> Note that copying may have side-effects on the source playlist, e.g. pushing a new local playlist to `@spotify/playlists` will add the corresponding Spotify ID to the local playlist.
+
+### Examples
+
+**Download a playlist from Spotify.**
+
+* `drum cp https://open.spotify.com/playlist/123456 my-fancy-list.yaml`
+* `drum cp spotify:playlist:123456 my-fancy-list.yaml`
+* `drum cp spotify:playlist:123456 some/folder`
+
+**Download your liked songs playlist from Spotify.**
+
+* `drum cp @spotify/tracks liked.yaml`
+
+**Download all playlists from your Spotify library.**
+
+* `drum cp @spotify/playlists .`
+
+**Upload a playlist to Spotify.**
+
+* `drum cp my-fancy-list.yaml @spotify/playlists`
+
+## Supported Services
 
 Currently, the following music streaming services are supported:
 
@@ -23,15 +48,19 @@ Currently, the following music streaming services are supported:
 
 ## Development
 
-After checking out the repo, run `bin/setup` (or `bundle install`) to install dependencies. If you use macOS and the installation of the SQLite3 gem fails, try
-
-```
-sudo gem install sqlite3 -- --with-sqlite3-lib=/usr/lib
-```
+After checking out the repo, run `bin/setup` (or `bundle install`) to install dependencies.
 
 To run the application, run `bundle exec bin/drum`. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 > Note that you may need to run `bundle exec ruby bin/drum` on Windows
+
+To package the application into a gem, run `bundle exec rake build`. The built gem should then be located in `pkg`.
+
+To install the gem, run `bundle exec rake install`.
+
+To generate the documentation, run `bundle exec rake yard`.
+
+To run tests, run `bundle exec rake spec`.
 
 ### Spotify
 

@@ -1,49 +1,44 @@
-require 'drum/db'
-require 'drum/web/server'
+require 'drum/model/raw_ref'
 require 'drum/service/applemusic'
-require 'drum/service/dummy'
+require 'drum/service/file'
+require 'drum/service/mock'
 require 'drum/service/service'
 require 'drum/service/spotify'
+require 'drum/service/stdio'
 require 'drum/version'
-require 'table_print'
 require 'highline'
 require 'thor'
-require 'git'
+require 'yaml'
 
 module Drum
-  TEST = 3
-
   class Error < StandardError; end
   
+  # The command line interface for drum.
   class CLI < Thor
+    # Sets up the CLI by registering the services.
     def initialize(*args)
       super
 
       @hl = HighLine.new
 
       # Set up .drum directory
-      @dot_dir = "#{Dir.home}/.drum"
-      Dir.mkdir(@dot_dir) unless File.exists?(@dot_dir)
+      @dot_dir = Pathname.new(Dir.home) / '.drum'
+      @dot_dir.mkdir unless @dot_dir.directory?
 
-      db_url_path = "#{@dot_dir}/drum.sqlite3"
+      @cache_dir = @dot_dir / 'cache'
+      @cache_dir.mkdir unless @cache_dir.directory?
 
-      # Fix for Windows
-      unless db_url_path.start_with?('/')
-        db_url_path.prepend('/')
-      end
-
-      # Set up Git repo and database
-      @git = Git.init(@dot_dir)
-      @git.config('user.name', 'drum')
-      @git.config('user.email', '')
-      @db = Drum.setup_db("sqlite://#{db_url_path}")
-      self.commit_changes
-
-      @services = {
-        'dummy' => DummyService.new,
-        'spotify' => SpotifyService.new(@db),
-        'applemusic' => AppleMusicService.new(@db)
-      }
+      # Declare services in descending order of parse priority
+      @services = [
+        MockService.new,
+        StdioService.new,
+        SpotifyService.new(@cache_dir),
+        AppleMusicService.new(@cache_dir),
+        # The file service should be last since it may
+        # successfully parse refs that overlap with other
+        # services.
+        FileService.new
+      ].map { |s| [s.name, s] }.to_h
     end
 
     def self.exit_on_failure?
@@ -51,26 +46,39 @@ module Drum
     end
 
     no_commands do
-      def with_service(raw)
-        name = raw.downcase
+      # Performs a block with the given service, if registered.
+      #
+      # @yield [name, service] The block to run
+      # @yieldparam [String] name The name of the service
+      # @yieldparam [Service] service The service
+      # @param [String] raw_name The name of the service
+      def with_service(raw_name)
+        name = raw_name.downcase
         service = @services[name]
-        unless service.nil?
-          yield(name, service)
-        else
+        if service.nil?
           raise "Sorry, #{name} is not a valid service! Try one of these: #{@services.keys}"
         end
+        yield(name, service)
       end
 
-      def commit_changes
-        # TODO: Make sure that we are on the correct (default?) branch
-        begin
-          @git.add(all: true)
-          @git.commit(Time.now.strftime('Snapshot %Y-%m-%d %H:%M:%S'))
-        rescue StandardError
-          # If repo is in a clean state and no changes were made, ignore
+      # Parses a ref using the registered services.
+      #
+      # @param [String] raw The raw ref to parse
+      # @return [optional, Ref] The ref, if parsed successfully with any of the services
+      def parse_ref(raw)
+        raw_ref = RawRef.parse(raw)
+        @services.each_value do |service|
+          ref = service.parse_ref(raw_ref)
+          unless ref.nil?
+            return ref
+          end
         end
+        return nil
       end
 
+      # Prompts the user for confirmation.
+      #
+      # @param [String] prompt The message to be displayed
       def confirm(prompt)
         answer = @hl.ask "#{prompt} [y/n]"
         unless answer == 'y'
@@ -80,89 +88,87 @@ module Drum
       end
     end
 
-    desc 'preview', 'Previews information from an external service (e.g. spotify)'
-    def preview(raw)
-      self.with_service(raw) do |name, service|
-        puts "Previewing #{name}..."
-        service.preview
+    desc 'show [REF]', 'Preview a playlist in a simplified format'
+
+    # Previews a playlist in a simplified format.
+    #
+    # @param [String] raw_ref The (raw) playlist ref.
+    def show(raw_ref)
+      ref = self.parse_ref(raw_ref)
+
+      if ref.nil?
+        raise "Could not parse ref: #{raw_ref}"
+      end
+
+      self.with_service(ref.service_name) do |name, service|
+        playlists = service.download(ref)
+        
+        playlists.each do |playlist|
+          puts({
+            'name' => playlist.name,
+            'description' => playlist&.description,
+            'tracks' => playlist.tracks.each_with_index.map do |track, i|
+              artists = (track.artist_ids&.filter_map { |id| playlist.artists[id]&.name } || []).join(', ')
+              "#{i + 1}. #{artists} - #{track.name}"
+            end
+          }.compact.to_yaml)
+        end
       end
     end
     
-    desc 'pull', 'Fetches a library from an external service (e.g. spotify)'
-    method_option :update_existing, aliases: '--update-existing', desc: 'Updates existing tracks in the database.'
-    method_option :query_features, aliases: '--query-features', desc: 'Queries audio features for each track.'
-    def pull(raw)
-      self.with_service(raw) do |name, service|
-        puts "Pulling #{name}..."
-        service.pull(options)
-        self.commit_changes
+    desc 'cp [SOURCE] [DEST]', 'Copy a playlist from the source to the given destination'
+
+    # Copies a playlist from the source to the given destination.
+    #
+    # @param [String] raw_src_ref The source playlist ref.
+    # @param [String] raw_dest_ref The destination playlist ref.
+    # @return [void]
+    def cp(raw_src_ref, raw_dest_ref)
+      src_ref = self.parse_ref(raw_src_ref)
+      dest_ref = self.parse_ref(raw_dest_ref)
+
+      if src_ref.nil?
+        raise "Could not parse src ref: #{raw_src_ref}"
+      end
+      if dest_ref.nil?
+        raise "Could not parse dest ref: #{raw_dest_ref}"
+      end
+
+      self.with_service(src_ref.service_name) do |src_name, src_service|
+        self.with_service(dest_ref.service_name) do |dest_name, dest_service|
+          puts "Copying from #{src_name} to #{dest_name}..."
+
+          # TODO: Investigate where to handle merging. Should each service
+          #       be responsible for doing so, e.g. should the file service
+          #       merge playlists and return the result from 'upload'?
+
+          playlists = src_service.download(src_ref)
+          updated_playlists = dest_service.upload(dest_ref, playlists)
+
+          unless updated_playlists.nil? || !src_service.supports_source_mutations
+            src_service.upload(src_ref, updated_playlists)
+          end
+        end
       end
     end
 
-    desc 'push', 'Uploads a library to an external service (e.g. spotify)'
-    method_option :playlist, aliases: '-p', desc: 'A playlist to pull.'
-    def push(raw)
-      playlist_id = options[:playlist]
-      self.with_service(raw) do |name, service|
-        playlists = if playlist_id
-          @db[:playlists].where(
-            id: playlist_id
-          ).to_a
-        else
-          @db[:playlists].to_a
-        end
+    desc 'rm [REF]', 'Remove a playlist from the corresponding service'
 
-        if playlists.length > 4
-          self.confirm "Are you sure you want to push #{playlists.length} playlists to #{name}? You can specify a single playlist id using the '-p' flag!"
-        end
+    # Removes a playlist from the corresponding service.
+    #
+    # @param [String] raw_ref The playlist ref.
+    # @return [void]
+    def rm(raw_ref)
+      ref = self.parse_ref(raw_ref)
 
-        puts "Pushing #{playlists.length} playlist(s) to #{name}..."
-        service.push(playlists, options)
-      end
-    end
-
-    desc 'playlists', 'Lists the stored playlists'
-    def playlists
-      tp @db[:library_playlists]
-        .left_join(:libraries, id: :library_id)
-        .join(:playlists, id: Sequel[:library_playlists][:playlist_id])
-        .select(
-          :playlist_id,
-          Sequel[Sequel[:playlists][:name]].as(:playlist_name),
-          Sequel[Sequel[:playlists][:description]].as(:playlist_description),
-          Sequel[Sequel[:playlists][:user_id]].as(:playlist_user_id),
-          Sequel[Sequel[:libraries][:name]].as(:library_name)
-        )
-    end
-
-    desc 'tracks', 'Lists the stored tracks'
-    method_option :playlist, aliases: '-p', desc: 'A playlist to query.'
-    method_option :all, aliases: '-a', desc: 'Whether to query all attributes.'
-    def tracks
-      playlist_id = options[:playlist]
-      if playlist_id
-        tracks = @db[:playlist_tracks]
-          .join(:tracks, id: :track_id)
-          .where(playlist_id: playlist_id)
-          .order(:track_index)
-        unless options[:all]
-          tracks = tracks.select(:track_index, :track_id, :name, :duration_ms, :added_at)
-        end
-      else
-        self.confirm "Are you sure you want to query the entire library? (This could take some time.) You can specify a single playlist id using the '-p' flag!"
-        tracks = @db[:tracks]
-        unless options[:all]
-          tracks = tracks.select(:id, :name, :duration_ms)
-        end
+      if ref.nil?
+        raise "Could not parse ref: #{raw_ref}"
       end
 
-      tp tracks
-    end
-
-    desc 'serve', 'Serves up a web interface for managing the local library.'
-    method_option :port, aliases: '-p', desc: 'The port to run on.'
-    def serve
-      Drum.run_web_server(@db, options)
+      self.with_service(ref.service_name) do |name, service|
+        puts "Removing from #{name}..."
+        service.remove(ref)
+      end
     end
   end
 end

@@ -1,9 +1,9 @@
-name: Ruby
+name: Test
 
-on: [push,pull_request]
+on: [push]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -11,7 +11,9 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: 2.7.0
-    - name: Run the default task
+    - name: Install dependencies
       run: |
         gem install bundler -v 2.2.0
         bundle install
+    - name: Run tests
+      run: bundle exec rake spec
