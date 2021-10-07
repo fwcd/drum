@@ -186,14 +186,12 @@ module Drum
           'refresh_token' => refresh_token,
           'access_refresh_callback' => Proc.new do |new_token, token_lifetime|
             new_expiry = DateTime.now + (token_lifetime / 86400.0)
-            # TODO: Clean up old token
-            @db[:auth_tokens].insert(
-              service_id: @service_id,
+            @auth_tokens[:latest] = {
               access_token: new_token,
               refresh_token: refresh_token, # TODO: Refresh token might change too
               token_type: token_type,
               expires_at: new_expiry
-            )
+            }
           end
         },
         'id' => @me_id
