@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  File: README
+  
+    &mdash; Documentation by YARD 0.9.26
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "README";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><div id='filecontents'>
+<h1 id="label-Drum">Drum</h1>
+
+<p>A small tool for copying your playlists across music streaming services. Think <code>rsync</code>, but for playlists.</p>
+
+<p><img src="artwork/icon128.png"></p>
+
+<h2 id="label-Usage">Usage</h2>
+
+<p>The basic usage pattern is always <code>drum cp [source] [destination]</code> where <code>source</code> and <code>destination</code> may be any of the following:</p>
+<ul><li>
+<p>A file or folder, e.g. <code>.</code>, <code>some/folder</code>, <code>some-file.yaml</code></p>
+</li><li>
+<p>A URI, e.g. <code>https://open.spotify.com/playlist/123456</code>, <code>spotify:playlist:123456</code>, <code>file:///path/to/list.yaml</code></p>
+</li><li>
+<p>A special token, e.g. <code>@spotify/playlists</code>, <code>@spotify/tracks</code>, <code>@stdin</code>, <code>@stdout</code></p>
+</li><li>
+<p>A dash <code>-</code>, synonymous with <code>@stdin</code> and <code>@stdout</code>, depending on usage</p>
+</li></ul>
+
+<blockquote>
+<p>Note that if the source is folder-like, i.e. includes multiple playlists, the destination has to be folder-like too. (The reverse is not true though.)</p>
+
+<p>Note that copying may have side-effects on the source playlist, e.g. pushing a new local playlist to <code>@spotify/playlists</code> will add the corresponding Spotify ID to the local playlist.</p>
+</blockquote>
+
+<h3 id="label-Examples">Examples</h3>
+
+<p><strong>Download a playlist from Spotify.</strong></p>
+<ul><li>
+<p><code>drum cp https://open.spotify.com/playlist/123456 my-fancy-list.yaml</code></p>
+</li><li>
+<p><code>drum cp spotify:playlist:123456 my-fancy-list.yaml</code></p>
+</li><li>
+<p><code>drum cp spotify:playlist:123456 some/folder</code></p>
+</li></ul>
+
+<p><strong>Download your liked songs playlist from Spotify.</strong></p>
+<ul><li>
+<p><code>drum cp @spotify/tracks liked.yaml</code></p>
+</li></ul>
+
+<p><strong>Download all playlists from your Spotify library.</strong></p>
+<ul><li>
+<p><code>drum cp @spotify/playlists .</code></p>
+</li></ul>
+
+<p><strong>Upload a playlist to Spotify.</strong></p>
+<ul><li>
+<p><code>drum cp my-fancy-list.yaml @spotify/playlists</code></p>
+</li></ul>
+
+<h2 id="label-Supported+Services">Supported Services</h2>
+
+<p>Currently, the following music streaming services are supported:</p>
+<ul><li>
+<p><code>spotify</code></p>
+</li><li>
+<p><code>applemusic</code> (partially, only <code>pull</code>)</p>
+</li></ul>
+
+<blockquote>
+<p>Note that the tool only processes metadata, not the actual audio files.</p>
+</blockquote>
+
+<h2 id="label-Development">Development</h2>
+
+<p>After checking out the repo, run <code>bin/setup</code> (or <code>bundle install</code>) to install dependencies.</p>
+
+<p>To run the application, run <code>bundle exec bin/drum</code>. You can also run <code>bin/console</code> for an interactive prompt that will allow you to experiment.</p>
+
+<blockquote>
+<p>Note that you may need to run <code>bundle exec ruby bin/drum</code> on Windows</p>
+</blockquote>
+
+<p>To package the application into a gem, run <code>bundle exec rake build</code>. The built gem should then be located in <code>pkg</code>.</p>
+
+<p>To install the gem, run <code>bundle exec rake install</code>.</p>
+
+<p>To generate the documentation, run <code>bundle exec rake yard</code>.</p>
+
+<p>To run tests, run <code>bundle exec rake spec</code>.</p>
+
+<h3 id="label-Spotify">Spotify</h3>
+
+<p>To use the service integration with Spotify, set the following environment variables:</p>
+
+<pre class="code ruby"><code class="ruby">SPOTIFY_CLIENT_ID=...
+SPOTIFY_CLIENT_SECRET=...
+</code></pre>
+
+<p>The client ID and secret can be obtained by creating a Spotify application in the <a href="https://developer.spotify.com/dashboard/applications">developer dashboard</a>. After adding the application, make sure to whitelist the following redirect URI (required for user authentication):</p>
+
+<pre class="code ruby"><code class="ruby">http://localhost:17998/callback
+</code></pre>
+
+<h3 id="label-Apple+Music">Apple Music</h3>
+
+<p>To use the service integration with Apple Music, set the following environment variables:</p>
+
+<pre class="code ruby"><code class="ruby">MUSICKIT_KEY_P8_FILE_PATH=...
+MUSICKIT_KEY_ID=...
+MUSICKIT_TEAM_ID=...
+</code></pre>
+
+<p>This (private) p8 key can be obtained as described <a href="https://help.apple.com/developer-account/#/devce5522674">here</a> or <a href="https://developer.apple.com/documentation/applemusicapi/getting_keys_and_creating_tokens">here</a> (requires an Apple Developer Program membership).</p>
+
+<h2 id="label-Limitations">Limitations</h2>
+<ul><li>
+<p>Neither the <a href="https://developer.spotify.com/documentation/general/guides/working-with-playlists/#folders">Spotify API</a> nor the <a href="https://github.com/Musish/Musish/issues/189#issuecomment-455749901">Apple Music API</a> provide a way to access folders currently</p>
+</li></ul>
+
+<h2 id="label-Contributing">Contributing</h2>
+
+<p>Bug reports and pull requests are welcome on GitHub at <a href="https://github.com/fwcd/drum">github.com/fwcd/drum</a>.</p>
+
+<h2 id="label-License">License</h2>
+
+<p>The gem is available as open source under the terms of the <a href="https://opensource.org/licenses/MIT">MIT License</a>.</p>
+</div></div>
+
+      <div id="footer">
+  Generated on Thu Oct  7 19:18:57 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.0).
+</div>
+
+    </div>
+  </body>
+</html>
