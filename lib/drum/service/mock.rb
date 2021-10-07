@@ -2,6 +2,7 @@ require 'drum/model/artist'
 require 'drum/model/ref'
 require 'drum/model/playlist'
 require 'drum/model/track'
+require 'drum/service/service'
 
 module Drum
   # A service that provides a mock playlist for ease of manual testing.

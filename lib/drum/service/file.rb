@@ -1,5 +1,6 @@
 require 'drum/model/playlist'
 require 'drum/model/ref'
+require 'drum/service/service'
 require 'pathname'
 require 'yaml'
 
