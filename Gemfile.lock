@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    drum (0.1.3)
+    drum (0.1.4)
       highline (~> 2.0)
       jwt (~> 2.2)
       launchy (~> 2.4)
@@ -20,7 +20,7 @@ GEM
     diff-lcs (1.4.4)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
-    faraday (1.7.2)
+    faraday (1.8.0)
       faraday-em_http (~> 1.0)
       faraday-em_synchrony (~> 1.0)
       faraday-excon (~> 1.1)
@@ -39,11 +39,12 @@ GEM
     faraday-net_http_persistent (1.2.0)
     faraday-patron (1.0.0)
     faraday-rack (1.0.0)
+    ffi (1.15.4-x64-mingw32)
     hashie (4.1.0)
     highline (2.0.3)
     http-cookie (1.0.4)
       domain_name (~> 0.5)
-    jwt (2.2.3)
+    jwt (2.3.0)
     launchy (2.4.3)
       addressable (~> 2.3)
     mime-types (3.3.1)
@@ -79,6 +80,11 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
+    rest-client (2.0.2-x64-mingw32)
+      ffi (~> 1.9)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 4.0)
+      netrc (~> 0.8)
     rspec (3.10.0)
       rspec-core (~> 3.10.0)
       rspec-expectations (~> 3.10.0)
@@ -102,6 +108,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.8)
+    unf_ext (0.0.8-x64-mingw32)
     webrick (1.7.0)
     yard (0.9.26)
 
