@@ -289,6 +289,7 @@
       <pre class="lines">
 
 
+18
 19
 20
 21
@@ -310,12 +311,10 @@
 37
 38
 39
-40
-41
-42</pre>
+40</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 19</span>
+      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 18</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='kw'>super</span>
@@ -334,7 +333,6 @@
     <span class='const'><span class='object_link'><a href="MockService.html" title="Drum::MockService (class)">MockService</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='comma'>,</span>
     <span class='const'><span class='object_link'><a href="StdioService.html" title="Drum::StdioService (class)">StdioService</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='comma'>,</span>
     <span class='const'><span class='object_link'><a href="SpotifyService.html" title="Drum::SpotifyService (class)">SpotifyService</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="SpotifyService.html#initialize-instance_method" title="Drum::SpotifyService#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='ivar'>@cache_dir</span><span class='rparen'>)</span><span class='comma'>,</span>
-    <span class='const'>AppleMusicService</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='ivar'>@cache_dir</span><span class='rparen'>)</span><span class='comma'>,</span>
     <span class='comment'># The file service should be last since it may
 </span>    <span class='comment'># successfully parse refs that overlap with other
 </span>    <span class='comment'># services.
@@ -390,12 +388,12 @@
       <pre class="lines">
 
 
-44
-45
-46</pre>
+42
+43
+44</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 44</span>
+      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 42</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_exit_on_failure?'>exit_on_failure?</span>
   <span class='kw'>true</span>
@@ -473,6 +471,8 @@
       <pre class="lines">
 
 
+124
+125
 126
 127
 128
@@ -498,12 +498,10 @@
 148
 149
 150
-151
-152
-153</pre>
+151</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 126</span>
+      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 124</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_cp'>cp</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_src_ref'>raw_src_ref</span><span class='comma'>,</span> <span class='id identifier rubyid_raw_dest_ref'>raw_dest_ref</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_src_ref'>src_ref</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_parse_ref'>parse_ref</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_src_ref'>raw_src_ref</span><span class='rparen'>)</span>
@@ -584,6 +582,8 @@
       <pre class="lines">
 
 
+159
+160
 161
 162
 163
@@ -593,12 +593,10 @@
 167
 168
 169
-170
-171
-172</pre>
+170</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 161</span>
+      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 159</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_rm'>rm</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_ref'>ref</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_parse_ref'>parse_ref</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='rparen'>)</span>
@@ -663,6 +661,8 @@
       <pre class="lines">
 
 
+94
+95
 96
 97
 98
@@ -682,12 +682,10 @@
 112
 113
 114
-115
-116
-117</pre>
+115</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 96</span>
+      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 94</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_show'>show</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_ref'>ref</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_parse_ref'>parse_ref</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='rparen'>)</span>
@@ -721,7 +719,7 @@
 </div>
 
       <div id="footer">
-  Generated on Thu Oct  7 19:29:17 2021 by
+  Generated on Thu Oct  7 19:50:34 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.0).
 </div>
