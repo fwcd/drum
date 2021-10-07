@@ -75,7 +75,7 @@ module Drum
       
       @auth_tokens[:latest] = {
         access_token: access_token,
-        refresh_token: refresh_token,
+        refresh_token: refresh_token || @auth_tokens[:latest][:refresh_token],
         token_type: token_type,
         expires_at: expires_at
       }
@@ -85,8 +85,6 @@ module Drum
     end
 
     def authenticate_user_via_browser(client_id, client_secret)
-      puts 'Authenticating via browser...'
-
       # Generate a new access refresh token,
       # this might require user interaction. Since the
       # user has to authenticate through the browser
@@ -151,8 +149,6 @@ module Drum
     end
 
     def authenticate_user_via_refresh(client_id, client_secret, refresh_token)
-      puts 'Authenticating via refresh...'
-
       # Authenticate the user using an existing (cached)
       # refresh token. This is useful if the user already
       # has been authenticated or a non-interactive authentication
@@ -171,13 +167,16 @@ module Drum
     def authenticate_user(client_id, client_secret)
       existing = @auth_tokens[:latest]
 
-      unless existing.nil? || existing[:expires_at] < DateTime.now
+      unless existing.nil? || existing[:expires_at].nil? || existing[:expires_at] < DateTime.now
+        puts 'Skipping authentication...'
         return existing[:access_token], existing[:refresh_token], existing[:token_type]
       end
 
       unless existing[:refresh_token].nil?
+        puts 'Authenticating via refresh...'
         self.authenticate_user_via_refresh(client_id, client_secret, existing[:refresh_token])
       else
+        puts 'Authenticating via browser...'
         self.authenticate_user_via_browser(client_id, client_secret)
       end
     end
@@ -205,8 +204,6 @@ module Drum
       if client_id.nil? || client_secret.nil?
         raise "Please specify the env vars #{CLIENT_ID_VAR} and #{CLIENT_SECRET_VAR}!"
       end
-
-      # TODO: Perform refresh flow if a valid token is in the DB
 
       self.authenticate_app(client_id, client_secret)
       access_token, refresh_token, token_type = self.authenticate_user(client_id, client_secret)
