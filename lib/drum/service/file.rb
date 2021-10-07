@@ -53,7 +53,7 @@ module Drum
           end
 
           length = 6
-          while playlist_path[length].exist?
+          while playlist_path[length].exist? && Playlist.deserialize(YAML.load(playlist_path[length].read)).id != playlist.id
             length += 1
           end
 
