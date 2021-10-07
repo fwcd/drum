@@ -4,6 +4,7 @@ require 'drum/model/user'
 require 'drum/model/track'
 require 'drum/service/service'
 require 'drum/utils/persist'
+require 'base64'
 require 'digest'
 require 'json'
 require 'launchy'
@@ -59,13 +60,32 @@ module Drum
     def authenticate_app(client_id, client_secret)
       RSpotify.authenticate(client_id, client_secret)
     end
-    
-    def authenticate_user(client_id, client_secret)
-      existing = @auth_tokens[:latest]
 
-      unless existing.nil? || existing[:expires_at] < DateTime.now
-        return existing[:access_token], existing[:refresh_token], existing[:token_type]
+    def consume_authentication_response(auth_response)
+      unless auth_response.code >= 200 && auth_response.code < 300
+        raise "Something went wrong while fetching auth token: #{auth_response}"
       end
+
+      auth_json = JSON.parse(auth_response.body)
+      access_token = auth_json['access_token']
+      refresh_token = auth_json['refresh_token']
+      token_type = auth_json['token_type']
+      expires_in = auth_json['expires_in'] # seconds
+      expires_at = DateTime.now + (expires_in / 86400.0)
+      
+      @auth_tokens[:latest] = {
+        access_token: access_token,
+        refresh_token: refresh_token,
+        token_type: token_type,
+        expires_at: expires_at
+      }
+      puts "Successfully added access token that expires at #{expires_at}."
+      
+      [access_token, refresh_token, token_type]
+    end
+
+    def authenticate_user_via_browser(client_id, client_secret)
+      puts 'Authenticating via browser...'
 
       # Generate a new access refresh token,
       # this might require user interaction. Since the
@@ -127,26 +147,39 @@ module Drum
         client_secret: client_secret
       })
       
-      unless auth_response.code >= 200 && auth_response.code < 300
-        raise "Something went wrong while fetching auth token: #{auth_response}"
+      consume_authentication_response(auth_response)
+    end
+
+    def authenticate_user_via_refresh(client_id, client_secret, refresh_token)
+      puts 'Authenticating via refresh...'
+
+      # Authenticate the user using an existing (cached)
+      # refresh token. This is useful if the user already
+      # has been authenticated or a non-interactive authentication
+      # is required (e.g. in a CI script).
+      encoded = Base64.strict_encode64("#{client_id}:#{client_secret}")
+      auth_response = RestClient.post('https://accounts.spotify.com/api/token', {
+        grant_type: 'refresh_token',
+        refresh_token: refresh_token
+      }, {
+        'Authorization' => "Basic #{encoded}"
+      })
+
+      consume_authentication_response(auth_response)
+    end
+
+    def authenticate_user(client_id, client_secret)
+      existing = @auth_tokens[:latest]
+
+      unless existing.nil? || existing[:expires_at] < DateTime.now
+        return existing[:access_token], existing[:refresh_token], existing[:token_type]
       end
 
-      auth_json = JSON.parse(auth_response.body)
-      access_token = auth_json['access_token']
-      refresh_token = auth_json['refresh_token']
-      token_type = auth_json['token_type']
-      expires_in = auth_json['expires_in'] # seconds
-      expires_at = DateTime.now + (expires_in / 86400.0)
-      
-      @auth_tokens[:latest] = {
-        access_token: access_token,
-        refresh_token: refresh_token,
-        token_type: token_type,
-        expires_at: expires_at
-      }
-      puts "Successfully added access token that expires at #{expires_at}."
-      
-      return access_token, refresh_token, token_type
+      unless existing[:refresh_token].nil?
+        authenticate_user_via_refresh(client_id, client_secret, existing[:refresh_token])
+      else
+        authenticate_user_via_browser(client_id, client_secret)
+      end
     end
     
     def fetch_me(access_token, token_type)
