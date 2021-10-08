@@ -512,6 +512,7 @@ module Drum
           bar = ProgressBar.new(saved_tracks.length)
           new_me = self.from_spotify_user(@me)
           new_playlist = Playlist.new(
+            id: self.hexdigest(new_me.id),
             name: 'Saved Tracks',
             author_id: new_me.id,
             users: {
