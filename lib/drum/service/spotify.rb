@@ -350,6 +350,7 @@ module Drum
         id: self.hexdigest(playlist.id),
         name: playlist.name,
         description: playlist&.description,
+        author_id: playlist&.owner&.id.try { |id| self.hexdigest(id) },
         spotify: PlaylistSpotify.new(
           id: playlist.id,
           public: playlist.public,
