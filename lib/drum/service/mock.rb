@@ -25,10 +25,10 @@ module Drum
           id: '95d5e24cde85a09ce2ac0ae381179dabacee0202',
           name: 'My Playlist',
           description: 'Lots of great songs',
-          artists: [
-            Artist.new(id: '0', name: 'Queen'),
-            Artist.new(id: '1', name: 'The Beatles')
-          ],
+          artists: {
+            '0' => Artist.new(id: '0', name: 'Queen'),
+            '1' => Artist.new(id: '1', name: 'The Beatles')
+          },
           tracks: [
             Track.new(name: 'Bohemian Rhapsody', artist_ids: ['0']),
             Track.new(name: 'Let it be', artist_ids: ['1'])

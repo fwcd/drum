@@ -514,7 +514,9 @@ module Drum
           new_playlist = Playlist.new(
             name: 'Saved Tracks',
             author_id: new_me.id,
-            users: [new_me]
+            users: {
+              new_me.id => new_me
+            }
           )
 
           saved_tracks.each do |track|
