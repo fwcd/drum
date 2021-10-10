@@ -359,7 +359,7 @@ module Drum
       new_playlist.users[new_id] || User.new(
         id: self.from_spotify_id(user.id, new_playlist),
         display_name: begin
-          user.display_name
+          user.display_name unless user.id.empty?
         rescue StandardError => e
           nil
         end,
@@ -391,7 +391,13 @@ module Drum
       )
 
       new_playlist.id = self.from_spotify_id(playlist.id, new_playlist)
-      new_playlist.author_id = playlist&.owner&.id.try { |id| self.from_spotify_id(id, new_playlist) }
+
+      author = playlist&.owner
+      unless author.nil?
+        new_author = self.from_spotify_user(author, new_playlist)
+        new_playlist.author_id = new_author.id
+        new_playlist.store_user(new_author)
+      end
 
       added_bys = playlist.tracks_added_by
       added_ats = playlist.tracks_added_at
