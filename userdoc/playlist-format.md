@@ -22,11 +22,11 @@ id: string
 name: string
 description: string?
 author_id: string? (references User.id)
+path: string[]?
 users: User[]?
 artists: Artist[]?
 albums: Album[]?
 tracks: Track[]?
-child_ids: string[]? (references Playlist.id)
 spotify:
   id: string
   public: boolean?

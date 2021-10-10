@@ -14,6 +14,8 @@ module Drum
   #   @return [optional, String] A description of the playlist
   # @!attribute author_id
   #   @return [optional, String] The author id
+  # @!attribute path
+  #   @return [optional, Array<String>] The path of parent 'folders' to this playlist.
   # @!attribute users
   #   @return [optional, Hash<String, User>] A hash of ids to users used somewhere in the playlist
   # @!attribute artists
@@ -22,25 +24,23 @@ module Drum
   #   @return [optional, Hash<String, Album>] A hash of ids to albums used somewhere in the playlist
   # @!attribute tracks
   #   @return [optional, Array<Track>] The list of tracks of the playlist, order matters here
-  # @!attribute child_ids
-  #   @return [optional, Array<String>] The list of playlist ids that are 'children' of this playlist (implies that this playlist is a 'folder')
   # @!attribute spotify
   #   @return [optional, PlaylistSpotify] Spotify-specific metadata
   class Playlist < Struct.new(
     :id, :name, :description,
+    :path,
     :author_id,
     :users, :artists, :albums, :tracks,
-    :child_ids,
     :spotify,
     keyword_init: true
   )
     def initialize(*)
       super
+      self.path ||= []
       self.users ||= {}
       self.artists ||= {}
       self.albums ||= {}
       self.tracks ||= []
-      self.child_ids ||= []
     end
 
     # TODO: Handle merging in the store_x methods?
@@ -89,11 +89,11 @@ module Drum
         name: h['name'],
         description: h['description'],
         author_id: h['author_id'],
+        path: h['path'],
         users: h['users']&.map { |u| User.deserialize(u) }&.to_h_by_id,
         artists: h['artists']&.map { |a| Artist.deserialize(a) }&.to_h_by_id,
         albums: h['albums']&.map { |a| Album.deserialize(a) }&.to_h_by_id,
         tracks: h['tracks']&.map { |t| Track.deserialize(t) },
-        child_ids: h['child_ids'],
         spotify: h['spotify'].try { |s| PlaylistSpotify.deserialize(s) }
       )
     end
@@ -107,11 +107,11 @@ module Drum
         'name' => self.name,
         'description' => self.description,
         'author_id' => self.author_id,
+        'path' => (self.path unless self.path.empty?),
         'users' => (self.users.each_value.map { |u| u.serialize } unless self.users.empty?),
         'artists' => (self.artists.each_value.map { |a| a.serialize } unless self.artists.empty?),
         'albums' => (self.albums.each_value.map { |a| a.serialize } unless self.albums.empty?),
         'tracks' => (self.tracks.map { |t| t.serialize } unless self.tracks.empty?),
-        'child_ids' => self.child_ids,
         'spotify' => self.spotify&.serialize
       }.compact
     end
