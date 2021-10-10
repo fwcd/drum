@@ -149,10 +149,8 @@ module Drum
 
           if options[:group_by_author]
             playlists = playlists.map do |playlist|
-              author_name = playlist.author_id.try { |id| playlist.users[id] }&.display_name
-              unless author_name.nil?
-                playlist.path.unshift(author_name)
-              end
+              author_name = playlist.author_id.try { |id| playlist.users[id] }&.display_name || 'Other'
+              playlist.path.unshift(author_name)
               playlist
             end
           end
