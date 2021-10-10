@@ -115,6 +115,7 @@ module Drum
     end
     
     desc 'cp [SOURCE] [DEST]', 'Copy a playlist from the source to the given destination'
+    method_option :group_by_author, :type => :boolean, :default => false, :desc => "Whether to prepend the author name to each playlist's path"
 
     # Copies a playlist from the source to the given destination.
     #
@@ -141,6 +142,16 @@ module Drum
           #       merge playlists and return the result from 'upload'?
 
           playlists = src_service.download(src_ref)
+
+          if options[:group_by_author]
+            playlists.each do |playlist|
+              author_name = playlist.author_id.try { |id| playlist.users[id] }&.display_name
+              unless author_name.nil?
+                playlist.path.unshift(author_name)
+              end
+            end
+          end
+
           updated_playlists = dest_service.upload(dest_ref, playlists)
 
           unless updated_playlists.nil? || !src_service.supports_source_mutations

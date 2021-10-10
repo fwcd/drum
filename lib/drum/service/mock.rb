@@ -25,6 +25,10 @@ module Drum
           id: '95d5e24cde85a09ce2ac0ae381179dabacee0202',
           name: 'Mock Playlist',
           description: 'Lots of great songs',
+          author_id: '0',
+          users: {
+            '0' => User.new(id: '0', display_name: 'Mr. X')
+          },
           artists: {
             '0' => Artist.new(id: '0', name: 'Queen'),
             '1' => Artist.new(id: '1', name: 'The Beatles')
