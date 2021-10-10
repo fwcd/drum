@@ -141,7 +141,11 @@ module Drum
           #       be responsible for doing so, e.g. should the file service
           #       merge playlists and return the result from 'upload'?
 
-          playlists = src_service.download(src_ref)
+          playlists = src_service.download(src_ref).lazy
+
+          # Apply transformations to the downloaded playlists.
+          # Note that we use 'map' despite mutating the playlists
+          # in-place to preserve laziness in the iteration.
 
           if options[:group_by_author]
             playlists = playlists.map do |playlist|
