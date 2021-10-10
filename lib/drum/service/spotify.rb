@@ -43,12 +43,15 @@ module Drum
     # Initializes the Spotify service.
     #
     # @param [String] cache_dir The path to the cache directory (shared by all services)
-    def initialize(cache_dir)
+    # @param [Boolean] fetch_artist_images Whether to fetch artist images (false by default)
+    def initialize(cache_dir, fetch_artist_images: false)
       @cache_dir = cache_dir / 'spotify'
       @cache_dir.mkdir unless @cache_dir.directory?
 
       @auth_tokens = PersistentHash.new(@cache_dir / 'auth-tokens.yaml')
       @authenticated = false
+
+      @fetch_artist_images = fetch_artist_images
     end
 
     def name
@@ -331,7 +334,11 @@ module Drum
         name: artist.name,
         spotify: ArtistSpotify.new(
           id: artist.id,
-          image_url: artist&.images.first&.dig('url')
+          image_url: if @fetch_artist_images
+            artist&.images.first&.dig('url')
+          else
+            nil
+          end
         )
       )
     end
