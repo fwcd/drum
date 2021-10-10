@@ -9,6 +9,8 @@ A playlist is 'smart' if and only if it contains `filter`s.
 
 > Note that by default, Drum will only allow copying smart playlists to destinations that support smart playlists (currently just local files). With the `-x`/`--execute` flag, however, the smart playlist will be converted into a regular playlist during the copying, thereby allowing all destinations that support regular playlists.
 
+<!-- TODO: Actually implement smart playlists -->
+
 ## Specification
 
 ### Playlist
@@ -24,6 +26,7 @@ users: User[]?
 artists: Artist[]?
 albums: Album[]?
 tracks: Track[]?
+child_ids: string[]? (references Playlist.id)
 spotify:
   id: string
   public: boolean?

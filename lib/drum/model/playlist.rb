@@ -22,12 +22,15 @@ module Drum
   #   @return [optional, Hash<String, Album>] A hash of ids to albums used somewhere in the playlist
   # @!attribute tracks
   #   @return [optional, Array<Track>] The list of tracks of the playlist, order matters here
+  # @!attribute child_ids
+  #   @return [optional, Array<String>] The list of playlist ids that are 'children' of this playlist (implies that this playlist is a 'folder')
   # @!attribute spotify
   #   @return [optional, PlaylistSpotify] Spotify-specific metadata
   class Playlist < Struct.new(
     :id, :name, :description,
     :author_id,
     :users, :artists, :albums, :tracks,
+    :child_ids,
     :spotify,
     keyword_init: true
   )
@@ -37,6 +40,7 @@ module Drum
       self.artists ||= {}
       self.albums ||= {}
       self.tracks ||= []
+      self.child_ids ||= []
     end
 
     # TODO: Handle merging in the store_x methods?
@@ -89,6 +93,7 @@ module Drum
         artists: h['artists']&.map { |a| Artist.deserialize(a) }&.to_h_by_id,
         albums: h['albums']&.map { |a| Album.deserialize(a) }&.to_h_by_id,
         tracks: h['tracks']&.map { |t| Track.deserialize(t) },
+        child_ids: h['child_ids'],
         spotify: h['spotify'].try { |s| PlaylistSpotify.deserialize(s) }
       )
     end
@@ -106,6 +111,7 @@ module Drum
         'artists' => (self.artists.each_value.map { |a| a.serialize } unless self.artists.empty?),
         'albums' => (self.albums.each_value.map { |a| a.serialize } unless self.albums.empty?),
         'tracks' => (self.tracks.map { |t| t.serialize } unless self.tracks.empty?),
+        'child_ids' => self.child_ids,
         'spotify' => self.spotify&.serialize
       }.compact
     end
