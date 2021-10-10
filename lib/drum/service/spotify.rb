@@ -355,7 +355,6 @@ module Drum
     end
     
     def from_spotify_user(user, new_playlist)
-      # TODO: Fetch and store display name
       new_id = self.from_spotify_id(user.id, new_playlist)
       new_playlist.users[new_id] || User.new(
         id: self.from_spotify_id(user.id, new_playlist),
