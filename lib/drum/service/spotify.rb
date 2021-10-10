@@ -330,7 +330,8 @@ module Drum
         id: self.hexdigest(artist.id),
         name: artist.name,
         spotify: ArtistSpotify.new(
-          id: artist.id
+          id: artist.id,
+          image_url: artist&.images.first&.dig('url')
         )
       )
     end
@@ -340,7 +341,8 @@ module Drum
       User.new(
         id: self.hexdigest(user.id),
         spotify: UserSpotify.new(
-          id: user.id
+          id: user.id,
+          image_url: user&.images.first&.dig('url')
         )
       )
     end

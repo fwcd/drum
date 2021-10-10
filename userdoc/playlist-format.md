@@ -38,6 +38,7 @@ id: string
 spotify:
   id: string
   display_name: string?
+  image_url: string?
 ```
 
 ### Artist
@@ -47,6 +48,7 @@ id: string
 name: string
 spotify:
   id: string
+  image_url: string?
 ```
 
 ### Album

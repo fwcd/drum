@@ -41,8 +41,11 @@ module Drum
   #
   # @!attribute id
   #   @return [String] The id of the artist on Spotify
+  # @!attribute image_url
+  #   @return [optional, String] An image of the artist
   ArtistSpotify = Struct.new(
     :id,
+    :image_url,
     keyword_init: true
   ) do
     # Parses spotify metadata from a Hash that uses string keys.
@@ -51,7 +54,8 @@ module Drum
     # @return [ArtistSpotify] The parsed metadata
     def self.deserialize(h)
       ArtistSpotify.new(
-        id: h['id']
+        id: h['id'],
+        image_url: h['image_url']
       )
     end
 
@@ -60,7 +64,8 @@ module Drum
     # @return [Hash<String, Object>] The serialized representation
     def serialize
       {
-        'id' => self.id
+        'id' => self.id,
+        'image_url' => self.image_url
       }.compact
     end
   end
