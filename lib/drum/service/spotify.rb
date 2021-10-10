@@ -359,9 +359,9 @@ module Drum
       new_id = self.from_spotify_id(user.id, new_playlist)
       new_playlist.users[new_id] || User.new(
         id: self.from_spotify_id(user.id, new_playlist),
+        display_name: user.display_name,
         spotify: UserSpotify.new(
           id: user.id,
-          display_name: user.display_name,
           image_url: user&.images.first&.dig('url')
         )
       )

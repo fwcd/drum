@@ -35,9 +35,9 @@ spotify:
 
 ```yaml
 id: string
+display_name: string?
 spotify:
   id: string
-  display_name: string?
   image_url: string?
 ```
 
