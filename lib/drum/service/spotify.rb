@@ -267,7 +267,11 @@ module Drum
       track&.audio_features
     end
 
-    def hexdigest(x)
+    # TODO: Replace hexdigest id generation with something
+    #       that matches e.g. artists or albums with those
+    #       already in the playlist.
+
+    def from_spotify_id(x, new_playlist)
       unless x.nil?
         Digest::SHA1.hexdigest(x)
       else
@@ -277,13 +281,19 @@ module Drum
 
     # Download helpers
 
-    # TODO: Replace hexdigest id generation with something
-    #       that matches e.g. artists or albums with those
-    #       already in the playlist.
+    # Note that while the `from_spotify_*` methods use
+    # an existing `new_playlist` to reuse albums/artists/etc,
+    # they do not mutate the `new_playlist` themselves.
 
-    def from_spotify_album(album, output: method(:puts))
+    def from_spotify_album(album, new_playlist, output: method(:puts))
+      new_id = self.from_spotify_id(album.id, new_playlist)
+      new_album = new_playlist.albums[new_id]
+      unless new_album.nil?
+        return [new_album, []]
+      end
+
       new_album = Album.new(
-        id: self.hexdigest(album.id),
+        id: self.from_spotify_id(album.id, new_playlist),
         name: album.name,
         artist_ids: [],
         spotify: AlbumSpotify.new(
@@ -293,7 +303,7 @@ module Drum
       )
 
       new_artists = album.artists.map do |artist|
-        new_artist = self.from_spotify_artist(artist)
+        new_artist = self.from_spotify_artist(artist, new_playlist)
         new_album.artist_ids << new_artist.id
         new_artist
       end
@@ -301,7 +311,7 @@ module Drum
       [new_album, new_artists]
     end
 
-    def from_spotify_track(track, output: method(:puts))
+    def from_spotify_track(track, new_playlist, output: method(:puts))
       new_track = Track.new(
         name: track.name,
         artist_ids: [],
@@ -314,12 +324,12 @@ module Drum
       )
 
       new_artists = track.artists.map do |artist|
-        new_artist = self.from_spotify_artist(artist)
+        new_artist = self.from_spotify_artist(artist, new_playlist)
         new_track.artist_ids << new_artist.id
         new_artist
       end
 
-      new_album, new_album_artists = self.from_spotify_album(track.album, output: output)
+      new_album, new_album_artists = self.from_spotify_album(track.album, new_playlist, output: output)
       new_track.album_id = new_album.id
       new_artists += new_album_artists
 
@@ -328,9 +338,10 @@ module Drum
       [new_track, new_artists, new_album]
     end
 
-    def from_spotify_artist(artist)
-      Artist.new(
-        id: self.hexdigest(artist.id),
+    def from_spotify_artist(artist, new_playlist)
+      new_id = self.from_spotify_id(artist.id, new_playlist)
+      new_playlist.artists[new_id] || Artist.new(
+        id: new_id,
         name: artist.name,
         spotify: ArtistSpotify.new(
           id: artist.id,
@@ -343,10 +354,11 @@ module Drum
       )
     end
     
-    def from_spotify_user(user)
+    def from_spotify_user(user, new_playlist)
       # TODO: Fetch and store display name
-      User.new(
-        id: self.hexdigest(user.id),
+      new_id = self.from_spotify_id(user.id, new_playlist)
+      new_playlist.users[new_id] || User.new(
+        id: self.from_spotify_id(user.id, new_playlist),
         spotify: UserSpotify.new(
           id: user.id,
           image_url: user&.images.first&.dig('url')
@@ -356,10 +368,8 @@ module Drum
 
     def from_spotify_playlist(playlist, tracks = nil, output: method(:puts))
       new_playlist = Playlist.new(
-        id: self.hexdigest(playlist.id),
         name: playlist.name,
         description: playlist&.description,
-        author_id: playlist&.owner&.id.try { |id| self.hexdigest(id) },
         spotify: PlaylistSpotify.new(
           id: playlist.id,
           public: playlist.public,
@@ -368,18 +378,21 @@ module Drum
         )
       )
 
+      new_playlist.id = self.from_spotify_id(playlist.id, new_playlist)
+      new_playlist.author_id = playlist&.owner&.id.try { |id| self.from_spotify_id(id, new_playlist) }
+
       added_bys = playlist.tracks_added_by
       added_ats = playlist.tracks_added_at
 
       tracks = tracks || self.all_spotify_playlist_tracks(playlist)
       output.call "Got #{tracks.length} playlist track(s)..."
       tracks.each_with_index do |track, i|
-        new_track, new_artists, new_album = self.from_spotify_track(track, output: output)
+        new_track, new_artists, new_album = self.from_spotify_track(track, new_playlist, output: output)
         new_track.added_at = added_ats[track.id]
 
         added_by = added_bys[track.id]
         unless added_by.nil?
-          new_added_by = self.from_spotify_user(added_by)
+          new_added_by = self.from_spotify_user(added_by, new_playlist)
           new_track.added_by = new_added_by.id
           new_playlist.store_user(new_added_by)
         end
@@ -520,18 +533,16 @@ module Drum
 
           puts 'Fetching saved tracks...'
           bar = ProgressBar.new(saved_tracks.length)
-          new_me = self.from_spotify_user(@me)
           new_playlist = Playlist.new(
-            id: self.hexdigest(new_me.id),
-            name: 'Saved Tracks',
-            author_id: new_me.id,
-            users: {
-              new_me.id => new_me
-            }
+            name: 'Saved Tracks'
           )
+          new_me = self.from_spotify_user(@me, new_playlist)
+          new_playlist.id = self.from_spotify_id(new_me.id, new_playlist)
+          new_playlist.author_id = new_me.id
+          new_playlist.store_user(new_me)
 
           saved_tracks.each do |track|
-            new_track, new_artists, new_album = self.from_spotify_track(track, output: bar.method(:puts))
+            new_track, new_artists, new_album = self.from_spotify_track(track, new_playlist, output: bar.method(:puts))
 
             new_artists.each do |new_artist|
               new_playlist.store_artist(new_artist)

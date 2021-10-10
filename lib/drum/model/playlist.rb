@@ -31,15 +31,20 @@ module Drum
     :spotify,
     keyword_init: true
   )
+    def initialize(*)
+      super
+      self.users ||= {}
+      self.artists ||= {}
+      self.albums ||= {}
+      self.tracks ||= []
+    end
+
     # TODO: Handle merging in the store_x methods?
 
     # Stores a user if it does not exist already.
     #
     # @param [User] user The user to store.
     def store_user(user)
-      if self.users.nil?
-        self.users = {}
-      end
       unless self.users.key?(user.id)
         self.users[user.id] = user
       end
@@ -49,9 +54,6 @@ module Drum
     #
     # @param [Artist] artist The artist to store.
     def store_artist(artist)
-      if self.artists.nil?
-        self.artists = {}
-      end
       unless self.artists.key?(artist.id)
         self.artists[artist.id] = artist
       end
@@ -61,9 +63,6 @@ module Drum
     #
     # @param [Album] album The album to store.
     def store_album(album)
-      if self.albums.nil?
-        self.albums = {}
-      end
       unless self.albums.key?(album.id)
         self.albums[album.id] = album
       end
@@ -73,9 +72,6 @@ module Drum
     #
     # @param [Track] track The track to store.
     def store_track(track)
-      if self.tracks.nil?
-        self.tracks = []
-      end
       self.tracks << track
     end
 
@@ -106,10 +102,10 @@ module Drum
         'name' => self.name,
         'description' => self.description,
         'author_id' => self.author_id,
-        'users' => self.users&.each_value&.map { |u| u.serialize },
-        'artists' => self.artists&.each_value&.map { |a| a.serialize },
-        'albums' => self.albums&.each_value&.map { |a| a.serialize },
-        'tracks' => self.tracks&.map { |t| t.serialize },
+        'users' => self.users.each_value.map { |u| u.serialize },
+        'artists' => self.artists.each_value.map { |a| a.serialize },
+        'albums' => self.albums.each_value.map { |a| a.serialize },
+        'tracks' => self.tracks.map { |t| t.serialize },
         'spotify' => self.spotify&.serialize
       }.compact
     end
