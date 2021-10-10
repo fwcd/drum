@@ -48,7 +48,10 @@ module Drum
 
       playlists.each do |playlist|
         path = base_path
-        yaml = playlist.serialize.to_yaml
+        dict = playlist.serialize
+
+        # Strip path from serialized playlist
+        dict.delete('path')
 
         if !path.exist? || path.directory?
           path = path / playlist.path.map { |n| Pathname.new(n.kebabcase) }.reduce(:/)
@@ -66,7 +69,7 @@ module Drum
         end
 
         path.parent.mkpath
-        path.write(yaml)
+        path.write(dict.to_yaml)
       end
     end
   end
