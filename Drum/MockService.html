@@ -246,7 +246,15 @@
 37
 38
 39
-40</pre>
+40
+41
+42
+43
+44
+45
+46
+47
+48</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/drum/service/mock.rb', line 22</span>
@@ -255,8 +263,12 @@
   <span class='kw'>if</span> <span class='id identifier rubyid_playlist_ref'>playlist_ref</span><span class='period'>.</span><span class='id identifier rubyid_resource_type'>resource_type</span> <span class='op'>==</span> <span class='symbol'>:playlist</span>
     <span class='lbracket'>[</span><span class='const'><span class='object_link'><a href="Playlist.html" title="Drum::Playlist (class)">Playlist</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Playlist.html#initialize-instance_method" title="Drum::Playlist#initialize (method)">new</a></span></span><span class='lparen'>(</span>
       <span class='label'>id:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>95d5e24cde85a09ce2ac0ae381179dabacee0202</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
-      <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>My Playlist</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+      <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Mock Playlist</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
       <span class='label'>description:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Lots of great songs</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+      <span class='label'>author_id:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+      <span class='label'>users:</span> <span class='lbrace'>{</span>
+        <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="User.html" title="Drum::User (class)">User</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>id:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>display_name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Mr. X</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+      <span class='rbrace'>}</span><span class='comma'>,</span>
       <span class='label'>artists:</span> <span class='lbrace'>{</span>
         <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="Artist.html" title="Drum::Artist (class)">Artist</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>id:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Queen</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='comma'>,</span>
         <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>1</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="Artist.html" title="Drum::Artist (class)">Artist</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>id:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>1</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>The Beatles</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -264,6 +276,10 @@
       <span class='label'>tracks:</span> <span class='lbracket'>[</span>
         <span class='const'><span class='object_link'><a href="Track.html" title="Drum::Track (class)">Track</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Bohemian Rhapsody</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>artist_ids:</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='comma'>,</span>
         <span class='const'><span class='object_link'><a href="Track.html" title="Drum::Track (class)">Track</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Let it be</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>artist_ids:</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>1</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+      <span class='rbracket'>]</span><span class='comma'>,</span>
+      <span class='label'>path:</span> <span class='lbracket'>[</span>
+        <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Top</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+        <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Sub</span><span class='tstring_end'>&#39;</span></span>
       <span class='rbracket'>]</span>
     <span class='rparen'>)</span><span class='rbracket'>]</span>
   <span class='kw'>else</span>
@@ -348,7 +364,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sun Oct 10 15:23:04 2021 by
+  Generated on Sun Oct 10 16:16:07 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.0).
 </div>

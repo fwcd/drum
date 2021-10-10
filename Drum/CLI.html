@@ -471,7 +471,6 @@
       <pre class="lines">
 
 
-124
 125
 126
 127
@@ -498,10 +497,21 @@
 148
 149
 150
-151</pre>
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 124</span>
+      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 125</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_cp'>cp</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_src_ref'>raw_src_ref</span><span class='comma'>,</span> <span class='id identifier rubyid_raw_dest_ref'>raw_dest_ref</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_src_ref'>src_ref</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_parse_ref'>parse_ref</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_src_ref'>raw_src_ref</span><span class='rparen'>)</span>
@@ -523,6 +533,16 @@
 </span>      <span class='comment'>#       merge playlists and return the result from &#39;upload&#39;?
 </span>
       <span class='id identifier rubyid_playlists'>playlists</span> <span class='op'>=</span> <span class='id identifier rubyid_src_service'>src_service</span><span class='period'>.</span><span class='id identifier rubyid_download'>download</span><span class='lparen'>(</span><span class='id identifier rubyid_src_ref'>src_ref</span><span class='rparen'>)</span>
+
+      <span class='kw'>if</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:group_by_author</span><span class='rbracket'>]</span>
+        <span class='id identifier rubyid_playlists'>playlists</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_playlist'>playlist</span><span class='op'>|</span>
+          <span class='id identifier rubyid_author_name'>author_name</span> <span class='op'>=</span> <span class='id identifier rubyid_playlist'>playlist</span><span class='period'>.</span><span class='id identifier rubyid_author_id'>author_id</span><span class='period'>.</span><span class='id identifier rubyid_try'>try</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_id'>id</span><span class='op'>|</span> <span class='id identifier rubyid_playlist'>playlist</span><span class='period'>.</span><span class='id identifier rubyid_users'>users</span><span class='lbracket'>[</span><span class='id identifier rubyid_id'>id</span><span class='rbracket'>]</span> <span class='rbrace'>}</span><span class='op'>&amp;.</span><span class='id identifier rubyid_display_name'>display_name</span>
+          <span class='kw'>unless</span> <span class='id identifier rubyid_author_name'>author_name</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+            <span class='id identifier rubyid_playlist'>playlist</span><span class='period'>.</span><span class='id identifier rubyid_path'>path</span><span class='period'>.</span><span class='id identifier rubyid_unshift'>unshift</span><span class='lparen'>(</span><span class='id identifier rubyid_author_name'>author_name</span><span class='rparen'>)</span>
+          <span class='kw'>end</span>
+        <span class='kw'>end</span>
+      <span class='kw'>end</span>
+
       <span class='id identifier rubyid_updated_playlists'>updated_playlists</span> <span class='op'>=</span> <span class='id identifier rubyid_dest_service'>dest_service</span><span class='period'>.</span><span class='id identifier rubyid_upload'>upload</span><span class='lparen'>(</span><span class='id identifier rubyid_dest_ref'>dest_ref</span><span class='comma'>,</span> <span class='id identifier rubyid_playlists'>playlists</span><span class='rparen'>)</span>
 
       <span class='kw'>unless</span> <span class='id identifier rubyid_updated_playlists'>updated_playlists</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='op'>!</span><span class='id identifier rubyid_src_service'>src_service</span><span class='period'>.</span><span class='id identifier rubyid_supports_source_mutations'>supports_source_mutations</span>
@@ -582,21 +602,21 @@
       <pre class="lines">
 
 
-159
-160
-161
-162
-163
-164
-165
-166
-167
-168
-169
-170</pre>
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 159</span>
+      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 170</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_rm'>rm</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_ref'>ref</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_parse_ref'>parse_ref</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='rparen'>)</span>
@@ -719,7 +739,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sun Oct 10 15:23:04 2021 by
+  Generated on Sun Oct 10 16:16:07 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.0).
 </div>

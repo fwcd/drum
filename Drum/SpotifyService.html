@@ -1552,6 +1552,7 @@
       <pre class="lines">
 
 
+510
 511
 512
 513
@@ -1608,11 +1609,10 @@
 564
 565
 566
-567
-568</pre>
+567</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/spotify.rb', line 511</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/spotify.rb', line 510</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_download'>download</span><span class='lparen'>(</span><span class='id identifier rubyid_ref'>ref</span><span class='rparen'>)</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_authenticate'>authenticate</span>
@@ -1960,6 +1960,7 @@ already in the playlist.
       <pre class="lines">
 
 
+369
 370
 371
 372
@@ -1999,11 +2000,10 @@ already in the playlist.
 406
 407
 408
-409
-410</pre>
+409</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/spotify.rb', line 370</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/spotify.rb', line 369</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_from_spotify_playlist'>from_spotify_playlist</span><span class='lparen'>(</span><span class='id identifier rubyid_playlist'>playlist</span><span class='comma'>,</span> <span class='id identifier rubyid_tracks'>tracks</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>output:</span> <span class='id identifier rubyid_method'>method</span><span class='lparen'>(</span><span class='symbol'>:puts</span><span class='rparen'>)</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_new_playlist'>new_playlist</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Playlist.html" title="Drum::Playlist (class)">Playlist</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Playlist.html#initialize-instance_method" title="Drum::Playlist#initialize (method)">new</a></span></span><span class='lparen'>(</span>
@@ -2152,15 +2152,13 @@ already in the playlist.
 364
 365
 366
-367
-368</pre>
+367</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/drum/service/spotify.rb', line 357</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_from_spotify_user'>from_spotify_user</span><span class='lparen'>(</span><span class='id identifier rubyid_user'>user</span><span class='comma'>,</span> <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='rparen'>)</span>
-  <span class='comment'># TODO: Fetch and store display name
-</span>  <span class='id identifier rubyid_new_id'>new_id</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_spotify_id'>from_spotify_id</span><span class='lparen'>(</span><span class='id identifier rubyid_user'>user</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_new_id'>new_id</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_spotify_id'>from_spotify_id</span><span class='lparen'>(</span><span class='id identifier rubyid_user'>user</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='period'>.</span><span class='id identifier rubyid_users'>users</span><span class='lbracket'>[</span><span class='id identifier rubyid_new_id'>new_id</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='const'><span class='object_link'><a href="User.html" title="Drum::User (class)">User</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
     <span class='label'>id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_spotify_id'>from_spotify_id</span><span class='lparen'>(</span><span class='id identifier rubyid_user'>user</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='rparen'>)</span><span class='comma'>,</span>
     <span class='label'>display_name:</span> <span class='id identifier rubyid_user'>user</span><span class='period'>.</span><span class='id identifier rubyid_display_name'>display_name</span><span class='comma'>,</span>
@@ -2220,6 +2218,7 @@ already in the playlist.
       <pre class="lines">
 
 
+495
 496
 497
 498
@@ -2230,11 +2229,10 @@ already in the playlist.
 503
 504
 505
-506
-507</pre>
+506</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/spotify.rb', line 496</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/spotify.rb', line 495</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_parse_ref'>parse_ref</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='period'>.</span><span class='id identifier rubyid_is_token'>is_token</span>
@@ -2279,6 +2277,7 @@ already in the playlist.
       <pre class="lines">
 
 
+450
 451
 452
 453
@@ -2287,11 +2286,10 @@ already in the playlist.
 456
 457
 458
-459
-460</pre>
+459</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/spotify.rb', line 451</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/spotify.rb', line 450</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_parse_resource_type'>parse_resource_type</span><span class='lparen'>(</span><span class='id identifier rubyid_raw'>raw</span><span class='rparen'>)</span>
   <span class='kw'>case</span> <span class='id identifier rubyid_raw'>raw</span>
@@ -2323,6 +2321,7 @@ already in the playlist.
       <pre class="lines">
 
 
+461
 462
 463
 464
@@ -2337,11 +2336,10 @@ already in the playlist.
 473
 474
 475
-476
-477</pre>
+476</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/spotify.rb', line 462</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/spotify.rb', line 461</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_parse_spotify_link'>parse_spotify_link</span><span class='lparen'>(</span><span class='id identifier rubyid_raw'>raw</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_uri'>uri</span> <span class='op'>=</span> <span class='const'>URI</span><span class='lparen'>(</span><span class='id identifier rubyid_raw'>raw</span><span class='rparen'>)</span>
@@ -2379,6 +2377,7 @@ already in the playlist.
       <pre class="lines">
 
 
+478
 479
 480
 481
@@ -2393,11 +2392,10 @@ already in the playlist.
 490
 491
 492
-493
-494</pre>
+493</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/spotify.rb', line 479</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/spotify.rb', line 478</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_parse_spotify_uri'>parse_spotify_uri</span><span class='lparen'>(</span><span class='id identifier rubyid_raw'>raw</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_uri'>uri</span> <span class='op'>=</span> <span class='const'>URI</span><span class='lparen'>(</span><span class='id identifier rubyid_raw'>raw</span><span class='rparen'>)</span>
@@ -2446,6 +2444,7 @@ already in the playlist.
       <pre class="lines">
 
 
+413
 414
 415
 416
@@ -2454,11 +2453,10 @@ already in the playlist.
 419
 420
 421
-422
-423</pre>
+422</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/spotify.rb', line 414</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/spotify.rb', line 413</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_spotify_tracks'>to_spotify_tracks</span><span class='lparen'>(</span><span class='id identifier rubyid_tracks'>tracks</span><span class='rparen'>)</span>
   <span class='kw'>unless</span> <span class='id identifier rubyid_tracks'>tracks</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='id identifier rubyid_tracks'>tracks</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
@@ -2490,6 +2488,7 @@ already in the playlist.
       <pre class="lines">
 
 
+569
 570
 571
 572
@@ -2505,11 +2504,10 @@ already in the playlist.
 582
 583
 584
-585
-586</pre>
+585</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/spotify.rb', line 570</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/spotify.rb', line 569</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_upload'>upload</span><span class='lparen'>(</span><span class='id identifier rubyid_ref'>ref</span><span class='comma'>,</span> <span class='id identifier rubyid_playlists'>playlists</span><span class='rparen'>)</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_authenticate'>authenticate</span>
@@ -2548,6 +2546,7 @@ already in the playlist.
       <pre class="lines">
 
 
+431
 432
 433
 434
@@ -2562,11 +2561,10 @@ already in the playlist.
 443
 444
 445
-446
-447</pre>
+446</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/spotify.rb', line 432</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/spotify.rb', line 431</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_upload_playlist'>upload_playlist</span><span class='lparen'>(</span><span class='id identifier rubyid_playlist'>playlist</span><span class='comma'>,</span> <span class='label'>output:</span> <span class='id identifier rubyid_method'>method</span><span class='lparen'>(</span><span class='symbol'>:puts</span><span class='rparen'>)</span><span class='rparen'>)</span>
   <span class='comment'># TODO: Use actual description
@@ -2604,15 +2602,15 @@ already in the playlist.
       <pre class="lines">
 
 
+424
 425
 426
 427
 428
-429
-430</pre>
+429</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/spotify.rb', line 425</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/spotify.rb', line 424</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_upload_playlist_tracks'>upload_playlist_tracks</span><span class='lparen'>(</span><span class='id identifier rubyid_external_tracks'>external_tracks</span><span class='comma'>,</span> <span class='id identifier rubyid_external_playlist'>external_playlist</span><span class='rparen'>)</span>
   <span class='kw'>unless</span> <span class='id identifier rubyid_external_tracks'>external_tracks</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='id identifier rubyid_external_tracks'>external_tracks</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
@@ -2630,7 +2628,7 @@ already in the playlist.
 </div>
 
       <div id="footer">
-  Generated on Sun Oct 10 15:23:05 2021 by
+  Generated on Sun Oct 10 16:16:08 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.0).
 </div>
