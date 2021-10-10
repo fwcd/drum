@@ -122,33 +122,6 @@
       <li class="public ">
   <span class="summary_signature">
     
-      <a href="#display_name-instance_method" title="#display_name (instance method)">#<strong>display_name</strong>  &#x21d2; optional, String </a>
-    
-
-    
-  </span>
-  
-  
-  
-    
-    
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'>
-<p>The displayed/formatted name of the user on Spotify.</p>
-</div></span>
-  
-</li>
-
-    
-      <li class="public ">
-  <span class="summary_signature">
-    
       <a href="#id-instance_method" title="#id (instance method)">#<strong>id</strong>  &#x21d2; String </a>
     
 
@@ -168,6 +141,33 @@
   
     <span class="summary_desc"><div class='inline'>
 <p>The id of the artist on Spotify.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#image_url-instance_method" title="#image_url (instance method)">#<strong>image_url</strong>  &#x21d2; optional, String </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The profile image of the user.</p>
 </div></span>
   
 </li>
@@ -252,116 +252,9 @@
     <h2>Instance Attribute Details</h2>
     
       
-      <span id="display_name=-instance_method"></span>
-      <div class="method_details first">
-  <h3 class="signature first" id="display_name-instance_method">
-  
-    #<strong>display_name</strong>  &#x21d2; <tt>optional</tt>, <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    
-<p>Returns The displayed/formatted name of the user on Spotify.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>optional</tt>, <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'>
-<p>The displayed/formatted name of the user on Spotify</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/model/user.rb', line 46</span>
-
-<span class='const'><span class='object_link'><a href="" title="Drum::UserSpotify (class)">UserSpotify</a></span></span> <span class='op'>=</span> <span class='const'>Struct</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
-  <span class='symbol'>:id</span><span class='comma'>,</span>
-  <span class='symbol'>:display_name</span><span class='comma'>,</span>
-  <span class='label'>keyword_init:</span> <span class='kw'>true</span>
-<span class='rparen'>)</span> <span class='kw'>do</span>
-  <span class='comment'># Parses Spotify metadata from a Hash that uses string keys.
-</span>  <span class='comment'>#
-</span>  <span class='comment'># @param [Hash&lt;String, Object&gt;] h The Hash to be parsed
-</span>  <span class='comment'># @return [UserSpotify] The parsed user
-</span>  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_deserialize'>deserialize</span><span class='lparen'>(</span><span class='id identifier rubyid_h'>h</span><span class='rparen'>)</span>
-    <span class='const'><span class='object_link'><a href="" title="Drum::UserSpotify (class)">UserSpotify</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
-      <span class='label'>id:</span> <span class='id identifier rubyid_h'>h</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
-      <span class='label'>display_name:</span> <span class='id identifier rubyid_h'>h</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>display_name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
-    <span class='rparen'>)</span>
-  <span class='kw'>end</span>
-
-  <span class='comment'># Serializes the metadata to a Hash that uses string keys.
-</span>  <span class='comment'>#
-</span>  <span class='comment'># @return [Hash&lt;String, Object&gt;] The serialized representation
-</span>  <span class='kw'>def</span> <span class='id identifier rubyid_serialize'>serialize</span>
-    <span class='lbrace'>{</span>
-      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>id</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span>
-      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>display_name</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_display_name'>display_name</span>
-    <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
-  <span class='kw'>end</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      
       <span id="id=-instance_method"></span>
-      <div class="method_details ">
-  <h3 class="signature " id="id-instance_method">
+      <div class="method_details first">
+  <h3 class="signature first" id="id-instance_method">
   
     #<strong>id</strong>  &#x21d2; <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt> 
   
@@ -436,7 +329,7 @@
 
 <span class='const'><span class='object_link'><a href="" title="Drum::UserSpotify (class)">UserSpotify</a></span></span> <span class='op'>=</span> <span class='const'>Struct</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
   <span class='symbol'>:id</span><span class='comma'>,</span>
-  <span class='symbol'>:display_name</span><span class='comma'>,</span>
+  <span class='symbol'>:image_url</span><span class='comma'>,</span>
   <span class='label'>keyword_init:</span> <span class='kw'>true</span>
 <span class='rparen'>)</span> <span class='kw'>do</span>
   <span class='comment'># Parses Spotify metadata from a Hash that uses string keys.
@@ -446,7 +339,7 @@
 </span>  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_deserialize'>deserialize</span><span class='lparen'>(</span><span class='id identifier rubyid_h'>h</span><span class='rparen'>)</span>
     <span class='const'><span class='object_link'><a href="" title="Drum::UserSpotify (class)">UserSpotify</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
       <span class='label'>id:</span> <span class='id identifier rubyid_h'>h</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
-      <span class='label'>display_name:</span> <span class='id identifier rubyid_h'>h</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>display_name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+      <span class='label'>image_url:</span> <span class='id identifier rubyid_h'>h</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>image_url</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
     <span class='rparen'>)</span>
   <span class='kw'>end</span>
 
@@ -456,7 +349,114 @@
 </span>  <span class='kw'>def</span> <span class='id identifier rubyid_serialize'>serialize</span>
     <span class='lbrace'>{</span>
       <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>id</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span>
-      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>display_name</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_display_name'>display_name</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>image_url</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_image_url'>image_url</span>
+    <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="image_url=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="image_url-instance_method">
+  
+    #<strong>image_url</strong>  &#x21d2; <tt>optional</tt>, <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns The profile image of the user.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>optional</tt>, <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The profile image of the user</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/model/user.rb', line 46</span>
+
+<span class='const'><span class='object_link'><a href="" title="Drum::UserSpotify (class)">UserSpotify</a></span></span> <span class='op'>=</span> <span class='const'>Struct</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
+  <span class='symbol'>:id</span><span class='comma'>,</span>
+  <span class='symbol'>:image_url</span><span class='comma'>,</span>
+  <span class='label'>keyword_init:</span> <span class='kw'>true</span>
+<span class='rparen'>)</span> <span class='kw'>do</span>
+  <span class='comment'># Parses Spotify metadata from a Hash that uses string keys.
+</span>  <span class='comment'>#
+</span>  <span class='comment'># @param [Hash&lt;String, Object&gt;] h The Hash to be parsed
+</span>  <span class='comment'># @return [UserSpotify] The parsed user
+</span>  <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_deserialize'>deserialize</span><span class='lparen'>(</span><span class='id identifier rubyid_h'>h</span><span class='rparen'>)</span>
+    <span class='const'><span class='object_link'><a href="" title="Drum::UserSpotify (class)">UserSpotify</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
+      <span class='label'>id:</span> <span class='id identifier rubyid_h'>h</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
+      <span class='label'>image_url:</span> <span class='id identifier rubyid_h'>h</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>image_url</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+    <span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Serializes the metadata to a Hash that uses string keys.
+</span>  <span class='comment'>#
+</span>  <span class='comment'># @return [Hash&lt;String, Object&gt;] The serialized representation
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_serialize'>serialize</span>
+    <span class='lbrace'>{</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>id</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>image_url</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_image_url'>image_url</span>
     <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
@@ -549,7 +549,7 @@
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_deserialize'>deserialize</span><span class='lparen'>(</span><span class='id identifier rubyid_h'>h</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="" title="Drum::UserSpotify (class)">UserSpotify</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
     <span class='label'>id:</span> <span class='id identifier rubyid_h'>h</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
-    <span class='label'>display_name:</span> <span class='id identifier rubyid_h'>h</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>display_name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+    <span class='label'>image_url:</span> <span class='id identifier rubyid_h'>h</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>image_url</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
   <span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -620,7 +620,7 @@
 <span class='kw'>def</span> <span class='id identifier rubyid_serialize'>serialize</span>
   <span class='lbrace'>{</span>
     <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>id</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span>
-    <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>display_name</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_display_name'>display_name</span>
+    <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>image_url</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_image_url'>image_url</span>
   <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -633,7 +633,7 @@
 </div>
 
       <div id="footer">
-  Generated on Fri Oct  8 11:26:09 2021 by
+  Generated on Sun Oct 10 15:23:04 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.0).
 </div>
