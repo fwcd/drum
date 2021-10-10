@@ -54,7 +54,9 @@ module Drum
         dict.delete('path')
 
         if !path.exist? || path.directory?
-          path = path / playlist.path.map { |n| Pathname.new(n.kebabcase) }.reduce(:/)
+          unless playlist.path.empty?
+            path = path / playlist.path.map { |n| Pathname.new(n.kebabcase) }.reduce(:/)
+          end
 
           playlist_path = lambda do |length|
             path / "#{playlist.name.kebabcase}-#{playlist.id[...length]}.yaml"

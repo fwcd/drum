@@ -144,11 +144,12 @@ module Drum
           playlists = src_service.download(src_ref)
 
           if options[:group_by_author]
-            playlists.each do |playlist|
+            playlists = playlists.map do |playlist|
               author_name = playlist.author_id.try { |id| playlist.users[id] }&.display_name
               unless author_name.nil?
                 playlist.path.unshift(author_name)
               end
+              playlist
             end
           end
 
