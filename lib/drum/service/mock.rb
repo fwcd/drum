@@ -23,7 +23,7 @@ module Drum
       if playlist_ref.resource_type == :playlist
         [Playlist.new(
           id: '95d5e24cde85a09ce2ac0ae381179dabacee0202',
-          name: 'My Playlist',
+          name: 'Mock Playlist',
           description: 'Lots of great songs',
           artists: {
             '0' => Artist.new(id: '0', name: 'Queen'),
@@ -32,6 +32,10 @@ module Drum
           tracks: [
             Track.new(name: 'Bohemian Rhapsody', artist_ids: ['0']),
             Track.new(name: 'Let it be', artist_ids: ['1'])
+          ],
+          path: [
+            'Top',
+            'Sub'
           ]
         )]
       else

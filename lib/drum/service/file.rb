@@ -44,13 +44,17 @@ module Drum
     end
 
     def upload(playlist_ref, playlists)
-      path = playlist_ref.resource_location
+      base_path = playlist_ref.resource_location
+
       playlists.each do |playlist|
+        path = base_path
         yaml = playlist.serialize.to_yaml
 
-        if path.directory?
+        if !path.exist? || path.directory?
+          path = path / playlist.path.map { |n| Pathname.new(n.kebabcase) }.reduce(:/)
+
           playlist_path = lambda do |length|
-            path.join("#{playlist.name.kebabcase}-#{playlist.id[...length]}.yaml")
+            path / "#{playlist.name.kebabcase}-#{playlist.id[...length]}.yaml"
           end
 
           length = 6
@@ -58,10 +62,11 @@ module Drum
             length += 1
           end
 
-          playlist_path[length].write(yaml)
-        else
-          path.write(yaml)
+          path = playlist_path[length]
         end
+
+        path.parent.mkpath
+        path.write(yaml)
       end
     end
   end
