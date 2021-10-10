@@ -54,9 +54,7 @@ describe Drum::Playlist do
         ],
         'tracks' => [
           { 'name' => 'Jailhouse Rock', 'artist_ids' => ['0'] }
-        ],
-        'users' => [],
-        'albums' => []
+        ]
       })
     end
   end

@@ -1,6 +1,6 @@
 module Drum
   module Try
-    # A lightweight variant of rails' try that only supports
+    # A lightweight variant of Rails' try that only supports
     # blocks (the other variants are already handled more
     # elegantly using &.).
     #

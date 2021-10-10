@@ -102,10 +102,10 @@ module Drum
         'name' => self.name,
         'description' => self.description,
         'author_id' => self.author_id,
-        'users' => self.users.each_value.map { |u| u.serialize },
-        'artists' => self.artists.each_value.map { |a| a.serialize },
-        'albums' => self.albums.each_value.map { |a| a.serialize },
-        'tracks' => self.tracks.map { |t| t.serialize },
+        'users' => (self.users.each_value.map { |u| u.serialize } unless self.users.empty?),
+        'artists' => (self.artists.each_value.map { |a| a.serialize } unless self.artists.empty?),
+        'albums' => (self.albums.each_value.map { |a| a.serialize } unless self.albums.empty?),
+        'tracks' => (self.tracks.map { |t| t.serialize } unless self.tracks.empty?),
         'spotify' => self.spotify&.serialize
       }.compact
     end
