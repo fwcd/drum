@@ -365,7 +365,11 @@ module Drum
         end,
         spotify: UserSpotify.new(
           id: user.id,
-          image_url: user&.images.first&.dig('url')
+          image_url: begin
+            user&.images.first&.dig('url')
+          rescue StandardError => e
+            nil
+          end
         )
       )
     end
@@ -378,7 +382,11 @@ module Drum
           id: playlist.id,
           public: playlist.public,
           collaborative: playlist.collaborative,
-          image_url: playlist&.images.first&.dig('url')
+          image_url: begin
+            playlist&.images.first&.dig('url')
+          rescue StandardError => e
+            nil
+          end
         )
       )
 
@@ -389,7 +397,7 @@ module Drum
       added_ats = playlist.tracks_added_at
 
       tracks = tracks || self.all_spotify_playlist_tracks(playlist)
-      output.call "Got #{tracks.length} playlist track(s)..."
+      output.call "Got #{tracks.length} playlist track(s) for '#{playlist.name}'..."
       tracks.each_with_index do |track, i|
         new_track, new_artists, new_album = self.from_spotify_track(track, new_playlist, output: output)
         new_track.added_at = added_ats[track.id]
