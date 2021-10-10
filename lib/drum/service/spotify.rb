@@ -361,6 +361,7 @@ module Drum
         id: self.from_spotify_id(user.id, new_playlist),
         spotify: UserSpotify.new(
           id: user.id,
+          display_name: user.display_name,
           image_url: user&.images.first&.dig('url')
         )
       )
