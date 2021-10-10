@@ -359,7 +359,7 @@ module Drum
       new_playlist.users[new_id] || User.new(
         id: self.from_spotify_id(user.id, new_playlist),
         display_name: begin
-          user.display_name,
+          user.display_name
         rescue StandardError => e
           nil
         end,
