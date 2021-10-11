@@ -210,27 +210,25 @@ module Drum
 
       self.authenticate_app(client_id, client_secret)
       access_token, refresh_token, token_type = self.authenticate_user(client_id, client_secret)
+
       me_json = self.fetch_me(access_token, token_type)
+      me_json['credentials'] = {
+        'token' => access_token,
+        'refresh_token' => refresh_token,
+        'access_refresh_callback' => Proc.new do |new_token, token_lifetime|
+          new_expiry = DateTime.now + (token_lifetime / 86400.0)
+          @auth_tokens[:latest] = {
+            access_token: new_token,
+            refresh_token: refresh_token, # TODO: Refresh token might change too
+            token_type: token_type,
+            expires_at: new_expiry
+          }
+        end
+      }
       
-      @me_id = me_json['id']
-      @me = RSpotify::User.new({
-        'credentials' => {
-          'token' => access_token,
-          'refresh_token' => refresh_token,
-          'access_refresh_callback' => Proc.new do |new_token, token_lifetime|
-            new_expiry = DateTime.now + (token_lifetime / 86400.0)
-            @auth_tokens[:latest] = {
-              access_token: new_token,
-              refresh_token: refresh_token, # TODO: Refresh token might change too
-              token_type: token_type,
-              expires_at: new_expiry
-            }
-          end
-        },
-        'id' => @me_id
-      })
-      
+      @me = RSpotify::User.new(me_json)
       @authenticated = true
+
       puts "Successfully logged in to Spotify API as #{me_json['id']}."
     end
 
