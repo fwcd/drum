@@ -41,7 +41,8 @@ The basic usage pattern is always `drum cp [source] [destination]` where `source
 
 Currently, the following music streaming services are supported:
 
-* `spotify`
+* Spotify
+* Apple Music (WIP)
 
 > Note that the tool only processes metadata, not the actual audio files.
 
