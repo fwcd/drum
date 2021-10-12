@@ -1,2 +1,2 @@
 @echo off
-ruby %0\..\drum
+ruby %0\..\drum %*
