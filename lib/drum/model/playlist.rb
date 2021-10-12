@@ -25,7 +25,7 @@ module Drum
   # @!attribute tracks
   #   @return [optional, Array<Track>] The list of tracks of the playlist, order matters here
   # @!attribute spotify
-  #   @return [optional, PlaylistSpotify] Spotify-specific metadata
+  #   @return [optional, Playlist::Spotify] Spotify-specific metadata
   class Playlist < Struct.new(
     :id, :name, :description,
     :path,
@@ -94,7 +94,7 @@ module Drum
         artists: h['artists']&.map { |a| Artist.deserialize(a) }&.to_h_by_id,
         albums: h['albums']&.map { |a| Album.deserialize(a) }&.to_h_by_id,
         tracks: h['tracks']&.map { |t| Track.deserialize(t) },
-        spotify: h['spotify'].try { |s| PlaylistSpotify.deserialize(s) }
+        spotify: h['spotify'].try { |s| Playlist::Spotify.deserialize(s) }
       )
     end
 
@@ -127,7 +127,7 @@ module Drum
   #   @return [optional, Boolean] Whether the playlist is collaborative on Spotify
   # @!attribute image_url
   #   @return [optional, String] The playlist cover URL
-  PlaylistSpotify = Struct.new(
+  Playlist::Spotify = Struct.new(
     :id,
     :public, :collaborative,
     :image_url,
@@ -136,9 +136,9 @@ module Drum
     # Parses spotify metadata from a Hash that uses string keys.
     #
     # @param [Hash<String, Object>] h The Hash to be parsed
-    # @return [PlaylistSpotify] The parsed metadata
+    # @return [Spotify] The parsed metadata
     def self.deserialize(h)
-      PlaylistSpotify.new(
+      Playlist::Spotify.new(
         id: h['id'],
         public: h['public'],
         collaborative: h['collaborative'],

@@ -21,7 +21,7 @@ module Drum
   # @!attribute isrc
   #  @return [optional, String] The International Standard Recording Code of this track
   # @!attribute spotify
-  #  @return [optional, TrackSpotify] Spotify-specific metadata
+  #  @return [optional, Track::Spotify] Spotify-specific metadata
   Track = Struct.new(
     :name,
     :artist_ids, :album_id,
@@ -44,7 +44,7 @@ module Drum
         added_at: h['added_at'].try { |d| DateTime.parse(d) },
         added_by: h['added_by'],
         isrc: h['isrc'],
-        spotify: h['spotify'].try { |s| TrackSpotify.deserialize(s) }
+        spotify: h['spotify'].try { |s| Track::Spotify.deserialize(s) }
       )
     end
 
@@ -70,16 +70,16 @@ module Drum
   #
   # @!attribute id
   #   @return [String] The id of the track on Spotify
-  TrackSpotify = Struct.new(
+  Track::Spotify = Struct.new(
     :id,
     keyword_init: true
   ) do
     # Parses spotify metadata from a Hash that uses string keys.
     #
     # @param [Hash<String, Object>] h The Hash to be parsed
-    # @return [TrackSpotify] The parsed metadata
+    # @return [Spotify] The parsed metadata
     def self.deserialize(h)
-      TrackSpotify.new(
+      Track::Spotify.new(
         id: h['id']
       )
     end

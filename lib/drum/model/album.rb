@@ -8,7 +8,7 @@ module Drum
   # @!attribute artist_ids
   #  @return [Array<String>] The artist ids of the album
   # @!attribute spotify
-  #  @return [optional, AlbumSpotify] Spotify-specific metadata
+  #  @return [optional, Album::Spotify] Spotify-specific metadata
   Album = Struct.new(
     :id,
     :name,
@@ -25,7 +25,7 @@ module Drum
         id: h['id'],
         name: h['name'],
         artist_ids: h['artist_ids'],
-        spotify: h['spotify'].try { |s| AlbumSpotify.deserialize(s) }
+        spotify: h['spotify'].try { |s| Album::Spotify.deserialize(s) }
       )
     end
 
@@ -48,7 +48,7 @@ module Drum
   #   @return [String] The id of the album on Spotify
   # @!attribute image_url
   #   @return [String] The URL of the album cover art on Spotify
-  AlbumSpotify = Struct.new(
+  Album::Spotify = Struct.new(
     :id,
     :image_url,
     keyword_init: true
@@ -56,9 +56,9 @@ module Drum
     # Parses spotify metadata from a Hash that uses string keys.
     #
     # @param [Hash<String, Object>] h The Hash to be parsed
-    # @return [AlbumSpotify] The parsed metadata
+    # @return [Spotify] The parsed metadata
     def self.deserialize(h)
-      AlbumSpotify.new(
+      Album::Spotify.new(
         id: h['id'],
         image_url: h['image_url']
       )

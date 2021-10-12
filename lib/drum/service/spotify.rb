@@ -294,7 +294,7 @@ module Drum
         id: self.from_spotify_id(album.id, new_playlist),
         name: album.name,
         artist_ids: [],
-        spotify: AlbumSpotify.new(
+        spotify: Album::Spotify.new(
           id: album.id,
           image_url: album&.images.first&.dig('url')
         )
@@ -316,7 +316,7 @@ module Drum
         duration_ms: track.duration_ms,
         explicit: track.explicit,
         isrc: track.external_ids&.dig('isrc'),
-        spotify: TrackSpotify.new(
+        spotify: Track::Spotify.new(
           id: track.id
         )
       )
@@ -341,7 +341,7 @@ module Drum
       new_playlist.artists[new_id] || Artist.new(
         id: new_id,
         name: artist.name,
-        spotify: ArtistSpotify.new(
+        spotify: Artist::Spotify.new(
           id: artist.id,
           image_url: if @fetch_artist_images
             artist&.images.first&.dig('url')
@@ -361,7 +361,7 @@ module Drum
         rescue StandardError => e
           nil
         end,
-        spotify: UserSpotify.new(
+        spotify: User::Spotify.new(
           id: user.id,
           image_url: begin
             user&.images.first&.dig('url')
@@ -376,7 +376,7 @@ module Drum
       new_playlist = Playlist.new(
         name: playlist.name,
         description: playlist&.description,
-        spotify: PlaylistSpotify.new(
+        spotify: Playlist::Spotify.new(
           id: playlist.id,
           public: playlist.public,
           collaborative: playlist.collaborative,

@@ -6,7 +6,7 @@ module Drum
   # @!attribute display_name
   #   @return [optional, String] The general formatted name of the user
   # @!attribute spotify
-  #   @return [optional, UserSpotify] Spotify-specific metadata
+  #   @return [optional, User::Spotify] Spotify-specific metadata
   User = Struct.new(
     :id,
     :display_name,
@@ -21,7 +21,7 @@ module Drum
       User.new(
         id: h['id'],
         display_name: h['display_name'],
-        spotify: h['spotify'].try { |s| UserSpotify.deserialize(s) }
+        spotify: h['spotify'].try { |s| User::Spotify.deserialize(s) }
       )
     end
 
@@ -43,7 +43,7 @@ module Drum
   #   @return [String] The id of the artist on Spotify
   # @!attribute image_url
   #   @return [optional, String] The profile image of the user
-  UserSpotify = Struct.new(
+  User::Spotify = Struct.new(
     :id,
     :image_url,
     keyword_init: true
@@ -51,9 +51,9 @@ module Drum
     # Parses Spotify metadata from a Hash that uses string keys.
     #
     # @param [Hash<String, Object>] h The Hash to be parsed
-    # @return [UserSpotify] The parsed user
+    # @return [Spotify] The parsed user
     def self.deserialize(h)
-      UserSpotify.new(
+      User::Spotify.new(
         id: h['id'],
         image_url: h['image_url']
       )
