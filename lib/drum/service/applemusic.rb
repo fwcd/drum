@@ -44,7 +44,7 @@ module Drum
     # Authentication
 
     def authenticate_app(p8_file, key_id, team_id)
-      # TODO: Store and reuse keys in DB instead of regenerating a new one each time
+      # TODO: Store and reuse keys in cache/auth-keys.yaml instead of regenerating a new one each time
 
       expiration_in_days = 180 # may not be greater than 180
 
@@ -78,7 +78,7 @@ module Drum
     end
 
     def authenticate_user(token)
-      # TODO: Store this token in the DB
+      # TODO: Store this token in the cache/auth-keys.yaml
 
       # Generate a new access refresh token,
       # this might require user interaction. Since the
