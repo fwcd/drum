@@ -291,7 +291,6 @@ module Drum
       new_album = Album.new(
         id: self.from_sp_id(sp_album.id, new_playlist),
         name: sp_album.name,
-        artist_ids: [],
         spotify: AlbumSpotify.new(
           id: sp_album.id,
           image_url: sp_album&.images.first&.dig('url')
@@ -310,7 +309,6 @@ module Drum
     def from_sp_track(sp_track, new_playlist, output: method(:puts))
       new_track = Track.new(
         name: sp_track.name,
-        artist_ids: [],
         duration_ms: sp_track.duration_ms,
         explicit: sp_track.explicit,
         isrc: sp_track.external_ids&.dig('isrc'),

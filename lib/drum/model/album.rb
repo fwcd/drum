@@ -16,6 +16,11 @@ module Drum
     :spotify,
     keyword_init: true
   ) do
+    def initialize(*)
+      super
+      self.artist_ids ||= []
+    end
+
     # Parses an album from a nested Hash that uses string keys.
     #
     # @param [Hash<String, Object>] h The Hash to be parsed
