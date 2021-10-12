@@ -1,3 +1,4 @@
+require 'drum/model/album'
 require 'drum/model/artist'
 require 'drum/model/ref'
 require 'drum/model/playlist'
@@ -183,8 +184,6 @@ module Drum
     end
 
     def get_json(endpoint)
-      puts "Getting #{endpoint}"
-
       response = request(:get, endpoint)
       unless response.code >= 200 && response.code < 300
         raise "Something went wrong while GETting #{endpoint}: #{response}"
@@ -224,7 +223,7 @@ module Drum
       return []
     end
 
-    def from_am_id(am_id, new_playlist)
+    def from_am_id(am_id)
       unless am_id.nil?
         Digest::SHA1.hexdigest(am_id)
       else
@@ -232,16 +231,40 @@ module Drum
       end
     end
 
-    def from_am_track(am_track, new_playlist)
-      # TODO
-      raise "#{am_track}"
+    def from_am_library_track(am_track, new_playlist)
+      am_attributes = am_track['attributes']
+
+      # TODO: Album artwork, etc.
+      # TODO: Generate the album/artist IDs from something other than the names
+      # TODO: Apple Music-specific metadata (ids)
+
+      new_track = Track.new(
+        name: am_attributes['name'],
+        duration_ms: am_attributes['durationInMillis']
+      )
+
+      album_name = am_attributes['albumName']
+      artist_name = am_attributes['artistName']
+
+      new_album = Album.new(
+        id: self.from_am_id(album_name),
+        name: album_name
+      )
+
+      new_artist = Artist.new(
+        id: self.from_am_id(artist_name),
+        name: artist_name
+      )
+      new_track.artist_ids = [new_artist.id]
+
+      [new_track, new_artist, new_album]
     end
 
     def from_am_library_playlist(am_playlist, output: method(:puts))
       am_attributes = am_playlist['attributes']
       new_playlist = Playlist.new(
         name: am_attributes['name'] || '',
-        description: am_attributes['description'],
+        description: am_attributes.dig('description', 'standard'),
         applemusic: PlaylistAppleMusic.new(
           library_id: am_attributes.dig('playParams', 'id'),
           global_id: am_attributes.dig('playParams', 'globalId'),
@@ -250,7 +273,7 @@ module Drum
         )
       )
 
-      new_playlist.id = self.from_am_id(am_playlist['id'], new_playlist)
+      new_playlist.id = self.from_am_id(am_playlist['id'])
 
       # TODO: Author information
 
@@ -258,8 +281,11 @@ module Drum
         am_tracks = self.all_am_library_playlist_tracks(am_playlist)
         output.call "Got #{am_tracks.length} playlist track(s) for '#{new_playlist.name}'..."
         am_tracks.each do |am_track|
-          new_track = self.from_am_track(am_track, new_playlist)
+          new_track, new_artist, new_album = self.from_am_library_track(am_track, new_playlist)
+
           new_playlist.store_track(new_track)
+          new_playlist.store_artist(new_artist)
+          new_playlist.store_album(new_album)
         end
       rescue RestClient::NotFound
         # Swallow 404s, apparently sometimes there are no tracks associated with a list
