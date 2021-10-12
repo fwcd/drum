@@ -247,6 +247,7 @@ module Drum
 
     def parse_applemusic_link(raw)
       # Parses links like https://music.apple.com/us/playlist/some-name/pl.123456789
+      # TODO: Investigate whether such links can always be fetched through the catalog API
 
       uri = URI(raw)
       unless ['http', 'https'].include?(uri&.scheme) && uri&.host == 'music.apple.com'
