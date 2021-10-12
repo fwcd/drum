@@ -9,5 +9,5 @@
 /tmp/
 local
 vendor
-.env
+.env*
 *.gem
