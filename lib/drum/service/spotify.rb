@@ -265,6 +265,12 @@ module Drum
       track&.audio_features
     end
 
+    # Download helpers
+
+    # Note that while the `from_spotify_*` methods use
+    # an existing `new_playlist` to reuse albums/artists/etc,
+    # they do not mutate the `new_playlist` themselves.
+
     # TODO: Replace hexdigest id generation with something
     #       that matches e.g. artists or albums with those
     #       already in the playlist.
@@ -276,12 +282,6 @@ module Drum
         nil
       end
     end
-
-    # Download helpers
-
-    # Note that while the `from_spotify_*` methods use
-    # an existing `new_playlist` to reuse albums/artists/etc,
-    # they do not mutate the `new_playlist` themselves.
 
     def from_spotify_album(album, new_playlist, output: method(:puts))
       new_id = self.from_spotify_id(album.id, new_playlist)
