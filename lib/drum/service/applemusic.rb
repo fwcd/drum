@@ -4,6 +4,7 @@ require 'drum/model/playlist'
 require 'drum/model/track'
 require 'drum/service/service'
 require 'drum/version'
+require 'digest'
 require 'jwt'
 require 'json'
 require 'launchy'
@@ -221,6 +222,18 @@ module Drum
       return []
     end
 
+    def from_am_id(am_id, new_playlist)
+      unless am_id.nil?
+        Digest::SHA1.hexdigest(am_id)
+      else
+        nil
+      end
+    end
+
+    def from_am_playlist(am_playlist, output: method(:puts))
+      # TODO
+    end
+
     # Ref parsing
 
     def parse_resource_type(raw)
@@ -277,9 +290,16 @@ module Drum
           puts 'Querying library playlists...'
           am_playlists = self.all_am_library_playlists
 
-          # TODO
-          puts "Got #{am_playlists.length} playlists"
-          []
+          puts 'Fetching playlists...'
+          bar = ProgressBar.new(am_playlists.length)
+
+          Enumerator.new do |enum|
+            am_playlists.each do |am_playlist|
+              new_playlist = self.from_am_playlist(am_playlist, output: bar.method(:puts))
+              bar.increment!
+              enum.yield new_playlist
+            end
+          end
         else raise "Special resource location '#{ref.resource_location}' cannot be downloaded (yet)"
         end
       else raise "Resource type '#{ref.resource_type}' cannot be downloaded (yet)"
