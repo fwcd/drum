@@ -73,7 +73,7 @@ module Drum
       exp = (Time.now + expiration_in_days * 86400).to_i 
       pem_file = `openssl pkcs8 -nocrypt -in #{p8_file}`
       private_key = OpenSSL::PKey::EC.new(pem_file) 
-      payload = {:iss => "#{team_id}", :iat => iat, :exp => exp}
+      payload = { iss: "#{team_id}", iat: iat, exp: exp }
       return JWT.encode(payload, private_key, "ES256", { alg: "ES256", kid: "#{key_id}" })
     end
 
