@@ -230,8 +230,22 @@ module Drum
       end
     end
 
-    def from_am_playlist(am_playlist, output: method(:puts))
-      # TODO
+    def from_am_library_playlist(am_playlist, output: method(:puts))
+      am_attributes = my_playlist['attributes']
+      new_playlist = Playlist.new(
+        name: am_attributes['name'] || '',
+        description: am_attributes['description'],
+        applemusic: PlaylistAppleMusic.new(
+          library_id: am_attributes.dig('playParams', 'id'),
+          global_id: am_attributes.dig('playParams', 'globalId'),
+          public: am_attributes['isPublic'],
+          editable: am_attributes['canEdit']
+        )
+      )
+
+      new_playlist.id = self.from_am_id(am_playlist['id'], new_playlist)
+
+      new_playlist
     end
 
     # Ref parsing
@@ -296,7 +310,7 @@ module Drum
 
           Enumerator.new do |enum|
             am_playlists.each do |am_playlist|
-              new_playlist = self.from_am_playlist(am_playlist, output: bar.method(:puts))
+              new_playlist = self.from_am_library_playlist(am_playlist, output: bar.method(:puts))
               bar.increment!
               enum.yield new_playlist
             end

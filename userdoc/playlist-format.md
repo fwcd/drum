@@ -32,6 +32,11 @@ spotify:
   public: boolean?
   collaborative: boolean?
   image_url: string?
+applemusic:
+  library_id: string?
+  global_id: string?
+  public: boolean?
+  editable: boolean?
 ```
 
 ### User
