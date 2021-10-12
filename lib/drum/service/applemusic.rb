@@ -170,12 +170,45 @@ module Drum
 
     # Ref parsing
 
+    def parse_resource_type(raw)
+      case raw
+      when 'playlist' then :playlist
+      when 'album' then :album
+      when 'artist' then :artist
+      else nil
+      end
+    end
+
+    def parse_applemusic_link(raw)
+      # Parses links like https://music.apple.com/us/playlist/some-name/pl.123456789
+
+      uri = URI(raw)
+      unless ['http', 'https'].include?(uri&.scheme) && uri&.host == 'music.apple.com'
+        return nil
+      end
+
+      parsed_path = uri.path.split('/')
+      unless parsed_path.length == 5
+        return nil
+      end
+
+      storefront = parsed_path[1]
+      resource_type = parsed_path[2]
+      resource_location = parsed_path[4]
+
+      Ref.new(self.name, resource_type, [storefront, resource_location])
+    end
+
     def parse_ref(raw_ref)
-      # TODO: Implement proper ref parsing
-      if raw_ref.is_token && raw_ref.text == 'applemusic'
-        Ref.new(self.name, :playlist, '')
+      if raw_ref.is_token
+        location = case raw_ref.text
+        when "#{self.name}/tracks" then :tracks
+        when "#{self.name}/playlists" then :playlists
+        else return nil
+        end
+        Ref.new(self.name, :special, location)
       else
-        nil
+        self.parse_applemusic_link(raw_ref.text)
       end
     end
 
@@ -185,6 +218,7 @@ module Drum
       self.authenticate
 
       # TODO: Implement proper downloading
+      puts ref
       []
     end
   end
