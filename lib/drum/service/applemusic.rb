@@ -183,6 +183,8 @@ module Drum
     end
 
     def get_json(endpoint)
+      puts "Getting #{endpoint}"
+
       response = request(:get, endpoint)
       unless response.code >= 200 && response.code < 300
         raise "Something went wrong while GETting #{endpoint}: #{response}"
@@ -213,7 +215,7 @@ module Drum
 
     def all_am_library_playlist_tracks(am_playlist, offset: 0, total: nil)
       unless total != nil && offset >= total
-        response = self.library_playlist_tracks(am_playlist, offset: offset)
+        response = self.api_library_playlist_tracks(am_playlist, offset: offset)
         am_tracks = response['data']
         unless am_tracks.empty?
           return am_tracks + self.all_am_library_playlist_tracks(am_playlist, offset: offset + PLAYLISTS_CHUNK_SIZE, total: response.dig('meta', 'total'))
@@ -230,8 +232,13 @@ module Drum
       end
     end
 
+    def from_am_track(am_track, new_playlist)
+      # TODO
+      raise "#{am_track}"
+    end
+
     def from_am_library_playlist(am_playlist, output: method(:puts))
-      am_attributes = my_playlist['attributes']
+      am_attributes = am_playlist['attributes']
       new_playlist = Playlist.new(
         name: am_attributes['name'] || '',
         description: am_attributes['description'],
@@ -244,6 +251,20 @@ module Drum
       )
 
       new_playlist.id = self.from_am_id(am_playlist['id'], new_playlist)
+
+      # TODO: Author information
+
+      begin
+        am_tracks = self.all_am_library_playlist_tracks(am_playlist)
+        output.call "Got #{am_tracks.length} playlist track(s) for '#{new_playlist.name}'..."
+        am_tracks.each do |am_track|
+          new_track = self.from_am_track(am_track, new_playlist)
+          new_playlist.store_track(new_track)
+        end
+      rescue RestClient::NotFound
+        # Swallow 404s, apparently sometimes there are no tracks associated with a list
+        nil
+      end
 
       new_playlist
     end
@@ -303,7 +324,7 @@ module Drum
         case ref.resource_location
         when :playlists
           puts 'Querying library playlists...'
-          am_playlists = self.all_am_library_playlists
+          am_playlists = self.all_am_library_playlists.filter { |p| !p.dig('attributes', 'name').nil? }
 
           puts 'Fetching playlists...'
           bar = ProgressBar.new(am_playlists.length)

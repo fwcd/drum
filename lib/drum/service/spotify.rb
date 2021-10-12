@@ -400,7 +400,7 @@ module Drum
 
       sp_tracks = sp_tracks || self.all_sp_playlist_tracks(sp_playlist)
       output.call "Got #{sp_tracks.length} playlist track(s) for '#{sp_playlist.name}'..."
-      sp_tracks.each_with_index do |sp_track, i|
+      sp_tracks.each do |sp_track|
         new_track, new_artists, new_album = self.from_sp_track(sp_track, new_playlist, output: output)
         new_track.added_at = sp_added_ats[sp_track.id]
 
