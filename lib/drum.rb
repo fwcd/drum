@@ -184,5 +184,14 @@ module Drum
         service.remove(ref)
       end
     end
+
+    desc 'services', 'List available services'
+
+    # Lists available services.
+    #
+    # @return [void]
+    def services
+      puts @services.each_key.to_a.join("\n")
+    end
   end
 end
