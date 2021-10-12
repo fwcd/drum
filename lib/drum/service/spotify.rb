@@ -315,7 +315,7 @@ module Drum
         artist_ids: [],
         duration_ms: sp_track.duration_ms,
         explicit: sp_track.explicit,
-        isrc: sp_track.sp_ids&.dig('isrc'),
+        isrc: sp_track.external_ids&.dig('isrc'),
         spotify: TrackSpotify.new(
           id: sp_track.id
         )
