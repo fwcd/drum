@@ -8,14 +8,6 @@ class Drum::Service
     raise "ERROR: Service does not specify a name!"
   end
 
-  # Whether the service supports updates ('mutations') to the playlist
-  # when used as a source.
-  #
-  # @return [Boolean] Whether 'mutations' to the playlist are supported
-  def supports_source_mutations
-    false
-  end
-
   # Tries to parse a ref from this service.
   #
   # @param [RawRef] raw_ref The raw reference to be parsed.
@@ -45,7 +37,6 @@ class Drum::Service
   # 
   # @param [Ref] playlist_ref A ref to the upload location (see README for examples)
   # @param [Array<Playlist>, Enumerator<Playlist>] playlists The list of playlists to be uploaded
-  # @return [optional, Array<Playlist>] The list of playlists to be updated in the source or nil, if there are no updates
   def upload(playlist_ref, playlists)
     raise "ERROR: Service '#{self.name}' cannot upload playlists (yet)!"
   end

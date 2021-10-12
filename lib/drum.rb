@@ -157,11 +157,7 @@ module Drum
             end
           end
 
-          updated_playlists = dest_service.upload(dest_ref, playlists)
-
-          unless updated_playlists.nil? || !src_service.supports_source_mutations
-            src_service.upload(src_ref, updated_playlists)
-          end
+          dest_service.upload(dest_ref, playlists)
         end
       end
     end
