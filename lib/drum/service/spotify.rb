@@ -232,7 +232,7 @@ module Drum
       puts "Successfully logged in to Spotify API as #{me_json['id']}."
     end
 
-    # Utilities
+    # Download helpers
     
     def all_sp_library_playlists(offset: 0)
       sp_playlists = @me.playlists(limit: PLAYLISTS_CHUNK_SIZE, offset: offset)
@@ -264,8 +264,6 @@ module Drum
     def extract_sp_features(sp_track)
       sp_track&.audio_features
     end
-
-    # Download helpers
 
     # Note that while the `from_sp_*` methods use
     # an existing `new_playlist` to reuse albums/artists/etc,
