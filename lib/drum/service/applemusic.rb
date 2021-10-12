@@ -168,6 +168,59 @@ module Drum
       @user_token = user_token
     end
 
+    # API wrapper
+
+    def request(method, endpoint)
+      RestClient::Request.execute(
+        method: method,
+        url: "#{BASE_URL}#{endpoint}",
+        headers: {
+          'Authorization': "Bearer #{@token}",
+          'Music-User-Token': @user_token
+        }
+      )
+    end
+
+    def get_json(endpoint)
+      response = request(:get, endpoint)
+      unless response.code >= 200 && response.code < 300
+        raise "Something went wrong while GETting #{endpoint}: #{response}"
+      end
+      return JSON.parse(response.body)
+    end
+
+    def api_library_playlists(offset: 0)
+      get_json("/me/library/playlists?limit=#{PLAYLISTS_CHUNK_SIZE}&offset=#{offset}")
+    end
+
+    def api_library_playlist_tracks(am_playlist, offset: 0)
+      get_json("/me/library/playlists/#{am_playlist['id']}/tracks?limit=#{PLAYLISTS_CHUNK_SIZE}&offset=#{offset}")
+    end
+
+    # Download helpers
+
+    def all_am_library_playlists(offset: 0, total: nil)
+      unless total != nil && offset >= total
+        response = self.api_library_playlists(offset: offset)
+        am_playlists = response['data']
+        unless am_playlists.empty?
+          return am_playlists + self.all_am_library_playlists(offset: offset + PLAYLISTS_CHUNK_SIZE, total: response.dig('meta', 'total'))
+        end
+      end
+      return []
+    end
+
+    def all_am_library_playlist_tracks(am_playlist, offset: 0, total: nil)
+      unless total != nil && offset >= total
+        response = self.library_playlist_tracks(am_playlist, offset: offset)
+        am_tracks = response['data']
+        unless am_tracks.empty?
+          return am_tracks + self.all_am_library_playlist_tracks(am_playlist, offset: offset + PLAYLISTS_CHUNK_SIZE, total: response.dig('meta', 'total'))
+        end
+      end
+      return []
+    end
+
     # Ref parsing
 
     def parse_resource_type(raw)
