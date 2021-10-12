@@ -32,13 +32,13 @@ module Drum
     # Rate-limiting for API-heavy methods
     # 'rate' describes the max. number of calls per interval (seconds)
 
-    limit_method :extract_spotify_features, rate: 15, interval: 5
-    limit_method :all_spotify_playlist_tracks, rate: 15, interval: 5
-    limit_method :all_spotify_saved_tracks, rate: 15, interval: 5
-    limit_method :all_spotify_playlists, rate: 15, interval: 5
-    limit_method :to_spotify_tracks, rate: 15, interval: 5
-    limit_method :upload_playlist_tracks, rate: 15, interval: 5
-    limit_method :upload_playlists, rate: 15, interval: 5
+    limit_method :extract_sp_features, rate: 15, interval: 5
+    limit_method :all_sp_playlist_tracks, rate: 15, interval: 5
+    limit_method :all_sp_library_tracks, rate: 15, interval: 5
+    limit_method :all_sp_library_playlists, rate: 15, interval: 5
+    limit_method :to_sp_tracks, rate: 15, interval: 5
+    limit_method :upload_sp_playlist_tracks, rate: 15, interval: 5
+    limit_method :upload_playlist, rate: 15, interval: 5
 
     # Initializes the Spotify service.
     #
@@ -234,40 +234,40 @@ module Drum
 
     # Utilities
     
-    def all_spotify_playlists(offset: 0)
+    def all_sp_library_playlists(offset: 0)
       sp_playlists = @me.playlists(limit: PLAYLISTS_CHUNK_SIZE, offset: offset)
       unless sp_playlists.empty?
-        sp_playlists + self.all_spotify_playlists(offset: offset + PLAYLISTS_CHUNK_SIZE)
+        sp_playlists + self.all_sp_library_playlists(offset: offset + PLAYLISTS_CHUNK_SIZE)
       else
         []
       end
     end
 
-    def all_spotify_playlist_tracks(sp_playlist, offset: 0)
+    def all_sp_playlist_tracks(sp_playlist, offset: 0)
       sp_tracks = sp_playlist.tracks(limit: TRACKS_CHUNK_SIZE, offset: offset)
       unless sp_tracks.empty?
-        sp_tracks + self.all_spotify_playlist_tracks(sp_playlist, offset: offset + TRACKS_CHUNK_SIZE)
+        sp_tracks + self.all_sp_playlist_tracks(sp_playlist, offset: offset + TRACKS_CHUNK_SIZE)
       else
         []
       end
     end
 
-    def all_spotify_saved_tracks(offset: 0)
+    def all_sp_library_tracks(offset: 0)
       sp_tracks = @me.saved_tracks(limit: SAVED_TRACKS_CHUNKS_SIZE, offset: offset)
       unless sp_tracks.empty?
-        sp_tracks + self.all_spotify_saved_tracks(offset: offset + SAVED_TRACKS_CHUNKS_SIZE)
+        sp_tracks + self.all_sp_library_tracks(offset: offset + SAVED_TRACKS_CHUNKS_SIZE)
       else
         []
       end
     end
 
-    def extract_spotify_features(sp_track)
+    def extract_sp_features(sp_track)
       sp_track&.audio_features
     end
 
     # Download helpers
 
-    # Note that while the `from_spotify_*` methods use
+    # Note that while the `from_sp_*` methods use
     # an existing `new_playlist` to reuse albums/artists/etc,
     # they do not mutate the `new_playlist` themselves.
 
@@ -275,7 +275,7 @@ module Drum
     #       that matches e.g. artists or albums with those
     #       already in the playlist.
 
-    def from_spotify_id(sp_id, new_playlist)
+    def from_sp_id(sp_id, new_playlist)
       unless sp_id.nil?
         Digest::SHA1.hexdigest(sp_id)
       else
@@ -283,15 +283,15 @@ module Drum
       end
     end
 
-    def from_spotify_album(sp_album, new_playlist, output: method(:puts))
-      new_id = self.from_spotify_id(sp_album.id, new_playlist)
+    def from_sp_album(sp_album, new_playlist, output: method(:puts))
+      new_id = self.from_sp_id(sp_album.id, new_playlist)
       new_album = new_playlist.albums[new_id]
       unless new_album.nil?
         return [new_album, []]
       end
 
       new_album = Album.new(
-        id: self.from_spotify_id(sp_album.id, new_playlist),
+        id: self.from_sp_id(sp_album.id, new_playlist),
         name: sp_album.name,
         artist_ids: [],
         spotify: AlbumSpotify.new(
@@ -301,7 +301,7 @@ module Drum
       )
 
       new_artists = sp_album.artists.map do |sp_artist|
-        new_artist = self.from_spotify_artist(sp_artist, new_playlist)
+        new_artist = self.from_sp_artist(sp_artist, new_playlist)
         new_album.artist_ids << new_artist.id
         new_artist
       end
@@ -309,7 +309,7 @@ module Drum
       [new_album, new_artists]
     end
 
-    def from_spotify_track(sp_track, new_playlist, output: method(:puts))
+    def from_sp_track(sp_track, new_playlist, output: method(:puts))
       new_track = Track.new(
         name: sp_track.name,
         artist_ids: [],
@@ -322,12 +322,12 @@ module Drum
       )
 
       new_artists = sp_track.artists.map do |sp_artist|
-        new_artist = self.from_spotify_artist(sp_artist, new_playlist)
+        new_artist = self.from_sp_artist(sp_artist, new_playlist)
         new_track.artist_ids << new_artist.id
         new_artist
       end
 
-      new_album, new_album_artists = self.from_spotify_album(sp_track.album, new_playlist, output: output)
+      new_album, new_album_artists = self.from_sp_album(sp_track.album, new_playlist, output: output)
       new_track.album_id = new_album.id
       new_artists += new_album_artists
 
@@ -336,8 +336,8 @@ module Drum
       [new_track, new_artists, new_album]
     end
 
-    def from_spotify_artist(sp_artist, new_playlist)
-      new_id = self.from_spotify_id(sp_artist.id, new_playlist)
+    def from_sp_artist(sp_artist, new_playlist)
+      new_id = self.from_sp_id(sp_artist.id, new_playlist)
       new_playlist.artists[new_id] || Artist.new(
         id: new_id,
         name: sp_artist.name,
@@ -352,10 +352,10 @@ module Drum
       )
     end
     
-    def from_spotify_user(sp_user, new_playlist)
-      new_id = self.from_spotify_id(sp_user.id, new_playlist)
+    def from_sp_user(sp_user, new_playlist)
+      new_id = self.from_sp_id(sp_user.id, new_playlist)
       new_playlist.users[new_id] || User.new(
-        id: self.from_spotify_id(sp_user.id, new_playlist),
+        id: self.from_sp_id(sp_user.id, new_playlist),
         display_name: begin
           sp_user.display_name unless sp_user.id.empty?
         rescue StandardError => e
@@ -372,7 +372,7 @@ module Drum
       )
     end
 
-    def from_spotify_playlist(sp_playlist, sp_tracks = nil, output: method(:puts))
+    def from_sp_playlist(sp_playlist, sp_tracks = nil, output: method(:puts))
       new_playlist = Playlist.new(
         name: sp_playlist.name,
         description: sp_playlist&.description,
@@ -388,11 +388,11 @@ module Drum
         )
       )
 
-      new_playlist.id = self.from_spotify_id(sp_playlist.id, new_playlist)
+      new_playlist.id = self.from_sp_id(sp_playlist.id, new_playlist)
 
       sp_author = sp_playlist&.owner
       unless sp_author.nil?
-        new_author = self.from_spotify_user(sp_author, new_playlist)
+        new_author = self.from_sp_user(sp_author, new_playlist)
         new_playlist.author_id = new_author.id
         new_playlist.store_user(new_author)
       end
@@ -400,15 +400,15 @@ module Drum
       sp_added_bys = sp_playlist.tracks_added_by
       sp_added_ats = sp_playlist.tracks_added_at
 
-      sp_tracks = sp_tracks || self.all_spotify_playlist_tracks(sp_playlist)
+      sp_tracks = sp_tracks || self.all_sp_playlist_tracks(sp_playlist)
       output.call "Got #{sp_tracks.length} playlist track(s) for '#{sp_playlist.name}'..."
       sp_tracks.each_with_index do |sp_track, i|
-        new_track, new_artists, new_album = self.from_spotify_track(sp_track, new_playlist, output: output)
+        new_track, new_artists, new_album = self.from_sp_track(sp_track, new_playlist, output: output)
         new_track.added_at = sp_added_ats[sp_track.id]
 
         sp_added_by = sp_added_bys[sp_track.id]
         unless sp_added_by.nil?
-          new_added_by = self.from_spotify_user(sp_added_by, new_playlist)
+          new_added_by = self.from_sp_user(sp_added_by, new_playlist)
           new_track.added_by = new_added_by.id
           new_playlist.store_user(new_added_by)
         end
@@ -426,21 +426,21 @@ module Drum
 
     # Upload helpers
 
-    def to_spotify_tracks(tracks)
+    def to_sp_tracks(tracks)
       unless tracks.nil? || tracks.empty?
         # TODO: If track has no ID, match it using search
         sp_ids = tracks[...TO_SPOTIFY_TRACKS_CHUNK_SIZE].filter_map { |t| t&.spotify&.id }
         sp_tracks = RSpotify::Track.find(sp_ids)
-        sp_tracks + to_spotify_tracks(tracks[TO_SPOTIFY_TRACKS_CHUNK_SIZE...])
+        sp_tracks + to_sp_tracks(tracks[TO_SPOTIFY_TRACKS_CHUNK_SIZE...])
       else
         []
       end
     end
 
-    def upload_playlist_tracks(sp_tracks, sp_playlist)
+    def upload_sp_playlist_tracks(sp_tracks, sp_playlist)
       unless sp_tracks.nil? || sp_tracks.empty?
         sp_playlist.add_tracks!(sp_tracks[...UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE])
-        self.upload_playlist_tracks(sp_tracks[UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE...], sp_playlist)
+        self.upload_sp_playlist_tracks(sp_tracks[UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE...], sp_playlist)
       end
     end
 
@@ -452,10 +452,10 @@ module Drum
       tracks = playlist.tracks
 
       output.call "Externalizing #{tracks.length} playlist track(s)..."
-      sp_tracks = self.to_spotify_tracks(tracks)
+      sp_tracks = self.to_sp_tracks(tracks)
 
       output.call "Uploading #{sp_tracks.length} playlist track(s)..."
-      self.upload_playlist_tracks(sp_tracks, sp_playlist)
+      self.upload_sp_playlist_tracks(sp_tracks, sp_playlist)
 
       # TODO: Clone the original playlist and insert potentially new Spotify ids
       nil
@@ -531,34 +531,34 @@ module Drum
         case ref.resource_location
         when :playlists
           puts 'Querying playlists...'
-          sp_playlists = self.all_spotify_playlists
+          sp_playlists = self.all_sp_library_playlists
 
           puts 'Fetching playlists...'
           bar = ProgressBar.new(sp_playlists.length)
 
           Enumerator.new do |enum|
             sp_playlists.each do |sp_playlist|
-              new_playlist = self.from_spotify_playlist(sp_playlist, output: bar.method(:puts))
+              new_playlist = self.from_sp_playlist(sp_playlist, output: bar.method(:puts))
               bar.increment!
               enum.yield new_playlist
             end
           end
         when :tracks
           puts 'Querying saved tracks...'
-          sp_saved_tracks = self.all_spotify_saved_tracks
+          sp_saved_tracks = self.all_sp_library_tracks
 
           puts 'Fetching saved tracks...'
           bar = ProgressBar.new(sp_saved_tracks.length)
           new_playlist = Playlist.new(
             name: 'Saved Tracks'
           )
-          new_me = self.from_spotify_user(@me, new_playlist)
-          new_playlist.id = self.from_spotify_id(new_me.id, new_playlist)
+          new_me = self.from_sp_user(@me, new_playlist)
+          new_playlist.id = self.from_sp_id(new_me.id, new_playlist)
           new_playlist.author_id = new_me.id
           new_playlist.store_user(new_me)
 
           sp_saved_tracks.each do |sp_track|
-            new_track, new_artists, new_album = self.from_spotify_track(sp_track, new_playlist, output: bar.method(:puts))
+            new_track, new_artists, new_album = self.from_sp_track(sp_track, new_playlist, output: bar.method(:puts))
 
             new_artists.each do |new_artist|
               new_playlist.store_artist(new_artist)
@@ -575,7 +575,7 @@ module Drum
         end
       when :playlist
         playlist = RSpotify::Playlist.find_by_id(ref.resource_location)
-        new_playlist = self.from_spotify_playlist(playlist)
+        new_playlist = self.from_sp_playlist(playlist)
 
         [new_playlist]
       else raise "Resource type '#{ref.resource_type}' cannot be downloaded (yet)"
