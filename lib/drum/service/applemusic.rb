@@ -3,6 +3,7 @@ require 'drum/model/ref'
 require 'drum/model/playlist'
 require 'drum/model/track'
 require 'drum/service/service'
+require 'drum/version'
 require 'jwt'
 require 'json'
 require 'launchy'
@@ -101,7 +102,7 @@ module Drum
           "      document.addEventListener('musickitloaded', () => {",
           '        MusicKit.configure({',
           "          developerToken: '#{token}',",
-          "          app: { name: 'Drum', build: '0.0.1' }",
+          "          app: { name: 'Drum', build: '#{VERSION}' }",
           '        });',
           '      });',
           "      window.addEventListener('load', () => {",
