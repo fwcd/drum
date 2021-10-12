@@ -45,7 +45,7 @@ module Drum
     # @param [String] cache_dir The path to the cache directory (shared by all services)
     # @param [Boolean] fetch_artist_images Whether to fetch artist images (false by default)
     def initialize(cache_dir, fetch_artist_images: false)
-      @cache_dir = cache_dir / 'spotify'
+      @cache_dir = cache_dir / self.name
       @cache_dir.mkdir unless @cache_dir.directory?
 
       @auth_tokens = PersistentHash.new(@cache_dir / 'auth-tokens.yaml')
