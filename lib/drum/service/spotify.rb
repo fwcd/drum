@@ -175,7 +175,7 @@ module Drum
         return existing[:access_token], existing[:refresh_token], existing[:token_type]
       end
 
-      unless existing[:refresh_token].nil?
+      unless existing.nil? || existing[:refresh_token].nil?
         puts 'Authenticating via refresh...'
         self.authenticate_user_via_refresh(client_id, client_secret, existing[:refresh_token])
       else
