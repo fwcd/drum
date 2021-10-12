@@ -270,9 +270,22 @@ module Drum
     def download(ref)
       self.authenticate
 
-      # TODO: Implement proper downloading
-      puts ref
-      []
+      case ref.resource_type
+      when :special
+        case ref.resource_location
+        when :playlists
+          puts 'Querying library playlists...'
+          am_playlists = self.all_am_library_playlists
+
+          # TODO
+          puts "Got #{am_playlists.length} playlists"
+          []
+        else raise "Special resource location '#{ref.resource_location}' cannot be downloaded (yet)"
+        end
+      else raise "Resource type '#{ref.resource_type}' cannot be downloaded (yet)"
+      end
     end
+
+    # TODO: Uploading
   end
 end
