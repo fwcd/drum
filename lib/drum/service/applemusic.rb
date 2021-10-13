@@ -90,7 +90,12 @@ module Drum
       # HTTP server as a 'callback'.
 
       port = 17997
-      server = WEBrick::HTTPServer.new :Port => port
+      server = WEBrick::HTTPServer.new({
+        Port: port,
+        StartCallback: Proc.new do
+          Launchy.open("http://localhost:#{port}/")
+        end
+      })
       user_token = nil
 
       server.mount_proc '/' do |req, res|
@@ -134,11 +139,6 @@ module Drum
         server.shutdown
       end
 
-      Thread.new do
-        sleep(1) # a short delay to make sure that the web server has launched
-        Launchy.open("http://localhost:#{port}/")
-      end
-
       trap 'INT' do server.shutdown end
 
       puts "Launching callback HTTP server on port #{port}, waiting for auth code..."
@@ -157,7 +157,7 @@ module Drum
       team_id = ENV[MUSICKIT_TEAM_ID_VAR]
 
       if p8_file.nil? || key_id.nil? || team_id.nil?
-        raise "Please specify your MusicKit keys (#{MUSICKIT_P8_FILE_VAR}, #{MUSICKIT_KEY_ID_VAR}, #{MUSICKIT_TEAM_ID_VAR}) in your env vars!"
+        raise "Please specify your MusicKit keys (#{MUSICKIT_P8_FILE_VAR}, #{MUSICKIT_KEY_VAR}, #{MUSICKIT_TEAM_ID_VAR}) in your env vars!"
       end
 
       token = self.authenticate_app(p8_file, key_id, team_id)
