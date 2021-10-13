@@ -86,6 +86,8 @@ module Drum
       payload = { iss: "#{team_id}", iat: iat, exp: exp }
 
       token = JWT.encode(payload, private_key, "ES256", { alg: "ES256", kid: "#{key_id}" })
+      puts "Generated MusicKit JWT token #{token}"
+
       @auth_tokens[:app] = {
         expires_at: DateTime.now + expiration_in_days,
         token: token
@@ -95,7 +97,12 @@ module Drum
     end
 
     def authenticate_user(token)
-      # TODO: Store this token in the cache/auth-keys.yaml
+      existing = @auth_tokens[:user]
+
+      unless existing.nil? || existing[:expires_at].nil? || existing[:expires_at] < DateTime.now
+        puts 'Skipping user authentication...'
+        return existing[:token]
+      end
 
       # Generate a new access refresh token,
       # this might require user interaction. Since the
@@ -161,8 +168,17 @@ module Drum
       if user_token.nil?
         raise "Did not get a MusicKit user token."
       end
+      puts "Generated MusicKit user token #{user_token}"
 
-      return user_token
+      # Cache user token for half an hour (an arbitrary duration)
+      expiration_in_seconds = 1800
+
+      @auth_tokens[:user] = {
+        expires_at: DateTime.now + (expiration_in_seconds / 86400.0),
+        token: user_token
+      }
+
+      user_token
     end
 
     def authenticate
@@ -175,10 +191,7 @@ module Drum
       end
 
       token = self.authenticate_app(p8_file, key_id, team_id)
-      puts "Generated MusicKit JWT token #{token}"
-
       user_token = self.authenticate_user(token)
-      puts "Generated MusicKit user token #{user_token}"
 
       @token = token
       @user_token = user_token
