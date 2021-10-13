@@ -189,5 +189,15 @@ module Drum
     def services
       puts @services.each_key.to_a.join("\n")
     end
+
+    map %w[--version -v] => :__print_version
+    desc '--version, -v', 'Print the version', hide: true
+
+    # Prints the version.
+    #
+    # @return [void]
+    def __print_version
+      puts VERSION
+    end
   end
 end
