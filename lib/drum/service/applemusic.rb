@@ -26,9 +26,10 @@ module Drum
     MUSICKIT_KEY_VAR = 'MUSICKIT_KEY_ID'
     MUSICKIT_TEAM_ID_VAR = 'MUSICKIT_TEAM_ID'
 
-    # Rate-limiting for API-heavy methods
+    # Rate-limiting for API methods
 
-    # TODO
+    limit_method :api_library_playlists, rate: 60
+    limit_method :api_library_playlist_tracks, rate: 60
 
     # Initializes the Apple Music service.
     #
