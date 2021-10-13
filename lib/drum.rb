@@ -117,7 +117,7 @@ module Drum
     end
     
     desc 'cp [SOURCE] [DEST]', 'Copy a playlist from the source to the given destination'
-    method_option :group_by_author, :type => :boolean, :default => false, :desc => "Whether to prepend the author name to each playlist's path"
+    method_option :group_by_author, type: :boolean, default: false, desc: "Whether to prepend the author name to each playlist's path"
 
     # Copies a playlist from the source to the given destination.
     #
