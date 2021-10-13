@@ -5,6 +5,7 @@ require 'drum/model/playlist'
 require 'drum/model/track'
 require 'drum/service/service'
 require 'drum/version'
+require 'date'
 require 'digest'
 require 'jwt'
 require 'json'
@@ -47,9 +48,15 @@ module Drum
     # Authentication
 
     def authenticate_app(p8_file, key_id, team_id)
-      # TODO: Store and reuse keys in cache/auth-keys.yaml instead of regenerating a new one each time
+      existing = @auth_tokens[:app]
+
+      unless existing.nil? || existing[:expires_at].nil? || existing[:expires_at] < DateTime.now
+        puts 'Skipping app authentication...'
+        return existing[:token]
+      end
 
       expiration_in_days = 180 # may not be greater than 180
+      expiration_in_seconds = expiration_in_days * 86400
 
       # Source: https://github.com/mkoehnke/musickit-token-encoder/blob/master/musickit-token-encoder
       # Copyright (c) 2016 Mathias Koehnke (http://www.mathiaskoehnke.de)
@@ -73,11 +80,18 @@ module Drum
       # THE SOFTWARE.
 
       iat = Time.now.to_i
-      exp = (Time.now + expiration_in_days * 86400).to_i 
+      exp = (Time.now + expiration_in_seconds).to_i 
       pem_file = `openssl pkcs8 -nocrypt -in #{p8_file}`
       private_key = OpenSSL::PKey::EC.new(pem_file) 
       payload = { iss: "#{team_id}", iat: iat, exp: exp }
-      return JWT.encode(payload, private_key, "ES256", { alg: "ES256", kid: "#{key_id}" })
+
+      token = JWT.encode(payload, private_key, "ES256", { alg: "ES256", kid: "#{key_id}" })
+      @auth_tokens[:app] = {
+        expires_at: DateTime.now + expiration_in_days,
+        token: token
+      }
+
+      token
     end
 
     def authenticate_user(token)
