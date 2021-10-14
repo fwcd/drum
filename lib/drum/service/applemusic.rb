@@ -271,6 +271,16 @@ module Drum
         &.sub('{h}', height.to_s)
     end
 
+    def from_am_artist_name(artist_name)
+      artist_names = artist_name.split(/\s*[,&]\s*/)
+      artist_names.map do |artist_name|
+        Artist.new(
+          id: self.from_am_id(artist_name),
+          name: artist_name
+        )
+      end
+    end
+
     def from_am_track(am_track, new_playlist)
       am_attributes = am_track['attributes']
 
@@ -305,21 +315,14 @@ module Drum
       end
 
       unless artist_name.nil?
-        new_artist = Artist.new(
-          id: self.from_am_id(artist_name),
-          name: artist_name
-        )
-        new_track.artist_ids << new_artist.id
-        new_artists << new_artist
+        new_artists = self.from_am_artist_name(artist_name)
+        new_track.artist_ids = new_artists.map { |a| a.id }
       end
 
       unless composer_name.nil?
-        new_composer = Artist.new(
-          id: self.from_am_id(composer_name),
-          name: composer_name
-        )
-        new_track.composer_ids << new_composer.id
-        new_artists << new_composer
+        new_composers = self.from_am_artist_name(composer_name)
+        new_track.composer_ids = new_composers.map { |c| c.id }
+        new_artists += new_composers
       end
 
       [new_track, new_artists, new_album]
