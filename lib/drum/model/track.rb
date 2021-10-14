@@ -18,6 +18,8 @@ module Drum
   #  @return [optional, Float] The duration of the track in milliseconds
   # @!attribute explicit
   #  @return [optional, Boolean] Whether the track is explicit
+  # @!attribute released_at
+  #  @return [optional, DateTime] The date/time the this track was released
   # @!attribute added_at
   #  @return [optional, DateTime] The date/time the this track was added to the playlist
   # @!attribute added_by
@@ -33,7 +35,7 @@ module Drum
     :artist_ids, :composer_ids, :album_id,
     :genres,
     :duration_ms, :explicit,
-    :added_at, :added_by,
+    :released_at, :added_at, :added_by,
     :isrc, :spotify, :applemusic,
     keyword_init: true
   ) do
@@ -57,6 +59,7 @@ module Drum
         album_id: h['album_id'],
         duration_ms: h['duration_ms'],
         explicit: h['explicit'],
+        released_at: h['released_at'].try { |d| DateTime.parse(d) },
         added_at: h['added_at'].try { |d| DateTime.parse(d) },
         added_by: h['added_by'],
         isrc: h['isrc'],
@@ -77,6 +80,7 @@ module Drum
         'album_id' => self.album_id,
         'duration_ms' => self.duration_ms,
         'explicit' => self.explicit,
+        'released_at' => self.released_at&.iso8601,
         'added_at' => self.added_at&.iso8601,
         'added_by' => self.added_by,
         'isrc' => self.isrc,

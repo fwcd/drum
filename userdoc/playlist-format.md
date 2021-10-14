@@ -83,6 +83,7 @@ genres: string[]?
 album_id: string? (references Album.id)
 duration_ms: number?
 explicit: boolean?
+released_at: string? (ISO8601 date)
 added_at: string? (ISO8601 date)
 added_by: string? (references User.id)
 isrc: string?
