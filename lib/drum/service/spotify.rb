@@ -420,12 +420,18 @@ module Drum
 
     # Upload helpers
 
-    def to_sp_tracks(tracks)
+    def to_sp_track(track, playlist)
+      sp_id = track&.spotify&.id
+      search_phrase = "#{track.name} #{track.artist_ids.join(' ')}"
+      # Use Spotify ID or search for the track otherwise
+      sp_tracks = sp_id.map { |i| [RSpotify::Track.find(i)] } || RSpotify::Track.search(search_phrase, limit: 1)
+      sp_tracks[0]
+    end
+
+    def to_sp_tracks(tracks, playlist)
       unless tracks.nil? || tracks.empty?
-        # TODO: If track has no ID, match it using search
-        sp_ids = tracks[...TO_SPOTIFY_TRACKS_CHUNK_SIZE].filter_map { |t| t&.spotify&.id }
-        sp_tracks = RSpotify::Track.find(sp_ids)
-        sp_tracks + to_sp_tracks(tracks[TO_SPOTIFY_TRACKS_CHUNK_SIZE...])
+        sp_tracks = tracks[...TO_SPOTIFY_TRACKS_CHUNK_SIZE].filter_map { |t| self.to_sp_track(t) }
+        sp_tracks + to_sp_tracks(tracks[TO_SPOTIFY_TRACKS_CHUNK_SIZE...], playlist)
       else
         []
       end
@@ -446,7 +452,7 @@ module Drum
       tracks = playlist.tracks
 
       output.call "Externalizing #{tracks.length} playlist track(s)..."
-      sp_tracks = self.to_sp_tracks(tracks)
+      sp_tracks = self.to_sp_tracks(tracks, playlist)
 
       output.call "Uploading #{sp_tracks.length} playlist track(s)..."
       self.upload_sp_playlist_tracks(sp_tracks, sp_playlist)
