@@ -171,6 +171,7 @@ describe Drum::AppleMusicService do
           tracks: [
             Drum::Track.new(
               name: 'Bohemian Rhapsody',
+              album_id: '99905cf4ee43a16ac92086c9c3a396f997088c7f',
               artist_ids: [
                 '6911adcc6c625bb5c52c5093aa8cdb0545ca63d4'
               ],
@@ -182,6 +183,7 @@ describe Drum::AppleMusicService do
             ),
             Drum::Track.new(
               name: 'Blue Suede Shoes',
+              album_id: '8c379b58b4028863b32a84e5affbc1cd0a5f2537',
               artist_ids: [
                 '8c379b58b4028863b32a84e5affbc1cd0a5f2537'
               ],

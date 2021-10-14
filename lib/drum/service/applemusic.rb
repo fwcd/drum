@@ -282,25 +282,45 @@ module Drum
         isrc: am_attributes['isrc']
       )
 
-      album_name = am_attributes['albumName'] || ''
-      artist_name = am_attributes['artistName'] || ''
+      album_name = am_attributes['albumName']
+      artist_name = am_attributes['artistName']
+      composer_name = am_attributes['composerName']
       am_album_artwork = am_attributes['artwork'] || {}
 
-      new_album = Album.new(
-        id: self.from_am_id(album_name),
-        name: album_name,
-        applemusic: AlbumAppleMusic.new(
-          image_url: self.from_am_album_artwork(am_album_artwork)
+      new_artists = []
+      new_albums = []
+
+      unless album_name.nil?
+        new_album = Album.new(
+          id: self.from_am_id(album_name),
+          name: album_name,
+          applemusic: AlbumAppleMusic.new(
+            image_url: self.from_am_album_artwork(am_album_artwork)
+          )
         )
-      )
+        new_track.album_id = new_album.id
+        new_albums << new_album
+      end
 
-      new_artist = Artist.new(
-        id: self.from_am_id(artist_name),
-        name: artist_name
-      )
-      new_track.artist_ids = [new_artist.id]
+      unless artist_name.nil?
+        new_artist = Artist.new(
+          id: self.from_am_id(artist_name),
+          name: artist_name
+        )
+        new_track.artist_ids << new_artist.id
+        new_artists << new_artist
+      end
 
-      [new_track, [new_artist], new_album]
+      unless composer_name.nil?
+        new_composer = Artist.new(
+          id: self.from_am_id(composer_name),
+          name: composer_name
+        )
+        new_track.composer_ids << new_composer.id
+        new_artists << new_composer
+      end
+
+      [new_track, new_artists, new_album]
     end
 
     def from_am_library_track(am_track, new_playlist)
