@@ -398,6 +398,14 @@ module Drum
         description: am_attributes.dig('description', 'standard')
       )
 
+      author_name = am_attributes['curatorName']
+      new_author = User.new(
+        id: self.from_am_id(author_name),
+        display_name: author_name
+      )
+      new_playlist.author_id = new_author.id
+      new_playlist.store_user(new_author)
+
       # TODO: Investigate whether this track list is complete,
       #       perhaps we need a mechanism similar to `all_am_library_playlist_tracks`.
 
