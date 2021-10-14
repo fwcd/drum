@@ -406,8 +406,11 @@ module Drum
         new_track, new_artists, new_album = self.from_am_catalog_track(am_track, new_playlist)
 
         new_playlist.store_track(new_track)
-        new_playlist.store_artist(new_artist)
         new_playlist.store_album(new_album)
+
+        new_artists.each do |new_artist|
+          new_playlist.store_artist(new_artist)
+        end
       end
 
       new_playlist
