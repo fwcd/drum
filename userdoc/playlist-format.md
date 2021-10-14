@@ -83,4 +83,7 @@ added_by: string? (references User.id)
 isrc: string?
 spotify:
   id: string
+applemusic:
+  library_id: string?
+  catalog_id: string?
 ```

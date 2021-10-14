@@ -22,12 +22,14 @@ module Drum
   #  @return [optional, String] The International Standard Recording Code of this track
   # @!attribute spotify
   #  @return [optional, TrackSpotify] Spotify-specific metadata
+  # @!attribute applemusic
+  #   @return [optional, TrackAppleMusic] Apple Music-specific metadata
   Track = Struct.new(
     :name,
     :artist_ids, :album_id,
     :duration_ms, :explicit,
     :added_at, :added_by,
-    :isrc, :spotify,
+    :isrc, :spotify, :applemusic,
     keyword_init: true
   ) do
     def initialize(*)
@@ -49,7 +51,8 @@ module Drum
         added_at: h['added_at'].try { |d| DateTime.parse(d) },
         added_by: h['added_by'],
         isrc: h['isrc'],
-        spotify: h['spotify'].try { |s| TrackSpotify.deserialize(s) }
+        spotify: h['spotify'].try { |s| TrackSpotify.deserialize(s) },
+        applemusic: h['applemusic'].try { |s| TrackAppleMusic.deserialize(s) }
       )
     end
 
@@ -66,7 +69,8 @@ module Drum
         'added_at' => self.added_at&.iso8601,
         'added_by' => self.added_by,
         'isrc' => self.isrc,
-        'spotify' => self.spotify&.serialize
+        'spotify' => self.spotify&.serialize,
+        'applemusic' => self.applemusic&.serialize
       }.compact
     end
   end
@@ -95,6 +99,38 @@ module Drum
     def serialize
       {
         'id' => self.id
+      }.compact
+    end
+  end
+
+  # Apple Music-specific metadata about the track.
+  #
+  # @!attribute library_id
+  #   @return [optional, String] The library-internal id of the track
+  # @!attribute catalog_id
+  #   @return [optional, String] The global catalog id of the track
+  TrackAppleMusic = Struct.new(
+    :library_id, :catalog_id,
+    keyword_init: true
+  ) do
+    # Parses Apple Music metadata from a Hash that uses string keys.
+    #
+    # @param [Hash<String, Object>] h The Hash to be parsed
+    # @return [TrackAppleMusic] The parsed metadata
+    def self.deserialize(h)
+      TrackAppleMusic.new(
+        library_id: h['library_id'],
+        catalog_id: h['catalog_id']
+      )
+    end
+
+    # Serializes the metadata to a Hash that uses string keys.
+    #
+    # @return [Hash<String, Object>] The serialized representation
+    def serialize
+      {
+        'library_id' => self.library_id,
+        'catalog_id' => self.catalog_id
       }.compact
     end
   end
