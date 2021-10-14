@@ -60,7 +60,7 @@ describe Drum::AppleMusicService do
                 'artwork' => {
                   'width' => 1200,
                   'height' => 1200,
-                  'url' => 'https://example.com/bohemian-rhapsody-artwork.jpg'
+                  'url' => 'https://example.com/platinum-collection-artwork.jpg'
                 },
                 'artistName' => 'Queen',
                 'discNumber' => 1,
@@ -155,11 +155,17 @@ describe Drum::AppleMusicService do
           albums: {
             '99905cf4ee43a16ac92086c9c3a396f997088c7f' => Drum::Album.new(
               id: '99905cf4ee43a16ac92086c9c3a396f997088c7f',
-              name: 'The Platinum Collection'
+              name: 'The Platinum Collection',
+              applemusic: Drum::AlbumAppleMusic.new(
+                image_url: 'https://example.com/platinum-collection-artwork.jpg'
+              )
             ),
             '8c379b58b4028863b32a84e5affbc1cd0a5f2537' => Drum::Album.new(
               id: '8c379b58b4028863b32a84e5affbc1cd0a5f2537',
-              name: 'Elvis Presley'
+              name: 'Elvis Presley',
+              applemusic: Drum::AlbumAppleMusic.new(
+                image_url: 'https://example.com/elvis-presley-artwork.jpg'
+              )
             )
           },
           tracks: [

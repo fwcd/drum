@@ -266,7 +266,6 @@ module Drum
     def from_am_library_track(am_track, new_playlist)
       am_attributes = am_track['attributes']
 
-      # TODO: Album artwork, etc.
       # TODO: Generate the album/artist IDs from something other than the names
 
       new_track = Track.new(
@@ -283,7 +282,10 @@ module Drum
 
       new_album = Album.new(
         id: self.from_am_id(album_name),
-        name: album_name
+        name: album_name,
+        applemusic: AlbumAppleMusic.new(
+          image_url: am_attributes.dig('artwork', 'url')
+        )
       )
 
       new_artist = Artist.new(
