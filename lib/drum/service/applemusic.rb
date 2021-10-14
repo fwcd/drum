@@ -11,6 +11,7 @@ require 'digest'
 require 'jwt'
 require 'json'
 require 'launchy'
+require 'progress_bar'
 require 'rest-client'
 require 'ruby-limiter'
 require 'webrick'
@@ -217,7 +218,7 @@ module Drum
       unless response.code >= 200 && response.code < 300
         raise "Something went wrong while GETting #{endpoint}: #{response}"
       end
-      return JSON.parse(response.body)
+      JSON.parse(response.body)
     end
 
     def api_library_playlists(offset: 0)
