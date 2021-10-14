@@ -276,11 +276,7 @@ module Drum
     #       already in the playlist.
 
     def from_sp_id(sp_id, new_playlist)
-      unless sp_id.nil?
-        Digest::SHA1.hexdigest(sp_id)
-      else
-        nil
-      end
+      sp_id.try { |i| Digest::SHA1.hexdigest(sp_id) }
     end
 
     def from_sp_album(sp_album, new_playlist, output: method(:puts))

@@ -23,8 +23,8 @@ module Drum
 
     BASE_URL = 'https://api.music.apple.com/v1'
     PLAYLISTS_CHUNK_SIZE = 50
-    MAX_ALBUM_COVER_WIDTH = 512
-    MAX_ALBUM_COVER_HEIGHT = 512
+    MAX_ALBUM_ARTWORK_WIDTH = 512
+    MAX_ALBUM_ARTWORK_HEIGHT = 512
 
     MUSICKIT_P8_FILE_VAR = 'MUSICKIT_KEY_P8_FILE_PATH'
     MUSICKIT_KEY_VAR = 'MUSICKIT_KEY_ID'
@@ -260,14 +260,18 @@ module Drum
     end
 
     def from_am_id(am_id)
-      unless am_id.nil?
-        Digest::SHA1.hexdigest(am_id)
-      else
-        nil
-      end
+      am_id.try { |i| Digest::SHA1.hexdigest(i) }
     end
 
-    def from_am_library_track(am_track, new_playlist)
+    def from_am_album_artwork(am_artwork)
+      width = [am_artwork['width'], MAX_ALBUM_ARTWORK_WIDTH].compact.min
+      height = [am_artwork['height'], MAX_ALBUM_ARTWORK_HEIGHT].compact.min
+      am_artwork['url']
+        &.sub('{w}', width.to_s)
+        &.sub('{h}', height.to_s)
+    end
+
+    def from_am_track(am_track, new_playlist)
       am_attributes = am_track['attributes']
 
       # TODO: Generate the album/artist IDs from something other than the names
@@ -275,26 +279,18 @@ module Drum
       new_track = Track.new(
         name: am_attributes['name'],
         duration_ms: am_attributes['durationInMillis'],
-        applemusic: TrackAppleMusic.new(
-          library_id: am_attributes.dig('playParams', 'id'),
-          catalog_id: am_attributes.dig('playParams', 'catalogId')
-        )
+        isrc: am_attributes['isrc']
       )
 
-      album_name = am_attributes['albumName']
-      artist_name = am_attributes['artistName']
-
-      album_cover_width = [am_attributes.dig('artwork', 'width'), MAX_ALBUM_COVER_WIDTH].compact.min
-      album_cover_height = [am_attributes.dig('artwork', 'height'), MAX_ALBUM_COVER_HEIGHT].compact.min
-      album_cover_url = am_attributes.dig('artwork', 'url')
-        &.sub('{w}', album_cover_width.to_s)
-        &.sub('{h}', album_cover_height.to_s)
+      album_name = am_attributes['albumName'] || ''
+      artist_name = am_attributes['artistName'] || ''
+      am_album_artwork = am_attributes['artwork'] || {}
 
       new_album = Album.new(
         id: self.from_am_id(album_name),
         name: album_name,
         applemusic: AlbumAppleMusic.new(
-          image_url: album_cover_url
+          image_url: self.from_am_album_artwork(am_album_artwork)
         )
       )
 
@@ -303,6 +299,29 @@ module Drum
         name: artist_name
       )
       new_track.artist_ids = [new_artist.id]
+
+      [new_track, new_artist, new_album]
+    end
+
+    def from_am_library_track(am_track, new_playlist)
+      am_attributes = am_track['attributes']
+      new_track, new_artist, new_album = self.from_am_track(am_track, new_playlist)
+
+      new_track.applemusic = TrackAppleMusic.new(
+        library_id: am_attributes.dig('playParams', 'id'),
+        catalog_id: am_attributes.dig('playParams', 'catalogId')
+      )
+
+      [new_track, new_artist, new_album]
+    end
+
+    def from_am_catalog_track(am_track, new_playlist)
+      am_attributes = am_track['attributes']
+      new_track, new_artist, new_album = self.from_am_track(am_track, new_playlist)
+
+      new_track.applemusic = TrackAppleMusic.new(
+        catalog_id: am_attributes.dig('playParams', 'id')
+      )
 
       [new_track, new_artist, new_album]
     end
@@ -353,7 +372,17 @@ module Drum
         description: am_attributes.dig('description', 'standard')
       )
 
-      # TODO: Fetch tracks
+      # TODO: Investigate whether this track list is complete,
+      #       perhaps we need a mechanism similar to `all_am_library_playlist_tracks`.
+
+      am_tracks = am_playlist.dig('relationships', 'tracks', 'data') || []
+      am_tracks.each do |am_track|
+        new_track, new_artist, new_album = self.from_am_catalog_track(am_track, new_playlist)
+
+        new_playlist.store_track(new_track)
+        new_playlist.store_artist(new_artist)
+        new_playlist.store_album(new_album)
+      end
 
       new_playlist
     end
