@@ -60,7 +60,7 @@ describe Drum::AppleMusicService do
                 'artwork' => {
                   'width' => 1200,
                   'height' => 1200,
-                  'url' => 'https://example.com/platinum-collection-artwork.jpg'
+                  'url' => 'https://example.com/platinum-collection-artwork-{w}x{h}.jpg'
                 },
                 'artistName' => 'Queen',
                 'discNumber' => 1,
@@ -88,9 +88,9 @@ describe Drum::AppleMusicService do
               'href' => '/v1/me/library/songs/i.uvwx',
               'attributes' => {
                 'artwork' => {
-                  'width' => 1200,
-                  'height' => 1200,
-                  'url' => 'https://example.com/elvis-presley-artwork.jpg'
+                  'width' => 64,
+                  'height' => 64,
+                  'url' => 'https://example.com/elvis-presley-artwork-{w}x{h}.jpg'
                 },
                 'artistName' => 'Elvis Presley',
                 'discNumber' => 1,
@@ -157,14 +157,14 @@ describe Drum::AppleMusicService do
               id: '99905cf4ee43a16ac92086c9c3a396f997088c7f',
               name: 'The Platinum Collection',
               applemusic: Drum::AlbumAppleMusic.new(
-                image_url: 'https://example.com/platinum-collection-artwork.jpg'
+                image_url: 'https://example.com/platinum-collection-artwork-256x256.jpg'
               )
             ),
             '8c379b58b4028863b32a84e5affbc1cd0a5f2537' => Drum::Album.new(
               id: '8c379b58b4028863b32a84e5affbc1cd0a5f2537',
               name: 'Elvis Presley',
               applemusic: Drum::AlbumAppleMusic.new(
-                image_url: 'https://example.com/elvis-presley-artwork.jpg'
+                image_url: 'https://example.com/elvis-presley-artwork-64x64.jpg'
               )
             )
           },

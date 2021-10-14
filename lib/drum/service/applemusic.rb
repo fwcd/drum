@@ -23,6 +23,8 @@ module Drum
 
     BASE_URL = 'https://api.music.apple.com/v1'
     PLAYLISTS_CHUNK_SIZE = 50
+    MAX_ALBUM_COVER_WIDTH = 256
+    MAX_ALBUM_COVER_HEIGHT = 256
 
     MUSICKIT_P8_FILE_VAR = 'MUSICKIT_KEY_P8_FILE_PATH'
     MUSICKIT_KEY_VAR = 'MUSICKIT_KEY_ID'
@@ -278,11 +280,17 @@ module Drum
       album_name = am_attributes['albumName']
       artist_name = am_attributes['artistName']
 
+      album_cover_width = [am_attributes.dig('artwork', 'width'), MAX_ALBUM_COVER_WIDTH].compact.min
+      album_cover_height = [am_attributes.dig('artwork', 'height'), MAX_ALBUM_COVER_HEIGHT].compact.min
+      album_cover_url = am_attributes.dig('artwork', 'url')
+        &.sub('{w}', album_cover_width.to_s)
+        &.sub('{h}', album_cover_height.to_s)
+
       new_album = Album.new(
         id: self.from_am_id(album_name),
         name: album_name,
         applemusic: AlbumAppleMusic.new(
-          image_url: am_attributes.dig('artwork', 'url')
+          image_url: album_cover_url
         )
       )
 
