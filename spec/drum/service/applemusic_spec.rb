@@ -16,8 +16,8 @@ describe Drum::AppleMusicService do
     end
 
     allow(@service).to receive(:get_json) do |endpoint|
-      case endpoint.split(/[\/\?\=]/)[1...]
-      in ['me', 'library', 'playlists', *]
+      case endpoint.split(/[\/&]|(?<=[\?\=])/)[1...]
+      in ['me', 'library', 'playlists?', *]
         {
           'data' => [
             {
@@ -46,7 +46,7 @@ describe Drum::AppleMusicService do
             'total' => 1
           }
         }
-      in ['me', 'library', 'playlists', am_id, 'tracks', *]
+      in ['me', 'library', 'playlists', am_id, 'tracks?', *]
         {
           'data' => [],
           'meta' => {
@@ -65,7 +65,8 @@ describe Drum::AppleMusicService do
   describe 'download' do
     it 'should download library playlists correctly' do
       ref = @service.parse_ref(Drum::RawRef.parse('@applemusic/playlists'))
-      expect(@service.download(ref).to_a).to eq [
+      actual = @service.download(ref).to_a
+      expected = [
         Drum::Playlist.new(
           id: '1182bfec694d614c35cb79702e435cc193029e08',
           name: 'Test 1',
@@ -78,6 +79,7 @@ describe Drum::AppleMusicService do
           )
         )
       ]
+      expect(actual).to eq expected
     end
   end
 end

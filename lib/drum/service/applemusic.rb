@@ -239,7 +239,7 @@ module Drum
           return am_playlists + self.all_am_library_playlists(offset: offset + PLAYLISTS_CHUNK_SIZE, total: response.dig('meta', 'total'))
         end
       end
-      return []
+      []
     end
 
     def all_am_library_playlist_tracks(am_playlist, offset: 0, total: nil)
@@ -250,7 +250,7 @@ module Drum
           return am_tracks + self.all_am_library_playlist_tracks(am_playlist, offset: offset + PLAYLISTS_CHUNK_SIZE, total: response.dig('meta', 'total'))
         end
       end
-      return []
+      []
     end
 
     def from_am_id(am_id)
