@@ -38,6 +38,7 @@ module Drum
     limit_method :all_sp_playlist_tracks, rate: 15, interval: 5
     limit_method :all_sp_library_tracks, rate: 15, interval: 5
     limit_method :all_sp_library_playlists, rate: 15, interval: 5
+    limit_method :to_sp_track, rate: 15, interval: 5
     limit_method :to_sp_tracks, rate: 15, interval: 5
     limit_method :upload_sp_playlist_tracks, rate: 15, interval: 5
     limit_method :upload_playlist, rate: 15, interval: 5
@@ -420,27 +421,38 @@ module Drum
 
     # Upload helpers
 
-    def to_sp_track(track, playlist)
+    def to_sp_track(track, playlist, output: method(:puts))
       sp_id = track&.spotify&.id
-      search_phrase = "#{track.name} #{track.artist_ids.join(' ')}"
-      # Use Spotify ID or search for the track otherwise
-      sp_tracks = sp_id.map { |i| [RSpotify::Track.find(i)] } || RSpotify::Track.search(search_phrase, limit: 1)
-      sp_tracks[0]
+      search_phrase = "#{track.name} #{track.artist_ids.filter_map { |i| playlist.artists[i]&.name }.join(' ')}"
+      unless sp_id.nil?
+        # We already have an associated Spotify ID
+        RSpotify::Track.find(sp_id)
+      else
+        # We need to search for the song
+        sp_results = RSpotify::Track.search(search_phrase, limit: 1)
+        sp_track = sp_results[0]
+
+        unless sp_track.nil?
+          output.call "Matched '#{track.name}' with '#{sp_track.name}' by '#{sp_track.artists.map { |a| a.name }.join(', ')}' from Spotify"
+        end
+
+        sp_track
+      end
     end
 
-    def to_sp_tracks(tracks, playlist)
+    def to_sp_tracks(tracks, playlist, output: method(:puts))
       unless tracks.nil? || tracks.empty?
-        sp_tracks = tracks[...TO_SPOTIFY_TRACKS_CHUNK_SIZE].filter_map { |t| self.to_sp_track(t) }
-        sp_tracks + to_sp_tracks(tracks[TO_SPOTIFY_TRACKS_CHUNK_SIZE...], playlist)
+        sp_tracks = tracks[...TO_SPOTIFY_TRACKS_CHUNK_SIZE].filter_map { |t| self.to_sp_track(t, playlist, output: output) }
+        sp_tracks + to_sp_tracks(tracks[TO_SPOTIFY_TRACKS_CHUNK_SIZE...], playlist, output: output)
       else
         []
       end
     end
 
-    def upload_sp_playlist_tracks(sp_tracks, sp_playlist)
+    def upload_sp_playlist_tracks(sp_tracks, sp_playlist, output: method(:puts))
       unless sp_tracks.nil? || sp_tracks.empty?
         sp_playlist.add_tracks!(sp_tracks[...UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE])
-        self.upload_sp_playlist_tracks(sp_tracks[UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE...], sp_playlist)
+        self.upload_sp_playlist_tracks(sp_tracks[UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE...], sp_playlist, output: output)
       end
     end
 
@@ -452,10 +464,10 @@ module Drum
       tracks = playlist.tracks
 
       output.call "Externalizing #{tracks.length} playlist track(s)..."
-      sp_tracks = self.to_sp_tracks(tracks, playlist)
+      sp_tracks = self.to_sp_tracks(tracks, playlist, output: output)
 
       output.call "Uploading #{sp_tracks.length} playlist track(s)..."
-      self.upload_sp_playlist_tracks(sp_tracks, sp_playlist)
+      self.upload_sp_playlist_tracks(sp_tracks, sp_playlist, output: output)
 
       # TODO: Clone the original playlist and insert potentially new Spotify ids
       nil
@@ -598,7 +610,7 @@ module Drum
       end
 
       playlists.each do |playlist|
-        self.upload_playlist(playlist, output: bar.method(:puts))
+        self.upload_playlist(playlist, output: bar&.method(:puts) || method(:puts))
         bar&.increment!
       end
     end
