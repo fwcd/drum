@@ -278,8 +278,10 @@ module Drum
 
       new_track = Track.new(
         name: am_attributes['name'],
+        genres: am_attributes['genreNames'],
         duration_ms: am_attributes['durationInMillis'],
-        isrc: am_attributes['isrc']
+        isrc: am_attributes['isrc'],
+        released_at: am_attributes['releaseDate'].try { |d| DateTime.parse(d) }
       )
 
       album_name = am_attributes['albumName']
@@ -340,7 +342,8 @@ module Drum
       new_track, new_artists, new_album = self.from_am_track(am_track, new_playlist)
 
       new_track.applemusic = TrackAppleMusic.new(
-        catalog_id: am_attributes.dig('playParams', 'id')
+        catalog_id: am_attributes.dig('playParams', 'id'),
+        preview_url: am_attributes.dig('previews', 0, 'url')
       )
 
       [new_track, new_artists, new_album]

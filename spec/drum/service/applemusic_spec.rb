@@ -175,7 +175,11 @@ describe Drum::AppleMusicService do
               artist_ids: [
                 '6911adcc6c625bb5c52c5093aa8cdb0545ca63d4'
               ],
+              genres: [
+                'Rock'
+              ],
               duration_ms: 355145,
+              released_at: DateTime.parse('1975-10-31'),
               applemusic: Drum::TrackAppleMusic.new(
                 library_id: 'i.qrst',
                 catalog_id: '12345'
@@ -187,7 +191,11 @@ describe Drum::AppleMusicService do
               artist_ids: [
                 '8c379b58b4028863b32a84e5affbc1cd0a5f2537'
               ],
+              genres: [
+                'Rock'
+              ],
               duration_ms: 122133,
+              released_at: DateTime.parse('1956-03-23'),
               applemusic: Drum::TrackAppleMusic.new(
                 library_id: 'i.uvwx',
                 catalog_id: '67890'
