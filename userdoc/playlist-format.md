@@ -79,6 +79,7 @@ applemusic:
 name: string
 artist_ids: string[] (references Artist.id)
 composer_ids: string[]? (references Artist.id)
+genres: string[]?
 album_id: string? (references Album.id)
 duration_ms: number?
 explicit: boolean?
