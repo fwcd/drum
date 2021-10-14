@@ -157,7 +157,7 @@ describe Drum::AppleMusicService do
               id: '99905cf4ee43a16ac92086c9c3a396f997088c7f',
               name: 'The Platinum Collection',
               applemusic: Drum::AlbumAppleMusic.new(
-                image_url: 'https://example.com/platinum-collection-artwork-256x256.jpg'
+                image_url: 'https://example.com/platinum-collection-artwork-512x512.jpg'
               )
             ),
             '8c379b58b4028863b32a84e5affbc1cd0a5f2537' => Drum::Album.new(
