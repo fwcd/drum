@@ -25,6 +25,9 @@ describe Drum::AppleMusicService do
               'type' => 'library-playlists',
               'href' => '/v1/me/library/playlists/p.abcdefg',
               'attributes' => {
+                'artwork' => {
+                  'url' => 'https://example.com/test-playlist-artwork.jpg'
+                },
                 'canEdit' => true,
                 'dateAdded' => '2021-01-22T13:02:16Z',
                 'isPublic' => false,
@@ -57,7 +60,7 @@ describe Drum::AppleMusicService do
                 'artwork' => {
                   'width' => 1200,
                   'height' => 1200,
-                  'url' => 'https://example.com/artwork.jpg'
+                  'url' => 'https://example.com/bohemian-rhapsody-artwork.jpg'
                 },
                 'artistName' => 'Queen',
                 'discNumber' => 1,
@@ -87,7 +90,7 @@ describe Drum::AppleMusicService do
                 'artwork' => {
                   'width' => 1200,
                   'height' => 1200,
-                  'url' => 'https://example.com/artwork.jpg'
+                  'url' => 'https://example.com/elvis-presley-artwork.jpg'
                 },
                 'artistName' => 'Elvis Presley',
                 'discNumber' => 1,
@@ -136,7 +139,8 @@ describe Drum::AppleMusicService do
             library_id: 'p.abcdefg',
             global_id: 'pl.hijklmnop',
             public: false,
-            editable: true
+            editable: true,
+            image_url: 'https://example.com/test-playlist-artwork.jpg'
           ),
           artists: {
             '6911adcc6c625bb5c52c5093aa8cdb0545ca63d4' => Drum::Artist.new(

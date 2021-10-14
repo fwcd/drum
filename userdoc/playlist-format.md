@@ -37,6 +37,7 @@ applemusic:
   global_id: string?
   public: boolean?
   editable: boolean?
+  image_url: string?
 ```
 
 ### User

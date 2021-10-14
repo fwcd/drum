@@ -177,9 +177,11 @@ module Drum
   #   @return [optional, Boolean] Whether the playlist is public
   # @!attribute editable
   #   @return [optional, Boolean] Whether the playlist is editable
+  # @!attribute image_url
+  #   @return [optional, String] The playlist cover image, if present
   PlaylistAppleMusic = Struct.new(
     :library_id, :global_id,
-    :public, :editable,
+    :public, :editable, :image_url,
     keyword_init: true
   ) do
     # Parses Apple Music metadata from a Hash that uses string keys.
@@ -191,7 +193,8 @@ module Drum
         library_id: h['library_id'],
         global_id: h['global_id'],
         public: h['public'],
-        editable: h['editable']
+        editable: h['editable'],
+        image_url: h['image_url']
       )
     end
 
@@ -203,7 +206,8 @@ module Drum
         'library_id' => self.library_id,
         'global_id' => self.global_id,
         'public' => self.public,
-        'editable' => self.editable
+        'editable' => self.editable,
+        'image_url' => self.image_url
       }.compact
     end
   end

@@ -268,7 +268,6 @@ module Drum
 
       # TODO: Album artwork, etc.
       # TODO: Generate the album/artist IDs from something other than the names
-      # TODO: Apple Music-specific metadata (ids)
 
       new_track = Track.new(
         name: am_attributes['name'],
@@ -305,7 +304,8 @@ module Drum
           library_id: am_attributes.dig('playParams', 'id'),
           global_id: am_attributes.dig('playParams', 'globalId'),
           public: am_attributes['isPublic'],
-          editable: am_attributes['canEdit']
+          editable: am_attributes['canEdit'],
+          image_url: am_attributes.dig('artwork', 'url')
         )
       )
 
