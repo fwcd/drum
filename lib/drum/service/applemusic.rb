@@ -272,7 +272,11 @@ module Drum
 
       new_track = Track.new(
         name: am_attributes['name'],
-        duration_ms: am_attributes['durationInMillis']
+        duration_ms: am_attributes['durationInMillis'],
+        applemusic: TrackAppleMusic.new(
+          library_id: am_attributes.dig('playParams', 'id'),
+          catalog_id: am_attributes.dig('playParams', 'catalogId')
+        )
       )
 
       album_name = am_attributes['albumName']

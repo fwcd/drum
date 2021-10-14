@@ -164,14 +164,22 @@ describe Drum::AppleMusicService do
               artist_ids: [
                 '6911adcc6c625bb5c52c5093aa8cdb0545ca63d4'
               ],
-              duration_ms: 355145
+              duration_ms: 355145,
+              applemusic: Drum::TrackAppleMusic.new(
+                library_id: 'i.qrst',
+                catalog_id: '12345'
+              )
             ),
             Drum::Track.new(
               name: 'Blue Suede Shoes',
               artist_ids: [
                 '8c379b58b4028863b32a84e5affbc1cd0a5f2537'
               ],
-              duration_ms: 122133
+              duration_ms: 122133,
+              applemusic: Drum::TrackAppleMusic.new(
+                library_id: 'i.uvwx',
+                catalog_id: '67890'
+              )
             )
           ]
         )
