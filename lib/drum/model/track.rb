@@ -8,6 +8,8 @@ module Drum
   #  @return [String] The name of the track
   # @!attribute artist_ids
   #  @return [Array<String>] The (internal) artist ids
+  # @!attribute composer_ids
+  #  @return [optional, Array<String>] The (internal) composer ids
   # @!attribute album_id
   #  @return [optional, String] The (internal) album id
   # @!attribute duration_ms
@@ -26,7 +28,7 @@ module Drum
   #   @return [optional, TrackAppleMusic] Apple Music-specific metadata
   Track = Struct.new(
     :name,
-    :artist_ids, :album_id,
+    :artist_ids, :composer_ids, :album_id,
     :duration_ms, :explicit,
     :added_at, :added_by,
     :isrc, :spotify, :applemusic,
@@ -35,6 +37,7 @@ module Drum
     def initialize(*)
       super
       self.artist_ids ||= []
+      self.composer_ids ||= []
     end
 
     # Parses a track from a nested Hash that uses string keys.
@@ -45,6 +48,7 @@ module Drum
       Track.new(
         name: h['name'],
         artist_ids: h['artist_ids'],
+        composer_ids: h['composer_ids'],
         album_id: h['album_id'],
         duration_ms: h['duration_ms'],
         explicit: h['explicit'],
@@ -63,6 +67,7 @@ module Drum
       {
         'name' => self.name,
         'artist_ids' => self.artist_ids,
+        'composer_ids' => (self.composer_ids unless self.composer_ids.empty?),
         'album_id' => self.album_id,
         'duration_ms' => self.duration_ms,
         'explicit' => self.explicit,

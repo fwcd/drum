@@ -132,7 +132,7 @@ describe Drum::AppleMusicService do
       actual = @service.download(ref).to_a
       expected = [
         Drum::Playlist.new(
-          id: '1182bfec694d614c35cb79702e435cc193029e08',
+          id: '6417b26e1a17b15ecccfc855d3f2a5a926298433',
           name: 'Test 1',
           description: 'Sample description',
           applemusic: Drum::PlaylistAppleMusic.new(
