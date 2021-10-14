@@ -218,7 +218,9 @@ module Drum
       unless response.code >= 200 && response.code < 300
         raise "Something went wrong while GETting #{endpoint}: #{response}"
       end
-      JSON.parse(response.body)
+      json = JSON.parse(response.body)
+      puts json
+      return json
     end
 
     def api_library_playlists(offset: 0)
