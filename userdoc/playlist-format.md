@@ -69,6 +69,8 @@ artist_ids: string[] (references Artist.id)
 spotify:
   id: string
   image_url: string?
+applemusic:
+  image_url: string?
 ```
 
 ### Track
