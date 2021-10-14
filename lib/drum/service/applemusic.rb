@@ -309,19 +309,20 @@ module Drum
 
     def from_am_library_playlist(am_playlist, output: method(:puts))
       am_attributes = am_playlist['attributes']
+      am_library_id = am_attributes.dig('playParams', 'id')
+      am_global_id = am_attributes.dig('playParams', 'globalId')
       new_playlist = Playlist.new(
+        id: self.from_am_id(am_global_id || am_library_id),
         name: am_attributes['name'] || '',
         description: am_attributes.dig('description', 'standard'),
         applemusic: PlaylistAppleMusic.new(
-          library_id: am_attributes.dig('playParams', 'id'),
-          global_id: am_attributes.dig('playParams', 'globalId'),
+          library_id: am_library_id,
+          global_id: am_global_id,
           public: am_attributes['isPublic'],
           editable: am_attributes['canEdit'],
           image_url: am_attributes.dig('artwork', 'url')
         )
       )
-
-      new_playlist.id = self.from_am_id(am_playlist['id'])
 
       # TODO: Author information
 
@@ -339,6 +340,20 @@ module Drum
         # Swallow 404s, apparently sometimes there are no tracks associated with a list
         nil
       end
+
+      new_playlist
+    end
+
+    def from_am_catalog_playlist(am_playlist)
+      am_attributes = am_playlist['attributes']
+      am_global_id = am_attributes.dig('playParams', 'id')
+      new_playlist = Playlist.new(
+        id: self.from_am_id(am_global_id),
+        name: am_attributes['name'],
+        description: am_attributes.dig('description', 'standard')
+      )
+
+      # TODO: Fetch tracks
 
       new_playlist
     end
@@ -416,10 +431,21 @@ module Drum
         end
       when :playlist
         am_storefront, am_id = ref.resource_location
-        am_playlist = self.api_catalog_playlist(am_storefront, am_id)
 
-        # TODO
-        []
+        puts 'Querying catalog playlist...'
+        response = self.api_catalog_playlist(am_storefront, am_id)
+        am_playlists = response['data']
+
+        puts 'Fetching playlists...'
+        bar = ProgressBar.new(am_playlists.length)
+
+        Enumerator.new do |enum|
+          am_playlists.each do |am_playlist|
+            new_playlist = self.from_am_catalog_playlist(am_playlist)
+            bar.increment!
+            enum.yield new_playlist
+          end
+        end
       else raise "Resource type '#{ref.resource_type}' cannot be downloaded (yet)"
       end
     end
