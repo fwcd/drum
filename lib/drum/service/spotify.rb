@@ -586,11 +586,14 @@ module Drum
         raise 'Cannot upload to anything other than @spotify/playlists yet!'
       end
 
-      puts "Uploading #{playlists.length} playlist(s)..."
-      bar = ProgressBar.new(playlists.length)
+      if playlists.is_a? Array
+        puts "Uploading #{playlists.length} playlist(s)..."
+        bar = ProgressBar.new(playlists.length)
+      end
+
       playlists.each do |playlist|
         self.upload_playlist(playlist, output: bar.method(:puts))
-        bar.increment!
+        bar&.increment!
       end
     end
   end
