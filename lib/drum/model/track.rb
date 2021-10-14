@@ -124,8 +124,11 @@ module Drum
   #   @return [optional, String] The library-internal id of the track
   # @!attribute catalog_id
   #   @return [optional, String] The global catalog id of the track
+  # @!attribute preview_url
+  #   @return [optional, String] A short preview of the song audio
   TrackAppleMusic = Struct.new(
     :library_id, :catalog_id,
+    :preview_url,
     keyword_init: true
   ) do
     # Parses Apple Music metadata from a Hash that uses string keys.
@@ -135,7 +138,8 @@ module Drum
     def self.deserialize(h)
       TrackAppleMusic.new(
         library_id: h['library_id'],
-        catalog_id: h['catalog_id']
+        catalog_id: h['catalog_id'],
+        preview_url: h['preview_url']
       )
     end
 
@@ -145,7 +149,8 @@ module Drum
     def serialize
       {
         'library_id' => self.library_id,
-        'catalog_id' => self.catalog_id
+        'catalog_id' => self.catalog_id,
+        'preview_url' => self.preview_url
       }.compact
     end
   end

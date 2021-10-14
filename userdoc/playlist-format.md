@@ -92,4 +92,5 @@ spotify:
 applemusic:
   library_id: string?
   catalog_id: string?
+  preview_url: string?
 ```
