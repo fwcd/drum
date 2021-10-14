@@ -231,6 +231,10 @@ module Drum
       get_json("/me/library/playlists/#{am_playlist['id']}/tracks?limit=#{PLAYLISTS_CHUNK_SIZE}&offset=#{offset}")
     end
 
+    def api_catalog_playlist(am_storefront, am_id)
+      get_json("/catalog/#{am_storefront}/playlists/#{am_id}")
+    end
+
     # Download helpers
 
     def all_am_library_playlists(offset: 0, total: nil)
@@ -352,7 +356,9 @@ module Drum
 
     def parse_applemusic_link(raw)
       # Parses links like https://music.apple.com/us/playlist/some-name/pl.123456789
+
       # TODO: Investigate whether such links can always be fetched through the catalog API
+      # TODO: Handle library links
 
       uri = URI(raw)
       unless ['http', 'https'].include?(uri&.scheme) && uri&.host == 'music.apple.com'
@@ -364,11 +370,11 @@ module Drum
         return nil
       end
 
-      storefront = parsed_path[1]
-      resource_type = parsed_path[2]
-      resource_location = parsed_path[4]
+      am_storefront = parsed_path[1]
+      resource_type = self.parse_resource_type(parsed_path[2])
+      am_id = parsed_path[4]
 
-      Ref.new(self.name, resource_type, [storefront, resource_location])
+      Ref.new(self.name, resource_type, [am_storefront, am_id])
     end
 
     def parse_ref(raw_ref)
@@ -408,6 +414,12 @@ module Drum
           end
         else raise "Special resource location '#{ref.resource_location}' cannot be downloaded (yet)"
         end
+      when :playlist
+        am_storefront, am_id = ref.resource_location
+        am_playlist = self.api_catalog_playlist(am_storefront, am_id)
+
+        # TODO
+        []
       else raise "Resource type '#{ref.resource_type}' cannot be downloaded (yet)"
       end
     end
