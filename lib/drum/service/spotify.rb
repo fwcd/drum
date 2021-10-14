@@ -572,8 +572,8 @@ module Drum
         else raise "Special resource location '#{ref.resource_location}' cannot be downloaded (yet)"
         end
       when :playlist
-        playlist = RSpotify::Playlist.find_by_id(ref.resource_location)
-        new_playlist = self.from_sp_playlist(playlist)
+        sp_playlist = RSpotify::Playlist.find_by_id(ref.resource_location)
+        new_playlist = self.from_sp_playlist(sp_playlist)
 
         [new_playlist]
       else raise "Resource type '#{ref.resource_type}' cannot be downloaded (yet)"
