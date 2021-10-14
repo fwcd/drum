@@ -300,30 +300,30 @@ module Drum
       )
       new_track.artist_ids = [new_artist.id]
 
-      [new_track, new_artist, new_album]
+      [new_track, [new_artist], new_album]
     end
 
     def from_am_library_track(am_track, new_playlist)
       am_attributes = am_track['attributes']
-      new_track, new_artist, new_album = self.from_am_track(am_track, new_playlist)
+      new_track, new_artists, new_album = self.from_am_track(am_track, new_playlist)
 
       new_track.applemusic = TrackAppleMusic.new(
         library_id: am_attributes.dig('playParams', 'id'),
         catalog_id: am_attributes.dig('playParams', 'catalogId')
       )
 
-      [new_track, new_artist, new_album]
+      [new_track, new_artists, new_album]
     end
 
     def from_am_catalog_track(am_track, new_playlist)
       am_attributes = am_track['attributes']
-      new_track, new_artist, new_album = self.from_am_track(am_track, new_playlist)
+      new_track, new_artists, new_album = self.from_am_track(am_track, new_playlist)
 
       new_track.applemusic = TrackAppleMusic.new(
         catalog_id: am_attributes.dig('playParams', 'id')
       )
 
-      [new_track, new_artist, new_album]
+      [new_track, new_artists, new_album]
     end
 
     def from_am_library_playlist(am_playlist, output: method(:puts))
@@ -349,11 +349,14 @@ module Drum
         am_tracks = self.all_am_library_playlist_tracks(am_playlist)
         output.call "Got #{am_tracks.length} playlist track(s) for '#{new_playlist.name}'..."
         am_tracks.each do |am_track|
-          new_track, new_artist, new_album = self.from_am_library_track(am_track, new_playlist)
+          new_track, new_artists, new_album = self.from_am_library_track(am_track, new_playlist)
 
           new_playlist.store_track(new_track)
-          new_playlist.store_artist(new_artist)
           new_playlist.store_album(new_album)
+
+          new_artists.each do |new_artist|
+            new_playlist.store_artist(new_artist)
+          end
         end
       rescue RestClient::NotFound
         # Swallow 404s, apparently sometimes there are no tracks associated with a list
@@ -377,7 +380,7 @@ module Drum
 
       am_tracks = am_playlist.dig('relationships', 'tracks', 'data') || []
       am_tracks.each do |am_track|
-        new_track, new_artist, new_album = self.from_am_catalog_track(am_track, new_playlist)
+        new_track, new_artists, new_album = self.from_am_catalog_track(am_track, new_playlist)
 
         new_playlist.store_track(new_track)
         new_playlist.store_artist(new_artist)
