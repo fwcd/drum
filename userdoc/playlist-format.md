@@ -32,6 +32,12 @@ spotify:
   public: boolean?
   collaborative: boolean?
   image_url: string?
+applemusic:
+  library_id: string?
+  global_id: string?
+  public: boolean?
+  editable: boolean?
+  image_url: string?
 ```
 
 ### User
@@ -63,6 +69,8 @@ artist_ids: string[] (references Artist.id)
 spotify:
   id: string
   image_url: string?
+applemusic:
+  image_url: string?
 ```
 
 ### Track
@@ -70,12 +78,19 @@ spotify:
 ```yaml
 name: string
 artist_ids: string[] (references Artist.id)
+composer_ids: string[]? (references Artist.id)
+genres: string[]?
 album_id: string? (references Album.id)
 duration_ms: number?
 explicit: boolean?
+released_at: string? (ISO8601 date)
 added_at: string? (ISO8601 date)
 added_by: string? (references User.id)
 isrc: string?
 spotify:
   id: string
+applemusic:
+  library_id: string?
+  catalog_id: string?
+  preview_url: string?
 ```

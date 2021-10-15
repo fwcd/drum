@@ -3,7 +3,7 @@ require 'drum/model/artist'
 require 'drum/model/track'
 
 describe Drum::Playlist do
-  describe 'Playlist::deserialize' do
+  describe 'deserialize' do
     it 'should deserialize correctly' do
       expect(Drum::Playlist.deserialize({
         'id' => '9',

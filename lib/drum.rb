@@ -1,11 +1,14 @@
 require 'drum/model/raw_ref'
+require 'drum/service/applemusic'
 require 'drum/service/file'
 require 'drum/service/mock'
 require 'drum/service/service'
 require 'drum/service/spotify'
 require 'drum/service/stdio'
+require 'drum/utils/log'
 require 'drum/version'
 require 'highline'
+require 'progress_bar'
 require 'thor'
 require 'yaml'
 
@@ -14,6 +17,8 @@ module Drum
   
   # The command line interface for drum.
   class CLI < Thor
+    include Log
+
     # Sets up the CLI by registering the services.
     def initialize(*args)
       super
@@ -31,6 +36,7 @@ module Drum
       @services = [
         MockService.new,
         StdioService.new,
+        AppleMusicService.new(@cache_dir),
         SpotifyService.new(@cache_dir),
         # The file service should be last since it may
         # successfully parse refs that overlap with other
@@ -80,7 +86,7 @@ module Drum
       def confirm(prompt)
         answer = @hl.ask "#{prompt} [y/n]"
         unless answer == 'y'
-          puts 'Okay, exiting.'
+          log.info 'Okay, exiting.'
           exit
         end
       end
@@ -102,7 +108,7 @@ module Drum
         playlists = service.download(ref)
         
         playlists.each do |playlist|
-          puts({
+          log.all({
             'name' => playlist.name,
             'description' => playlist&.description,
             'tracks' => playlist.tracks.each_with_index.map do |track, i|
@@ -115,7 +121,8 @@ module Drum
     end
     
     desc 'cp [SOURCE] [DEST]', 'Copy a playlist from the source to the given destination'
-    method_option :group_by_author, :type => :boolean, :default => false, :desc => "Whether to prepend the author name to each playlist's path"
+    method_option :group_by_author, type: :boolean, default: false, desc: "Whether to prepend the author name to each playlist's path"
+    method_option :note_date, type: :boolean, default: false, desc: "Whether to add a small note with the upload date to each description."
 
     # Copies a playlist from the source to the given destination.
     #
@@ -135,31 +142,42 @@ module Drum
 
       self.with_service(src_ref.service_name) do |src_name, src_service|
         self.with_service(dest_ref.service_name) do |dest_name, dest_service|
-          puts "Copying from #{src_name} to #{dest_name}..."
+          log.info "Copying from #{src_name} to #{dest_name}..."
 
-          # TODO: Investigate where to handle merging. Should each service
-          #       be responsible for doing so, e.g. should the file service
-          #       merge playlists and return the result from 'upload'?
+          # TODO: Should we handle merging at all or just copy (as currently done)?
 
           playlists = src_service.download(src_ref).lazy
+
+          unless playlists.size.nil?
+            bar = ProgressBar.new(playlists.size)
+
+            # Redirect log output so the bar stays at the bottom
+            log.output = bar.method(:puts)
+          end
 
           # Apply transformations to the downloaded playlists.
           # Note that we use 'map' despite mutating the playlists
           # in-place to preserve laziness in the iteration.
 
-          if options[:group_by_author]
-            playlists = playlists.map do |playlist|
+          playlists = playlists.map do |playlist|
+            bar&.increment!
+
+            if options[:group_by_author]
               author_name = playlist.author_id.try { |id| playlist.users[id] }&.display_name || 'Other'
               playlist.path.unshift(author_name)
-              playlist
             end
+
+            if options[:note_date]
+              unless playlist.description.end_with?("\n") || playlist.description.empty?
+                playlist.description += "\n"
+              end
+              playlist.description += Time.now.strftime("Pushed with Drum on %Y-%m-%d")
+            end
+
+            playlist
           end
 
-          updated_playlists = dest_service.upload(dest_ref, playlists)
-
-          unless updated_playlists.nil? || !src_service.supports_source_mutations
-            src_service.upload(src_ref, updated_playlists)
-          end
+          dest_service.upload(dest_ref, playlists)
         end
       end
     end
@@ -178,9 +196,28 @@ module Drum
       end
 
       self.with_service(ref.service_name) do |name, service|
-        puts "Removing from #{name}..."
+        log.info "Removing from #{name}..."
         service.remove(ref)
       end
+    end
+
+    desc 'services', 'List available services'
+
+    # Lists available services.
+    #
+    # @return [void]
+    def services
+      log.info @services.each_key.to_a.join("\n")
+    end
+
+    map %w[--version -v] => :__print_version
+    desc '--version, -v', 'Print the version', hide: true
+
+    # Prints the version.
+    #
+    # @return [void]
+    def __print_version
+      log.all VERSION
     end
   end
 end

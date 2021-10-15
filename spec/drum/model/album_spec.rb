@@ -38,7 +38,8 @@ describe Drum::Album do
         'spotify' => {
           'id' => '3T4tUhGYeRNVUGevb0wThu',
           'image_url' => 'https://i.scdn.co/image/ab67616d00001e02ba5db46f4b838ef6027e6f96'
-        }
+        },
+        'artist_ids' => []
       })
     end
   end

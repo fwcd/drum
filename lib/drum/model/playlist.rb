@@ -3,6 +3,8 @@ require 'set'
 
 module Drum
   # TODO: Smart playlists!
+  # TODO: Add created_at/added_at or similar
+  #       (the Apple Music API provides us with a 'dateAdded', perhaps Spotify has something similar?)
 
   # A list of tracks with metadata.
   #
@@ -26,16 +28,19 @@ module Drum
   #   @return [optional, Array<Track>] The list of tracks of the playlist, order matters here
   # @!attribute spotify
   #   @return [optional, PlaylistSpotify] Spotify-specific metadata
+  # @!attribute applemusic
+  #   @return [optional, PlaylistAppleMusic] Apple Music-specific metadata
   class Playlist < Struct.new(
     :id, :name, :description,
     :path,
     :author_id,
     :users, :artists, :albums, :tracks,
-    :spotify,
+    :spotify, :applemusic,
     keyword_init: true
   )
     def initialize(*)
       super
+      self.description ||= ''
       self.path ||= []
       self.users ||= {}
       self.artists ||= {}
@@ -79,6 +84,13 @@ module Drum
       self.tracks << track
     end
 
+    # Describes a track in a way useful for song matching by search.
+    #
+    # @return [String] A short description of track name and artists
+    def track_search_phrase(track)
+      "#{track.name} #{track.artist_ids.filter_map { |i| self.artists[i]&.name }.join(' ')}"
+    end
+
     # Parses a playlist from a nested Hash that uses string keys.
     #
     # @param [Hash<String, Object>] h The Hash to be parsed
@@ -94,7 +106,8 @@ module Drum
         artists: h['artists']&.map { |a| Artist.deserialize(a) }&.to_h_by_id,
         albums: h['albums']&.map { |a| Album.deserialize(a) }&.to_h_by_id,
         tracks: h['tracks']&.map { |t| Track.deserialize(t) },
-        spotify: h['spotify'].try { |s| PlaylistSpotify.deserialize(s) }
+        spotify: h['spotify'].try { |s| PlaylistSpotify.deserialize(s) },
+        applemusic: h['applemusic'].try { |a| PlaylistAppleMusic.deserialize(a) }
       )
     end
 
@@ -105,14 +118,15 @@ module Drum
       {
         'id' => self.id,
         'name' => self.name,
-        'description' => self.description,
+        'description' => (self.description unless self.description.empty?),
         'author_id' => self.author_id,
         'path' => (self.path unless self.path.empty?),
         'users' => (self.users.each_value.map { |u| u.serialize } unless self.users.empty?),
         'artists' => (self.artists.each_value.map { |a| a.serialize } unless self.artists.empty?),
         'albums' => (self.albums.each_value.map { |a| a.serialize } unless self.albums.empty?),
         'tracks' => (self.tracks.map { |t| t.serialize } unless self.tracks.empty?),
-        'spotify' => self.spotify&.serialize
+        'spotify' => self.spotify&.serialize,
+        'applemusic' => self.applemusic&.serialize
       }.compact
     end
   end
@@ -154,6 +168,53 @@ module Drum
         'id' => self.id,
         'public' => self.public,
         'collaborative' => self.collaborative,
+        'image_url' => self.image_url
+      }.compact
+    end
+  end
+
+  # TODO: Add image URL to Apple Music metadata?
+
+  # Apple Music-specific metadata about the playlist.
+  #
+  # @!attribute library_id
+  #   @return [optional, String] The library-internal id of the playlist
+  # @!attribute global_id
+  #   @return [optional, String] The global id of the playlist (implies that it is available through the catalog API)
+  # @!attribute public
+  #   @return [optional, Boolean] Whether the playlist is public
+  # @!attribute editable
+  #   @return [optional, Boolean] Whether the playlist is editable
+  # @!attribute image_url
+  #   @return [optional, String] The playlist cover image, if present
+  PlaylistAppleMusic = Struct.new(
+    :library_id, :global_id,
+    :public, :editable, :image_url,
+    keyword_init: true
+  ) do
+    # Parses Apple Music metadata from a Hash that uses string keys.
+    #
+    # @param [Hash<String, Object>] h The Hash to be parsed
+    # @return [PlaylistAppleMusic] The parsed metadata
+    def self.deserialize(h)
+      PlaylistAppleMusic.new(
+        library_id: h['library_id'],
+        global_id: h['global_id'],
+        public: h['public'],
+        editable: h['editable'],
+        image_url: h['image_url']
+      )
+    end
+
+    # Serializes the metadata to a Hash that uses string keys.
+    #
+    # @return [Hash<String, Object>] The serialized representation
+    def serialize
+      {
+        'library_id' => self.library_id,
+        'global_id' => self.global_id,
+        'public' => self.public,
+        'editable' => self.editable,
         'image_url' => self.image_url
       }.compact
     end

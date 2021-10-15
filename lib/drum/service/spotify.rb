@@ -2,9 +2,12 @@ require 'drum/model/album'
 require 'drum/model/playlist'
 require 'drum/model/user'
 require 'drum/model/track'
+require 'drum/model/ref'
 require 'drum/service/service'
 require 'drum/utils/persist'
+require 'drum/utils/log'
 require 'base64'
+require 'date'
 require 'digest'
 require 'json'
 require 'launchy'
@@ -18,6 +21,7 @@ require 'webrick'
 module Drum
   # A service implementation that uses the Spotify Web API to query playlists.
   class SpotifyService < Service
+    include Log
     extend Limiter::Mixin
 
     PLAYLISTS_CHUNK_SIZE = 50
@@ -32,20 +36,21 @@ module Drum
     # Rate-limiting for API-heavy methods
     # 'rate' describes the max. number of calls per interval (seconds)
 
-    limit_method :extract_spotify_features, rate: 15, interval: 5
-    limit_method :all_spotify_playlist_tracks, rate: 15, interval: 5
-    limit_method :all_spotify_saved_tracks, rate: 15, interval: 5
-    limit_method :all_spotify_playlists, rate: 15, interval: 5
-    limit_method :to_spotify_tracks, rate: 15, interval: 5
-    limit_method :upload_playlist_tracks, rate: 15, interval: 5
-    limit_method :upload_playlists, rate: 15, interval: 5
+    limit_method :extract_sp_features, rate: 15, interval: 5
+    limit_method :all_sp_playlist_tracks, rate: 15, interval: 5
+    limit_method :all_sp_library_tracks, rate: 15, interval: 5
+    limit_method :all_sp_library_playlists, rate: 15, interval: 5
+    limit_method :to_sp_track, rate: 15, interval: 5
+    limit_method :to_sp_tracks, rate: 15, interval: 5
+    limit_method :upload_sp_playlist_tracks, rate: 15, interval: 5
+    limit_method :upload_playlist, rate: 15, interval: 5
 
     # Initializes the Spotify service.
     #
     # @param [String] cache_dir The path to the cache directory (shared by all services)
     # @param [Boolean] fetch_artist_images Whether to fetch artist images (false by default)
     def initialize(cache_dir, fetch_artist_images: false)
-      @cache_dir = cache_dir / 'spotify'
+      @cache_dir = cache_dir / self.name
       @cache_dir.mkdir unless @cache_dir.directory?
 
       @auth_tokens = PersistentHash.new(@cache_dir / 'auth-tokens.yaml')
@@ -82,7 +87,7 @@ module Drum
         token_type: token_type,
         expires_at: expires_at
       }
-      puts "Successfully added access token that expires at #{expires_at}."
+      log.info "Successfully added access token that expires at #{expires_at}."
       
       [access_token, refresh_token, token_type]
     end
@@ -133,7 +138,7 @@ module Drum
 
       trap 'INT' do server.shutdown end
       
-      puts "Launching callback HTTP server on port #{port}, waiting for auth code..."
+      log.info "Launching callback HTTP server on port #{port}, waiting for auth code..."
       server.start
       
       if auth_code.nil?
@@ -171,15 +176,15 @@ module Drum
       existing = @auth_tokens[:latest]
 
       unless existing.nil? || existing[:expires_at].nil? || existing[:expires_at] < DateTime.now
-        puts 'Skipping authentication...'
+        log.info 'Skipping authentication...'
         return existing[:access_token], existing[:refresh_token], existing[:token_type]
       end
 
-      unless existing[:refresh_token].nil?
-        puts 'Authenticating via refresh...'
+      unless existing.nil? || existing[:refresh_token].nil?
+        log.info 'Authenticating via refresh...'
         self.authenticate_user_via_refresh(client_id, client_secret, existing[:refresh_token])
       else
-        puts 'Authenticating via browser...'
+        log.info 'Authenticating via browser...'
         self.authenticate_user_via_browser(client_id, client_secret)
       end
     end
@@ -229,79 +234,72 @@ module Drum
       @me = RSpotify::User.new(me_json)
       @authenticated = true
 
-      puts "Successfully logged in to Spotify API as #{me_json['id']}."
+      log.info "Successfully logged in to Spotify API as #{me_json['id']}."
     end
 
-    # Utilities
+    # Download helpers
     
-    def all_spotify_playlists(offset: 0)
-      playlists = @me.playlists(limit: PLAYLISTS_CHUNK_SIZE, offset: offset)
-      unless playlists.empty?
-        playlists + self.all_spotify_playlists(offset: offset + PLAYLISTS_CHUNK_SIZE)
+    def all_sp_library_playlists(offset: 0)
+      sp_playlists = @me.playlists(limit: PLAYLISTS_CHUNK_SIZE, offset: offset)
+      unless sp_playlists.empty?
+        sp_playlists + self.all_sp_library_playlists(offset: offset + PLAYLISTS_CHUNK_SIZE)
       else
         []
       end
     end
 
-    def all_spotify_playlist_tracks(playlist, offset: 0)
-      tracks = playlist.tracks(limit: TRACKS_CHUNK_SIZE, offset: offset)
-      unless tracks.empty?
-        tracks + self.all_spotify_playlist_tracks(playlist, offset: offset + TRACKS_CHUNK_SIZE)
+    def all_sp_playlist_tracks(sp_playlist, offset: 0)
+      sp_tracks = sp_playlist.tracks(limit: TRACKS_CHUNK_SIZE, offset: offset)
+      unless sp_tracks.empty?
+        sp_tracks + self.all_sp_playlist_tracks(sp_playlist, offset: offset + TRACKS_CHUNK_SIZE)
       else
         []
       end
     end
 
-    def all_spotify_saved_tracks(offset: 0)
-      tracks = @me.saved_tracks(limit: SAVED_TRACKS_CHUNKS_SIZE, offset: offset)
-      unless tracks.empty?
-        tracks + self.all_spotify_saved_tracks(offset: offset + SAVED_TRACKS_CHUNKS_SIZE)
+    def all_sp_library_tracks(offset: 0)
+      sp_tracks = @me.saved_tracks(limit: SAVED_TRACKS_CHUNKS_SIZE, offset: offset)
+      unless sp_tracks.empty?
+        sp_tracks + self.all_sp_library_tracks(offset: offset + SAVED_TRACKS_CHUNKS_SIZE)
       else
         []
       end
     end
 
-    def extract_spotify_features(track)
-      track&.audio_features
+    def extract_sp_features(sp_track)
+      sp_track&.audio_features
     end
+
+    # Note that while the `from_sp_*` methods use
+    # an existing `new_playlist` to reuse albums/artists/etc,
+    # they do not mutate the `new_playlist` themselves.
 
     # TODO: Replace hexdigest id generation with something
     #       that matches e.g. artists or albums with those
     #       already in the playlist.
 
-    def from_spotify_id(x, new_playlist)
-      unless x.nil?
-        Digest::SHA1.hexdigest(x)
-      else
-        nil
-      end
+    def from_sp_id(sp_id, new_playlist)
+      sp_id.try { |i| Digest::SHA1.hexdigest(sp_id) }
     end
 
-    # Download helpers
-
-    # Note that while the `from_spotify_*` methods use
-    # an existing `new_playlist` to reuse albums/artists/etc,
-    # they do not mutate the `new_playlist` themselves.
-
-    def from_spotify_album(album, new_playlist, output: method(:puts))
-      new_id = self.from_spotify_id(album.id, new_playlist)
+    def from_sp_album(sp_album, new_playlist)
+      new_id = self.from_sp_id(sp_album.id, new_playlist)
       new_album = new_playlist.albums[new_id]
       unless new_album.nil?
         return [new_album, []]
       end
 
       new_album = Album.new(
-        id: self.from_spotify_id(album.id, new_playlist),
-        name: album.name,
-        artist_ids: [],
+        id: self.from_sp_id(sp_album.id, new_playlist),
+        name: sp_album.name,
         spotify: AlbumSpotify.new(
-          id: album.id,
-          image_url: album&.images.first&.dig('url')
+          id: sp_album.id,
+          image_url: sp_album&.images.first&.dig('url')
         )
       )
 
-      new_artists = album.artists.map do |artist|
-        new_artist = self.from_spotify_artist(artist, new_playlist)
+      new_artists = sp_album.artists.map do |sp_artist|
+        new_artist = self.from_sp_artist(sp_artist, new_playlist)
         new_album.artist_ids << new_artist.id
         new_artist
       end
@@ -309,25 +307,24 @@ module Drum
       [new_album, new_artists]
     end
 
-    def from_spotify_track(track, new_playlist, output: method(:puts))
+    def from_sp_track(sp_track, new_playlist)
       new_track = Track.new(
-        name: track.name,
-        artist_ids: [],
-        duration_ms: track.duration_ms,
-        explicit: track.explicit,
-        isrc: track.external_ids&.dig('isrc'),
+        name: sp_track.name,
+        duration_ms: sp_track.duration_ms,
+        explicit: sp_track.explicit,
+        isrc: sp_track.external_ids&.dig('isrc'),
         spotify: TrackSpotify.new(
-          id: track.id
+          id: sp_track.id
         )
       )
 
-      new_artists = track.artists.map do |artist|
-        new_artist = self.from_spotify_artist(artist, new_playlist)
+      new_artists = sp_track.artists.map do |sp_artist|
+        new_artist = self.from_sp_artist(sp_artist, new_playlist)
         new_track.artist_ids << new_artist.id
         new_artist
       end
 
-      new_album, new_album_artists = self.from_spotify_album(track.album, new_playlist, output: output)
+      new_album, new_album_artists = self.from_sp_album(sp_track.album, new_playlist)
       new_track.album_id = new_album.id
       new_artists += new_album_artists
 
@@ -336,15 +333,15 @@ module Drum
       [new_track, new_artists, new_album]
     end
 
-    def from_spotify_artist(artist, new_playlist)
-      new_id = self.from_spotify_id(artist.id, new_playlist)
+    def from_sp_artist(sp_artist, new_playlist)
+      new_id = self.from_sp_id(sp_artist.id, new_playlist)
       new_playlist.artists[new_id] || Artist.new(
         id: new_id,
-        name: artist.name,
+        name: sp_artist.name,
         spotify: ArtistSpotify.new(
-          id: artist.id,
+          id: sp_artist.id,
           image_url: if @fetch_artist_images
-            artist&.images.first&.dig('url')
+            sp_artist&.images.first&.dig('url')
           else
             nil
           end
@@ -352,19 +349,19 @@ module Drum
       )
     end
     
-    def from_spotify_user(user, new_playlist)
-      new_id = self.from_spotify_id(user.id, new_playlist)
+    def from_sp_user(sp_user, new_playlist)
+      new_id = self.from_sp_id(sp_user.id, new_playlist)
       new_playlist.users[new_id] || User.new(
-        id: self.from_spotify_id(user.id, new_playlist),
+        id: self.from_sp_id(sp_user.id, new_playlist),
         display_name: begin
-          user.display_name unless user.id.empty?
+          sp_user.display_name unless sp_user.id.empty?
         rescue StandardError => e
           nil
         end,
         spotify: UserSpotify.new(
-          id: user.id,
+          id: sp_user.id,
           image_url: begin
-            user&.images.first&.dig('url')
+            sp_user&.images.first&.dig('url')
           rescue StandardError => e
             nil
           end
@@ -372,43 +369,43 @@ module Drum
       )
     end
 
-    def from_spotify_playlist(playlist, tracks = nil, output: method(:puts))
+    def from_sp_playlist(sp_playlist, sp_tracks = nil)
       new_playlist = Playlist.new(
-        name: playlist.name,
-        description: playlist&.description,
+        name: sp_playlist.name,
+        description: sp_playlist&.description,
         spotify: PlaylistSpotify.new(
-          id: playlist.id,
-          public: playlist.public,
-          collaborative: playlist.collaborative,
+          id: sp_playlist.id,
+          public: sp_playlist.public,
+          collaborative: sp_playlist.collaborative,
           image_url: begin
-            playlist&.images.first&.dig('url')
+            sp_playlist&.images.first&.dig('url')
           rescue StandardError => e
             nil
           end
         )
       )
 
-      new_playlist.id = self.from_spotify_id(playlist.id, new_playlist)
+      new_playlist.id = self.from_sp_id(sp_playlist.id, new_playlist)
 
-      author = playlist&.owner
-      unless author.nil?
-        new_author = self.from_spotify_user(author, new_playlist)
+      sp_author = sp_playlist&.owner
+      unless sp_author.nil?
+        new_author = self.from_sp_user(sp_author, new_playlist)
         new_playlist.author_id = new_author.id
         new_playlist.store_user(new_author)
       end
 
-      added_bys = playlist.tracks_added_by
-      added_ats = playlist.tracks_added_at
+      sp_added_bys = sp_playlist.tracks_added_by
+      sp_added_ats = sp_playlist.tracks_added_at
 
-      tracks = tracks || self.all_spotify_playlist_tracks(playlist)
-      output.call "Got #{tracks.length} playlist track(s) for '#{playlist.name}'..."
-      tracks.each_with_index do |track, i|
-        new_track, new_artists, new_album = self.from_spotify_track(track, new_playlist, output: output)
-        new_track.added_at = added_ats[track.id]
+      sp_tracks = sp_tracks || self.all_sp_playlist_tracks(sp_playlist)
+      log.info "Got #{sp_tracks.length} playlist track(s) for '#{sp_playlist.name}'..."
+      sp_tracks.each do |sp_track|
+        new_track, new_artists, new_album = self.from_sp_track(sp_track, new_playlist)
+        new_track.added_at = sp_added_ats[sp_track.id]
 
-        added_by = added_bys[track.id]
-        unless added_by.nil?
-          new_added_by = self.from_spotify_user(added_by, new_playlist)
+        sp_added_by = sp_added_bys[sp_track.id]
+        unless sp_added_by.nil?
+          new_added_by = self.from_sp_user(sp_added_by, new_playlist)
           new_track.added_by = new_added_by.id
           new_playlist.store_user(new_added_by)
         end
@@ -426,36 +423,57 @@ module Drum
 
     # Upload helpers
 
-    def to_spotify_tracks(tracks)
+    def to_sp_track(track, playlist)
+      sp_id = track&.spotify&.id
+      unless sp_id.nil?
+        # We already have an associated Spotify ID
+        RSpotify::Track.find(sp_id)
+      else
+        # We need to search for the song
+        search_phrase = playlist.track_search_phrase(track)
+        sp_results = RSpotify::Track.search(search_phrase, limit: 1)
+        sp_track = sp_results[0]
+
+        unless sp_track.nil?
+          log.info "Matched '#{track.name}' with '#{sp_track.name}' by '#{sp_track.artists.map { |a| a.name }.join(', ')}' from Spotify"
+        end
+
+        sp_track
+      end
+    end
+
+    def to_sp_tracks(tracks, playlist)
       unless tracks.nil? || tracks.empty?
-        # TODO: If track has no ID, match it using search
-        external_ids = tracks[...TO_SPOTIFY_TRACKS_CHUNK_SIZE].filter_map { |t| t&.spotify&.id }
-        external_tracks = RSpotify::Track.find(external_ids)
-        external_tracks + to_spotify_tracks(tracks[TO_SPOTIFY_TRACKS_CHUNK_SIZE...])
+        sp_tracks = tracks[...TO_SPOTIFY_TRACKS_CHUNK_SIZE].filter_map { |t| self.to_sp_track(t, playlist) }
+        sp_tracks + to_sp_tracks(tracks[TO_SPOTIFY_TRACKS_CHUNK_SIZE...], playlist)
       else
         []
       end
     end
 
-    def upload_playlist_tracks(external_tracks, external_playlist)
-      unless external_tracks.nil? || external_tracks.empty?
-        external_playlist.add_tracks!(external_tracks[...UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE])
-        self.upload_playlist_tracks(external_tracks[UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE...], external_playlist)
+    def upload_sp_playlist_tracks(sp_tracks, sp_playlist)
+      unless sp_tracks.nil? || sp_tracks.empty?
+        sp_playlist.add_tracks!(sp_tracks[...UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE])
+        self.upload_sp_playlist_tracks(sp_tracks[UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE...], sp_playlist)
       end
     end
 
-    def upload_playlist(playlist, output: method(:puts))
-      # TODO: Use actual description
-      description = Time.now.strftime('Pushed with Drum on %Y-%m-%d.')
-      external_playlist = @me.create_playlist!(playlist.name, description: description, public: false, collaborative: false)
+    def upload_playlist(playlist)
+      sp_playlist = @me.create_playlist!(
+        playlist.name,
+        description: playlist.description,
+        # TODO: Use public/collaborative from playlist?
+        public: false,
+        collaborative: false
+      )
 
       tracks = playlist.tracks
 
-      output.call "Externalizing #{tracks.length} playlist track(s)..."
-      external_tracks = self.to_spotify_tracks(tracks)
+      log.info "Externalizing #{tracks.length} playlist track(s)..."
+      sp_tracks = self.to_sp_tracks(tracks, playlist)
 
-      output.call "Uploading #{external_tracks.length} playlist track(s)..."
-      self.upload_playlist_tracks(external_tracks, external_playlist)
+      log.info "Uploading #{sp_tracks.length} playlist track(s)..."
+      self.upload_sp_playlist_tracks(sp_tracks, sp_playlist)
 
       # TODO: Clone the original playlist and insert potentially new Spotify ids
       nil
@@ -530,35 +548,31 @@ module Drum
       when :special
         case ref.resource_location
         when :playlists
-          puts 'Querying playlists...'
-          playlists = self.all_spotify_playlists
+          log.info 'Querying playlists...'
+          sp_playlists = self.all_sp_library_playlists
 
-          puts 'Fetching playlists...'
-          bar = ProgressBar.new(playlists.length)
-
-          Enumerator.new do |enum|
-            playlists.each do |playlist|
-              new_playlist = self.from_spotify_playlist(playlist, output: bar.method(:puts))
-              bar.increment!
+          log.info 'Fetching playlists...'
+          Enumerator.new(sp_playlists.length) do |enum|
+            sp_playlists.each do |sp_playlist|
+              new_playlist = self.from_sp_playlist(sp_playlist)
               enum.yield new_playlist
             end
           end
         when :tracks
-          puts 'Querying saved tracks...'
-          saved_tracks = self.all_spotify_saved_tracks
+          log.info 'Querying saved tracks...'
+          sp_saved_tracks = self.all_sp_library_tracks
 
-          puts 'Fetching saved tracks...'
-          bar = ProgressBar.new(saved_tracks.length)
+          log.info 'Fetching saved tracks...'
           new_playlist = Playlist.new(
             name: 'Saved Tracks'
           )
-          new_me = self.from_spotify_user(@me, new_playlist)
-          new_playlist.id = self.from_spotify_id(new_me.id, new_playlist)
+          new_me = self.from_sp_user(@me, new_playlist)
+          new_playlist.id = self.from_sp_id(new_me.id, new_playlist)
           new_playlist.author_id = new_me.id
           new_playlist.store_user(new_me)
 
-          saved_tracks.each do |track|
-            new_track, new_artists, new_album = self.from_spotify_track(track, new_playlist, output: bar.method(:puts))
+          sp_saved_tracks.each do |sp_track|
+            new_track, new_artists, new_album = self.from_sp_track(sp_track, new_playlist)
 
             new_artists.each do |new_artist|
               new_playlist.store_artist(new_artist)
@@ -566,16 +580,14 @@ module Drum
 
             new_playlist.store_album(new_album)
             new_playlist.store_track(new_track)
-
-            bar.increment!
           end
 
           [new_playlist]
         else raise "Special resource location '#{ref.resource_location}' cannot be downloaded (yet)"
         end
       when :playlist
-        playlist = RSpotify::Playlist.find_by_id(ref.resource_location)
-        new_playlist = self.from_spotify_playlist(playlist)
+        sp_playlist = RSpotify::Playlist.find_by_id(ref.resource_location)
+        new_playlist = self.from_sp_playlist(sp_playlist)
 
         [new_playlist]
       else raise "Resource type '#{ref.resource_type}' cannot be downloaded (yet)"
@@ -587,16 +599,15 @@ module Drum
 
       # Note that pushes currently intentionally always create a new playlist
       # TODO: Flag for overwriting (something like -f, --force?)
+      #       (the flag should be declared in the CLI and perhaps added
+      #       to Service.upload as a parameter)
 
       unless ref.resource_type == :special && ref.resource_location == :playlists
         raise 'Cannot upload to anything other than @spotify/playlists yet!'
       end
 
-      puts "Uploading #{playlists.length} playlist(s)..."
-      bar = ProgressBar.new(playlists.length)
       playlists.each do |playlist|
-        self.upload_playlist(playlist, output: bar.method(:puts))
-        bar.increment!
+        self.upload_playlist(playlist)
       end
     end
   end

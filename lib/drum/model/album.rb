@@ -9,13 +9,20 @@ module Drum
   #  @return [Array<String>] The artist ids of the album
   # @!attribute spotify
   #  @return [optional, AlbumSpotify] Spotify-specific metadata
+  # @!attribute applemusic
+  #  @return [optional, AlbumAppleMusic] Apple Music-specific metadata
   Album = Struct.new(
     :id,
     :name,
     :artist_ids,
-    :spotify,
+    :spotify, :applemusic,
     keyword_init: true
   ) do
+    def initialize(*)
+      super
+      self.artist_ids ||= []
+    end
+
     # Parses an album from a nested Hash that uses string keys.
     #
     # @param [Hash<String, Object>] h The Hash to be parsed
@@ -25,7 +32,8 @@ module Drum
         id: h['id'],
         name: h['name'],
         artist_ids: h['artist_ids'],
-        spotify: h['spotify'].try { |s| AlbumSpotify.deserialize(s) }
+        spotify: h['spotify'].try { |s| AlbumSpotify.deserialize(s) },
+        applemusic: h['applemusic'].try { |s| AlbumAppleMusic.deserialize(s) }
       )
     end
 
@@ -37,7 +45,8 @@ module Drum
         'id' => self.id,
         'name' => self.name,
         'artist_ids' => self.artist_ids,
-        'spotify' => self.spotify&.serialize
+        'spotify' => self.spotify&.serialize,
+        'applemusic' => self.applemusic&.serialize
       }.compact
     end
   end
@@ -70,6 +79,34 @@ module Drum
     def serialize
       {
         'id' => self.id,
+        'image_url' => self.image_url
+      }.compact
+    end
+  end
+
+  # Apple Music-specific metadata about the album.
+  #
+  # @!attribute image_url
+  #   @return [optional, String] The cover image of the album
+  AlbumAppleMusic = Struct.new(
+    :image_url,
+    keyword_init: true
+  ) do
+    # Parses Apple Music metadata from a Hash that uses string keys.
+    #
+    # @param [Hash<String, Object>] h The Hash to be parsed
+    # @return [AlbumAppleMusic] The parsed metadata
+    def self.deserialize(h)
+      AlbumAppleMusic.new(
+        image_url: h['image_url']
+      )
+    end
+
+    # Serializes the metadata to a Hash that uses string keys.
+    #
+    # @return [Hash<String, Object>] The serialized representation
+    def serialize
+      {
         'image_url' => self.image_url
       }.compact
     end
