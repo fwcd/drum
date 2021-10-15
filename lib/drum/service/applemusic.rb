@@ -213,10 +213,10 @@ module Drum
     end
 
     def get_json(endpoint)
-      response = RestClient::Request.execute(
-        method: :get,
-        url: "#{BASE_URL}#{endpoint}",
-        headers: self.authorization_headers
+      log.debug "-> GET #{endpoint}"
+      response = RestClient.get(
+        "#{BASE_URL}#{endpoint}",
+        self.authorization_headers
       )
       unless response.code >= 200 && response.code < 300
         raise "Something went wrong while GETting #{endpoint}: #{response}"
@@ -225,10 +225,11 @@ module Drum
     end
 
     def post_json(endpoint, json)
-      response = RestClient::Request.execute(
-        method: :post,
-        url: "#{BASE_URL}#{endpoint}",
-        headers: self.authorization_headers.merge({
+      log.debug "-> POST #{endpoint} with #{json}"
+      response = RestClient.post(
+        "#{BASE_URL}#{endpoint}",
+        json.to_json,
+        self.authorization_headers.merge({
           'Content-Type': 'application/json'
         })
       )
@@ -246,16 +247,44 @@ module Drum
       self.get_json("/me/library/playlists/#{am_library_id}/tracks?limit=#{PLAYLISTS_CHUNK_SIZE}&offset=#{offset}")
     end
 
-    def api_catalog_playlist(am_storefront, am_id)
-      self.get_json("/catalog/#{am_storefront}/playlists/#{am_id}")
+    def api_catalog_playlist(am_storefront, am_catalog_id)
+      self.get_json("/catalog/#{am_storefront}/playlists/#{am_catalog_id}")
     end
 
-    def api_create_library_playlist
-      self.post_json("/me/library/playlists/")
+    def api_create_library_playlist(name, description: nil, am_track_catalog_ids: [])
+      self.post_json("/me/library/playlists/", {
+        'attributes' => {
+          'name' => name,
+          'description' => description
+        }.compact,
+        'relationships' => {
+          'tracks' => {
+            'data' => am_track_catalog_ids.map do |am_id|
+              {
+                'id' => am_id,
+                'type' => 'songs'
+              }
+            end
+          },
+          # TODO: Support parents i.e. playlist folders?
+          'parent' => {
+            'data' => []
+          }
+        }
+      })
     end
 
-    def api_add_library_playlist_tracks(am_library_id)
-      self.post_json("/me/library/playlists/#{am_library_id}/tracks")
+    def api_add_library_playlist_tracks(am_library_id, am_track_catalog_ids)
+      self.post_json("/me/library/playlists/#{am_library_id}/tracks", {
+        'tracks' => {
+          'data' => am_track_catalog_ids.map do |am_id|
+            {
+              'id' => am_id,
+              'type' => 'songs'
+            }
+          end
+        }
+      })
     end
 
     # Download helpers
@@ -451,6 +480,21 @@ module Drum
     end
 
     # Upload helpers
+
+    def to_am_catalog_track_id(track)
+      # TODO: Search if id does not exist
+      track.applemusic&.catalog_id
+    end
+
+    def upload_playlist(playlist)
+      # TODO: Chunking?
+
+      self.api_create_library_playlist(
+        playlist.name,
+        description: playlist.description,
+        am_track_catalog_ids: playlist.tracks.map { |t| self.to_am_catalog_track_id(t) }
+      )
+    end
 
     # Ref parsing
 
