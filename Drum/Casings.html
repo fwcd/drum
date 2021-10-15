@@ -106,6 +106,54 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#arraycase-instance_method" title="#arraycase (instance method)">#<strong>arraycase</strong>  &#x21d2; Array&lt;String&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Converts a string to [&#39;array&#39;, &#39;case&#39;].</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#camelcase-instance_method" title="#camelcase (instance method)">#<strong>camelcase</strong>  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Converts a string to camelCase.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#kebabcase-instance_method" title="#kebabcase (instance method)">#<strong>kebabcase</strong>  &#x21d2; String </a>
     
 
@@ -127,6 +175,54 @@
 </li>
 
       
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#pascalcase-instance_method" title="#pascalcase (instance method)">#<strong>pascalcase</strong>  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Converts a string to PascalCase.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#startcase-instance_method" title="#startcase (instance method)">#<strong>startcase</strong>  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Converts a string to Start Case.</p>
+</div></span>
+  
+</li>
+
+      
     </ul>
   
 
@@ -137,7 +233,133 @@
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="kebabcase-instance_method">
+  <h3 class="signature first" id="arraycase-instance_method">
+  
+    #<strong>arraycase</strong>  &#x21d2; <tt><span class='object_link'><a href="../Array.html" title="Array (class)">Array</a></span>&lt;<span class='object_link'><a href="../String.html" title="String (class)">String</a></span>&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Converts a string to [&#39;array&#39;, &#39;case&#39;]</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Array.html" title="Array (class)">Array</a></span>&lt;<span class='object_link'><a href="../String.html" title="String (class)">String</a></span>&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The arraycased version of the string</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+33
+34
+35
+36</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/utils/ext.rb', line 33</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_arraycase'>arraycase</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_kebabcase'>kebabcase</span>
+      <span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="camelcase-instance_method">
+  
+    #<strong>camelcase</strong>  &#x21d2; <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Converts a string to camelCase.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The camelcased version of the string</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+50
+51
+52
+53
+54
+55</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/utils/ext.rb', line 50</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_camelcase'>camelcase</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_arraycase'>arraycase</span>
+      <span class='period'>.</span><span class='id identifier rubyid_each_with_index'>each_with_index</span>
+      <span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_s'>s</span><span class='comma'>,</span> <span class='id identifier rubyid_i'>i</span><span class='op'>|</span> <span class='kw'>if</span> <span class='id identifier rubyid_i'>i</span> <span class='op'>==</span> <span class='int'>0</span> <span class='kw'>then</span> <span class='id identifier rubyid_s'>s</span> <span class='kw'>else</span> <span class='id identifier rubyid_s'>s</span><span class='period'>.</span><span class='id identifier rubyid_capitalize'>capitalize</span> <span class='kw'>end</span> <span class='rbrace'>}</span>
+      <span class='period'>.</span><span class='id identifier rubyid_join'>join</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="kebabcase-instance_method">
   
     #<strong>kebabcase</strong>  &#x21d2; <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt> 
   
@@ -167,7 +389,7 @@
       
         &mdash;
         <div class='inline'>
-<p>The kebab-cased version of the string</p>
+<p>The kebabcased version of the string</p>
 </div>
       
     </li>
@@ -201,12 +423,138 @@
 </table>
 </div>
     
+      <div class="method_details ">
+  <h3 class="signature " id="pascalcase-instance_method">
+  
+    #<strong>pascalcase</strong>  &#x21d2; <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Converts a string to PascalCase.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The pascalcased version of the string</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+60
+61
+62
+63
+64</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/utils/ext.rb', line 60</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_pascalcase'>pascalcase</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_arraycase'>arraycase</span>
+      <span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_s'>s</span><span class='op'>|</span> <span class='id identifier rubyid_s'>s</span><span class='period'>.</span><span class='id identifier rubyid_capitalize'>capitalize</span> <span class='rbrace'>}</span>
+      <span class='period'>.</span><span class='id identifier rubyid_join'>join</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="startcase-instance_method">
+  
+    #<strong>startcase</strong>  &#x21d2; <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Converts a string to Start Case.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The startcased version of the string</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+41
+42
+43
+44
+45</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/utils/ext.rb', line 41</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_startcase'>startcase</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_arraycase'>arraycase</span>
+      <span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_s'>s</span><span class='op'>|</span> <span class='id identifier rubyid_s'>s</span><span class='period'>.</span><span class='id identifier rubyid_capitalize'>capitalize</span> <span class='rbrace'>}</span>
+      <span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> </span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
   </div>
 
 </div>
 
       <div id="footer">
-  Generated on Fri Oct 15 16:46:42 2021 by
+  Generated on Fri Oct 15 17:46:35 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.0).
 </div>
