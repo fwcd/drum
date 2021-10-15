@@ -3,6 +3,7 @@ require 'drum/model/ref'
 require 'drum/service/service'
 require 'drum/utils/log'
 require 'pathname'
+require 'uri'
 require 'yaml'
 
 module Drum
@@ -15,12 +16,18 @@ module Drum
     end
 
     def parse_ref(raw_ref)
-      unless raw_ref.is_token
-        path = Pathname.new(raw_ref.text)
-        Ref.new(self.name, :any, path)
-      else
-        nil
+      if raw_ref.is_token
+        return nil
       end
+
+      raw_path = if raw_ref.text.start_with?('file:')
+        URI(raw_ref.text).path
+      else
+        raw_ref.text
+      end
+
+      path = Pathname.new(raw_path)
+      Ref.new(self.name, :any, path)
     end
 
     def remove(playlist_ref)

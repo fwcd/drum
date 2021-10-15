@@ -16,6 +16,7 @@ require 'rspotify'
 require 'ruby-limiter'
 require 'progress_bar'
 require 'securerandom'
+require 'uri'
 require 'webrick'
 
 module Drum

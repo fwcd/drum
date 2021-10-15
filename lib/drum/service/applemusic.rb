@@ -14,6 +14,7 @@ require 'json'
 require 'launchy'
 require 'rest-client'
 require 'ruby-limiter'
+require 'uri'
 require 'webrick'
 
 module Drum
