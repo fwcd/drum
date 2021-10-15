@@ -10,6 +10,10 @@ describe Drum::AppleMusicService do
     @service = Drum::AppleMusicService.new(@tmpdir)
   end
 
+  after :all do
+    FileUtils.remove_dir(@tmpdir)
+  end
+
   before :each do
     def split_endpoint(endpoint)
       endpoint.split(/[\/&]|(?<=[\?\=])/)[1...]
@@ -287,10 +291,6 @@ describe Drum::AppleMusicService do
         }
       end
     end
-  end
-
-  after :all do
-    FileUtils.remove_dir(@tmpdir)
   end
 
   describe 'download' do
