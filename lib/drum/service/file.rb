@@ -54,7 +54,7 @@ module Drum
 
         if !path.exist? || path.directory?
           unless playlist.path.empty?
-            path = path / playlist.path.map { |n| Pathname.new(n.kebabcase) }.reduce(:/)
+            path = path / playlist.path.map { |n| Pathname.new(n) }.reduce(:/)
           end
 
           playlist_path = lambda do |length|
