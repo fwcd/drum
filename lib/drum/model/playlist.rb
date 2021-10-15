@@ -40,6 +40,7 @@ module Drum
   )
     def initialize(*)
       super
+      self.description ||= ''
       self.path ||= []
       self.users ||= {}
       self.artists ||= {}
@@ -110,7 +111,7 @@ module Drum
       {
         'id' => self.id,
         'name' => self.name,
-        'description' => self.description,
+        'description' => (self.description unless self.description.empty?),
         'author_id' => self.author_id,
         'path' => (self.path unless self.path.empty?),
         'users' => (self.users.each_value.map { |u| u.serialize } unless self.users.empty?),

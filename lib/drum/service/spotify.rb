@@ -459,9 +459,13 @@ module Drum
     end
 
     def upload_playlist(playlist)
-      # TODO: Use actual description
-      description = Time.now.strftime('Pushed with Drum on %Y-%m-%d.')
-      sp_playlist = @me.create_playlist!(playlist.name, description: description, public: false, collaborative: false)
+      sp_playlist = @me.create_playlist!(
+        playlist.name,
+        description: playlist.description,
+        # TODO: Use public/collaborative from playlist?
+        public: false,
+        collaborative: false
+      )
 
       tracks = playlist.tracks
 

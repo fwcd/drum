@@ -122,6 +122,7 @@ module Drum
     
     desc 'cp [SOURCE] [DEST]', 'Copy a playlist from the source to the given destination'
     method_option :group_by_author, type: :boolean, default: false, desc: "Whether to prepend the author name to each playlist's path"
+    method_option :note_date, type: :boolean, default: false, desc: "Whether to add a small note with the upload date to each description."
 
     # Copies a playlist from the source to the given destination.
     #
@@ -149,28 +150,33 @@ module Drum
 
           playlists = src_service.download(src_ref).lazy
 
-          # Apply transformations to the downloaded playlists.
-          # Note that we use 'map' despite mutating the playlists
-          # in-place to preserve laziness in the iteration.
-
           unless playlists.size.nil?
             bar = ProgressBar.new(playlists.size)
 
             # Redirect log output so the bar stays at the bottom
             log.output = bar.method(:puts)
-
-            playlists = playlists.map do |playlist|
-              bar.increment!
-              playlist
-            end
           end
 
-          if options[:group_by_author]
-            playlists = playlists.map do |playlist|
+          # Apply transformations to the downloaded playlists.
+          # Note that we use 'map' despite mutating the playlists
+          # in-place to preserve laziness in the iteration.
+
+          playlists = playlists.map do |playlist|
+            bar&.increment!
+
+            if options[:group_by_author]
               author_name = playlist.author_id.try { |id| playlist.users[id] }&.display_name || 'Other'
               playlist.path.unshift(author_name)
-              playlist
             end
+
+            if options[:note_date]
+              unless playlist.description.end_with?("\n") || playlist.description.empty?
+                playlist.description += "\n"
+              end
+              playlist.description += Time.now.strftime("Pushed with Drum on %Y-%m-%d")
+            end
+
+            playlist
           end
 
           dest_service.upload(dest_ref, playlists)
