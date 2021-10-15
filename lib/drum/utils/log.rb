@@ -85,7 +85,7 @@ module Drum
   module Log
     # Fetches the global, lazily initialized logger.
     #
-    # @param [Logger] The logger
+    # @return [Logger] The logger
     def log
       @@log ||= Logger.new
     end
