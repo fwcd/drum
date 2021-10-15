@@ -5,8 +5,10 @@ require 'drum/service/mock'
 require 'drum/service/service'
 require 'drum/service/spotify'
 require 'drum/service/stdio'
+require 'drum/utils/log'
 require 'drum/version'
 require 'highline'
+require 'progress_bar'
 require 'thor'
 require 'yaml'
 
@@ -15,6 +17,8 @@ module Drum
   
   # The command line interface for drum.
   class CLI < Thor
+    include Log
+
     # Sets up the CLI by registering the services.
     def initialize(*args)
       super
@@ -137,7 +141,7 @@ module Drum
 
       self.with_service(src_ref.service_name) do |src_name, src_service|
         self.with_service(dest_ref.service_name) do |dest_name, dest_service|
-          puts "Copying from #{src_name} to #{dest_name}..."
+          log.info "Copying from #{src_name} to #{dest_name}..."
 
           # TODO: Investigate where to handle merging. Should each service
           #       be responsible for doing so, e.g. should the file service
@@ -148,6 +152,18 @@ module Drum
           # Apply transformations to the downloaded playlists.
           # Note that we use 'map' despite mutating the playlists
           # in-place to preserve laziness in the iteration.
+
+          unless playlists.size.nil?
+            bar = ProgressBar.new(playlists.size)
+
+            # Redirect log output so the bar stays at the bottom
+            log.output = bar.method(:puts)
+
+            playlists = playlists.map do |playlist|
+              bar.increment!
+              playlist
+            end
+          end
 
           if options[:group_by_author]
             playlists = playlists.map do |playlist|

@@ -11,7 +11,6 @@ require 'digest'
 require 'jwt'
 require 'json'
 require 'launchy'
-require 'progress_bar'
 require 'rest-client'
 require 'ruby-limiter'
 require 'webrick'
@@ -487,12 +486,9 @@ module Drum
           am_playlists = self.all_am_library_playlists.filter { |p| !p.dig('attributes', 'name').nil? }
 
           puts 'Fetching playlists...'
-          bar = ProgressBar.new(am_playlists.length)
-
-          Enumerator.new do |enum|
+          Enumerator.new(am_playlists.length) do |enum|
             am_playlists.each do |am_playlist|
               new_playlist = self.from_am_library_playlist(am_playlist, output: bar.method(:puts))
-              bar.increment!
               enum.yield new_playlist
             end
           end
@@ -506,12 +502,9 @@ module Drum
         am_playlists = response['data']
 
         puts 'Fetching playlists...'
-        bar = ProgressBar.new(am_playlists.length)
-
-        Enumerator.new do |enum|
+        Enumerator.new(am_playlists.length) do |enum|
           am_playlists.each do |am_playlist|
             new_playlist = self.from_am_catalog_playlist(am_playlist)
-            bar.increment!
             enum.yield new_playlist
           end
         end

@@ -546,12 +546,9 @@ module Drum
           sp_playlists = self.all_sp_library_playlists
 
           puts 'Fetching playlists...'
-          bar = ProgressBar.new(sp_playlists.length)
-
-          Enumerator.new do |enum|
+          Enumerator.new(sp_playlists.length) do |enum|
             sp_playlists.each do |sp_playlist|
               new_playlist = self.from_sp_playlist(sp_playlist, output: bar.method(:puts))
-              bar.increment!
               enum.yield new_playlist
             end
           end
@@ -560,7 +557,6 @@ module Drum
           sp_saved_tracks = self.all_sp_library_tracks
 
           puts 'Fetching saved tracks...'
-          bar = ProgressBar.new(sp_saved_tracks.length)
           new_playlist = Playlist.new(
             name: 'Saved Tracks'
           )
@@ -578,8 +574,6 @@ module Drum
 
             new_playlist.store_album(new_album)
             new_playlist.store_track(new_track)
-
-            bar.increment!
           end
 
           [new_playlist]
