@@ -33,13 +33,18 @@ module Drum
     end
 
     def download(playlist_ref)
-      path = playlist_ref.resource_location
-      paths = if path.directory?
-        path.children.filter { |p| !p.directory? && ['.yml', '.yaml'].include?(p.extname) }
+      base_path = playlist_ref.resource_location
+
+      if base_path.directory?
+        Dir.glob("#{base_path}/**/*.{yaml,yml}").map do |p|
+          path = Pathname.new(p)
+          playlist = Playlist.deserialize(YAML.load(path.read))
+          playlist.path = path.relative_path_from(base_path).parent.each_filename.to_a
+          playlist
+        end
       else
-        [path]
+        [Playlist.deserialize(YAML.load(base_path.read))]
       end
-      paths.map { |p| Playlist.deserialize(YAML.load(p.read)) }
     end
 
     def upload(playlist_ref, playlists)
