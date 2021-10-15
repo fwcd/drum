@@ -205,35 +205,57 @@ module Drum
 
     # API wrapper
 
-    def request(method, endpoint)
-      RestClient::Request.execute(
-        method: method,
-        url: "#{BASE_URL}#{endpoint}",
-        headers: {
-          'Authorization': "Bearer #{@token}",
-          'Music-User-Token': @user_token
-        }
-      )
+    def authorization_headers
+      {
+        'Authorization': "Bearer #{@token}",
+        'Music-User-Token': @user_token
+      }
     end
 
     def get_json(endpoint)
-      response = request(:get, endpoint)
+      response = RestClient::Request.execute(
+        method: :get,
+        url: "#{BASE_URL}#{endpoint}",
+        headers: self.authorization_headers
+      )
       unless response.code >= 200 && response.code < 300
         raise "Something went wrong while GETting #{endpoint}: #{response}"
       end
       JSON.parse(response.body)
     end
 
-    def api_library_playlists(offset: 0)
-      get_json("/me/library/playlists?limit=#{PLAYLISTS_CHUNK_SIZE}&offset=#{offset}")
+    def post_json(endpoint, json)
+      response = RestClient::Request.execute(
+        method: :post,
+        url: "#{BASE_URL}#{endpoint}",
+        headers: self.authorization_headers.merge({
+          'Content-Type': 'application/json'
+        })
+      )
+      unless response.code >= 200 && response.code < 300
+        raise "Something went wrong while POSTing to #{endpoint}: #{response}"
+      end
+      JSON.parse(response.body)
     end
 
-    def api_library_playlist_tracks(am_playlist, offset: 0)
-      get_json("/me/library/playlists/#{am_playlist['id']}/tracks?limit=#{PLAYLISTS_CHUNK_SIZE}&offset=#{offset}")
+    def api_library_playlists(offset: 0)
+      self.get_json("/me/library/playlists?limit=#{PLAYLISTS_CHUNK_SIZE}&offset=#{offset}")
+    end
+
+    def api_library_playlist_tracks(am_library_id, offset: 0)
+      self.get_json("/me/library/playlists/#{am_library_id}/tracks?limit=#{PLAYLISTS_CHUNK_SIZE}&offset=#{offset}")
     end
 
     def api_catalog_playlist(am_storefront, am_id)
-      get_json("/catalog/#{am_storefront}/playlists/#{am_id}")
+      self.get_json("/catalog/#{am_storefront}/playlists/#{am_id}")
+    end
+
+    def api_create_library_playlist
+      self.post_json("/me/library/playlists/")
+    end
+
+    def api_add_library_playlist_tracks(am_library_id)
+      self.post_json("/me/library/playlists/#{am_library_id}/tracks")
     end
 
     # Download helpers
@@ -251,7 +273,7 @@ module Drum
 
     def all_am_library_playlist_tracks(am_playlist, offset: 0, total: nil)
       unless total != nil && offset >= total
-        response = self.api_library_playlist_tracks(am_playlist, offset: offset)
+        response = self.api_library_playlist_tracks(am_playlist['id'], offset: offset)
         am_tracks = response['data']
         unless am_tracks.empty?
           return am_tracks + self.all_am_library_playlist_tracks(am_playlist, offset: offset + PLAYLISTS_CHUNK_SIZE, total: response.dig('meta', 'total'))
@@ -428,6 +450,8 @@ module Drum
       new_playlist
     end
 
+    # Upload helpers
+
     # Ref parsing
 
     def parse_resource_type(raw)
@@ -514,6 +538,21 @@ module Drum
       end
     end
 
-    # TODO: Uploading
+    def upload(ref, playlists)
+      self.authenticate
+
+      # Note that pushes currently intentionally always create a new playlist
+      # TODO: Flag for overwriting (something like -f, --force?)
+      #       (the flag should be declared in the CLI and perhaps added
+      #       to Service.upload as a parameter)
+
+      unless ref.resource_type == :special && ref.resource_location == :playlists
+        raise 'Cannot upload to anything other than @applemusic/playlists yet!'
+      end
+
+      playlists.each do |playlist|
+        self.upload_playlist(playlist)
+      end
+    end
   end
 end

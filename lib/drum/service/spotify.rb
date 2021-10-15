@@ -599,18 +599,15 @@ module Drum
 
       # Note that pushes currently intentionally always create a new playlist
       # TODO: Flag for overwriting (something like -f, --force?)
+      #       (the flag should be declared in the CLI and perhaps added
+      #       to Service.upload as a parameter)
 
       unless ref.resource_type == :special && ref.resource_location == :playlists
         raise 'Cannot upload to anything other than @spotify/playlists yet!'
       end
 
-      unless playlists.size.nil?
-        log.info "Uploading #{playlists.size} playlist(s)..."
-      end
-
       playlists.each do |playlist|
         self.upload_playlist(playlist)
-        bar&.increment!
       end
     end
   end
