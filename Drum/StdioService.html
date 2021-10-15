@@ -89,6 +89,11 @@
   
   
   
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="Log.html" title="Drum::Log (module)">Log</a></span></dd>
+  </dl>
+  
   
 
   
@@ -227,8 +232,19 @@
   
   
   
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Log.html" title="Drum::Log (module)">Log</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Log.html#log-instance_method" title="Drum::Log#log (method)">#log</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
   <h3 class="inherited">Methods inherited from <span class='object_link'><a href="Service.html" title="Drum::Service (class)">Service</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="Service.html#remove-instance_method" title="Drum::Service#remove (method)">#remove</a></span>, <span class='object_link'><a href="Service.html#supports_source_mutations-instance_method" title="Drum::Service#supports_source_mutations (method)">#supports_source_mutations</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="Service.html#remove-instance_method" title="Drum::Service#remove (method)">#remove</a></span></p>
 
 
   <div id="instance_method_details" class="method_details_list">
@@ -250,17 +266,17 @@
       <pre class="lines">
 
 
-28
-29
-30
 31
 32
 33
 34
-35</pre>
+35
+36
+37
+38</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/stdio.rb', line 28</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/stdio.rb', line 31</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_download'>download</span><span class='lparen'>(</span><span class='id identifier rubyid_playlist_ref'>playlist_ref</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_playlist_ref'>playlist_ref</span><span class='period'>.</span><span class='id identifier rubyid_resource_location'>resource_location</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='symbol'>:stdin</span><span class='rparen'>)</span>
@@ -290,12 +306,12 @@
       <pre class="lines">
 
 
-9
-10
-11</pre>
+12
+13
+14</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/stdio.rb', line 9</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/stdio.rb', line 12</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_name'>name</span>
   <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>stdio</span><span class='tstring_end'>&#39;</span></span>
@@ -320,9 +336,6 @@
       <pre class="lines">
 
 
-13
-14
-15
 16
 17
 18
@@ -333,10 +346,13 @@
 23
 24
 25
-26</pre>
+26
+27
+28
+29</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/stdio.rb', line 13</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/stdio.rb', line 16</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_parse_ref'>parse_ref</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='period'>.</span><span class='id identifier rubyid_is_token'>is_token</span>
@@ -372,24 +388,24 @@
       <pre class="lines">
 
 
-37
-38
-39
 40
 41
 42
 43
 44
 45
-46</pre>
+46
+47
+48
+49</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/stdio.rb', line 37</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/stdio.rb', line 40</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_upload'>upload</span><span class='lparen'>(</span><span class='id identifier rubyid_playlist_ref'>playlist_ref</span><span class='comma'>,</span> <span class='id identifier rubyid_playlists'>playlists</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_playlist_ref'>playlist_ref</span><span class='period'>.</span><span class='id identifier rubyid_resource_location'>resource_location</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='symbol'>:stdout</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_playlists'>playlists</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_playlist'>playlist</span><span class='op'>|</span>
-      <span class='id identifier rubyid_puts'>puts</span> <span class='id identifier rubyid_playlist'>playlist</span><span class='period'>.</span><span class='id identifier rubyid_serialize'>serialize</span><span class='period'>.</span><span class='id identifier rubyid_to_yaml'>to_yaml</span>
+      <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_all'>all</span> <span class='id identifier rubyid_playlist'>playlist</span><span class='period'>.</span><span class='id identifier rubyid_serialize'>serialize</span><span class='period'>.</span><span class='id identifier rubyid_to_yaml'>to_yaml</span>
     <span class='kw'>end</span>
     <span class='kw'>nil</span>
   <span class='kw'>else</span>
@@ -406,7 +422,7 @@
 </div>
 
       <div id="footer">
-  Generated on Tue Oct 12 18:13:48 2021 by
+  Generated on Fri Oct 15 16:08:27 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.0).
 </div>

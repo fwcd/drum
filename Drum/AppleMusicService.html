@@ -1,0 +1,2845 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: Drum::AppleMusicService
+  
+    &mdash; Documentation by YARD 0.9.26
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Drum::AppleMusicService";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (A)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../Drum.html" title="Drum (module)">Drum</a></span></span>
+     &raquo; 
+    <span class="title">AppleMusicService</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: Drum::AppleMusicService
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName"><span class='object_link'><a href="Service.html" title="Drum::Service (class)">Service</a></span></span>
+      
+        <ul class="fullTree">
+          <li><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></li>
+          
+            <li class="next"><span class='object_link'><a href="Service.html" title="Drum::Service (class)">Service</a></span></li>
+          
+            <li class="next">Drum::AppleMusicService</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  <dl>
+      <dt>Extended by:</dt>
+      <dd>Limiter::Mixin</dd>
+  </dl>
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="Log.html" title="Drum::Log (module)">Log</a></span></dd>
+  </dl>
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/drum/service/applemusic.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>A service that uses the Apple Music API to query playlists.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="BASE_URL-constant" class="">BASE_URL =
+          
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>https://api.music.apple.com/v1</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="PLAYLISTS_CHUNK_SIZE-constant" class="">PLAYLISTS_CHUNK_SIZE =
+          
+        </dt>
+        <dd><pre class="code"><span class='int'>50</span></pre></dd>
+      
+        <dt id="MAX_ALBUM_ARTWORK_WIDTH-constant" class="">MAX_ALBUM_ARTWORK_WIDTH =
+          
+        </dt>
+        <dd><pre class="code"><span class='int'>512</span></pre></dd>
+      
+        <dt id="MAX_ALBUM_ARTWORK_HEIGHT-constant" class="">MAX_ALBUM_ARTWORK_HEIGHT =
+          
+        </dt>
+        <dd><pre class="code"><span class='int'>512</span></pre></dd>
+      
+        <dt id="MUSICKIT_P8_FILE_VAR-constant" class="">MUSICKIT_P8_FILE_VAR =
+          
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>MUSICKIT_KEY_P8_FILE_PATH</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MUSICKIT_KEY_VAR-constant" class="">MUSICKIT_KEY_VAR =
+          
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>MUSICKIT_KEY_ID</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="MUSICKIT_TEAM_ID_VAR-constant" class="">MUSICKIT_TEAM_ID_VAR =
+          
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>MUSICKIT_TEAM_ID</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#all_am_library_playlist_tracks-instance_method" title="#all_am_library_playlist_tracks (instance method)">#<strong>all_am_library_playlist_tracks</strong>(am_playlist, offset: 0, total: nil)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#all_am_library_playlists-instance_method" title="#all_am_library_playlists (instance method)">#<strong>all_am_library_playlists</strong>(offset: 0, total: nil)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Download helpers.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#api_add_library_playlist_tracks-instance_method" title="#api_add_library_playlist_tracks (instance method)">#<strong>api_add_library_playlist_tracks</strong>(am_library_id, am_track_catalog_ids)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#api_catalog_playlist-instance_method" title="#api_catalog_playlist (instance method)">#<strong>api_catalog_playlist</strong>(am_storefront, am_catalog_id)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#api_catalog_search-instance_method" title="#api_catalog_search (instance method)">#<strong>api_catalog_search</strong>(am_storefront, term, limit: 1, offset: 0, types: [&#39;songs&#39;])  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#api_create_library_playlist-instance_method" title="#api_create_library_playlist (instance method)">#<strong>api_create_library_playlist</strong>(name, description: nil, am_track_catalog_ids: [])  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#api_library_playlist_tracks-instance_method" title="#api_library_playlist_tracks (instance method)">#<strong>api_library_playlist_tracks</strong>(am_library_id, offset: 0)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#api_library_playlists-instance_method" title="#api_library_playlists (instance method)">#<strong>api_library_playlists</strong>(offset: 0)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#authenticate-instance_method" title="#authenticate (instance method)">#<strong>authenticate</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#authenticate_app-instance_method" title="#authenticate_app (instance method)">#<strong>authenticate_app</strong>(p8_file, key_id, team_id)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Authentication.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#authenticate_user-instance_method" title="#authenticate_user (instance method)">#<strong>authenticate_user</strong>(token)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#authorization_headers-instance_method" title="#authorization_headers (instance method)">#<strong>authorization_headers</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>API wrapper.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#download-instance_method" title="#download (instance method)">#<strong>download</strong>(ref)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Service.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#from_am_album_artwork-instance_method" title="#from_am_album_artwork (instance method)">#<strong>from_am_album_artwork</strong>(am_artwork)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#from_am_artist_name-instance_method" title="#from_am_artist_name (instance method)">#<strong>from_am_artist_name</strong>(artist_name)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#from_am_catalog_playlist-instance_method" title="#from_am_catalog_playlist (instance method)">#<strong>from_am_catalog_playlist</strong>(am_playlist)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#from_am_catalog_track-instance_method" title="#from_am_catalog_track (instance method)">#<strong>from_am_catalog_track</strong>(am_track, new_playlist)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#from_am_id-instance_method" title="#from_am_id (instance method)">#<strong>from_am_id</strong>(am_id)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#from_am_library_playlist-instance_method" title="#from_am_library_playlist (instance method)">#<strong>from_am_library_playlist</strong>(am_playlist)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#from_am_library_track-instance_method" title="#from_am_library_track (instance method)">#<strong>from_am_library_track</strong>(am_track, new_playlist)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#from_am_track-instance_method" title="#from_am_track (instance method)">#<strong>from_am_track</strong>(am_track, new_playlist)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#get_json-instance_method" title="#get_json (instance method)">#<strong>get_json</strong>(endpoint)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(cache_dir)  &#x21d2; AppleMusicService </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Initializes the Apple Music service.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#name-instance_method" title="#name (instance method)">#<strong>name</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#parse_applemusic_link-instance_method" title="#parse_applemusic_link (instance method)">#<strong>parse_applemusic_link</strong>(raw)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#parse_ref-instance_method" title="#parse_ref (instance method)">#<strong>parse_ref</strong>(raw_ref)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#parse_resource_type-instance_method" title="#parse_resource_type (instance method)">#<strong>parse_resource_type</strong>(raw)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Ref parsing.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#post_json-instance_method" title="#post_json (instance method)">#<strong>post_json</strong>(endpoint, json)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#to_am_catalog_track_id-instance_method" title="#to_am_catalog_track_id (instance method)">#<strong>to_am_catalog_track_id</strong>(track, playlist)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upload helpers.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#upload-instance_method" title="#upload (instance method)">#<strong>upload</strong>(ref, playlists)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#upload_playlist-instance_method" title="#upload_playlist (instance method)">#<strong>upload_playlist</strong>(playlist)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Log.html" title="Drum::Log (module)">Log</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Log.html#log-instance_method" title="Drum::Log#log (method)">#log</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods inherited from <span class='object_link'><a href="Service.html" title="Drum::Service (class)">Service</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Service.html#remove-instance_method" title="Drum::Service#remove (method)">#remove</a></span></p>
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(cache_dir)  &#x21d2; <tt><span class='object_link'><a href="" title="Drum::AppleMusicService (class)">AppleMusicService</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Initializes the Apple Music service.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>cache_dir</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The path to the cache directory (shared by all services)</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+42
+43
+44
+45
+46
+47
+48</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 42</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_cache_dir'>cache_dir</span><span class='rparen'>)</span>
+  <span class='ivar'>@cache_dir</span> <span class='op'>=</span> <span class='id identifier rubyid_cache_dir'>cache_dir</span> <span class='op'>/</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span>
+  <span class='ivar'>@cache_dir</span><span class='period'>.</span><span class='id identifier rubyid_mkdir'>mkdir</span> <span class='kw'>unless</span> <span class='ivar'>@cache_dir</span><span class='period'>.</span><span class='id identifier rubyid_directory?'>directory?</span>
+
+  <span class='ivar'>@auth_tokens</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="PersistentHash.html" title="Drum::PersistentHash (class)">PersistentHash</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="PersistentHash.html#initialize-instance_method" title="Drum::PersistentHash#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='ivar'>@cache_dir</span> <span class='op'>/</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>auth-tokens.yaml</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='ivar'>@authenticated</span> <span class='op'>=</span> <span class='kw'>false</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="all_am_library_playlist_tracks-instance_method">
+  
+    #<strong>all_am_library_playlist_tracks</strong>(am_playlist, offset: 0, total: nil)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 309</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_all_am_library_playlist_tracks'>all_am_library_playlist_tracks</span><span class='lparen'>(</span><span class='id identifier rubyid_am_playlist'>am_playlist</span><span class='comma'>,</span> <span class='label'>offset:</span> <span class='int'>0</span><span class='comma'>,</span> <span class='label'>total:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>unless</span> <span class='id identifier rubyid_total'>total</span> <span class='op'>!=</span> <span class='kw'>nil</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_offset'>offset</span> <span class='op'>&gt;=</span> <span class='id identifier rubyid_total'>total</span>
+    <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_api_library_playlist_tracks'>api_library_playlist_tracks</span><span class='lparen'>(</span><span class='id identifier rubyid_am_playlist'>am_playlist</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>offset:</span> <span class='id identifier rubyid_offset'>offset</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_am_tracks'>am_tracks</span> <span class='op'>=</span> <span class='id identifier rubyid_response'>response</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>data</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_am_tracks'>am_tracks</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+      <span class='kw'>return</span> <span class='id identifier rubyid_am_tracks'>am_tracks</span> <span class='op'>+</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_all_am_library_playlist_tracks'>all_am_library_playlist_tracks</span><span class='lparen'>(</span><span class='id identifier rubyid_am_playlist'>am_playlist</span><span class='comma'>,</span> <span class='label'>offset:</span> <span class='id identifier rubyid_offset'>offset</span> <span class='op'>+</span> <span class='const'><span class='object_link'><a href="#PLAYLISTS_CHUNK_SIZE-constant" title="Drum::AppleMusicService::PLAYLISTS_CHUNK_SIZE (constant)">PLAYLISTS_CHUNK_SIZE</a></span></span><span class='comma'>,</span> <span class='label'>total:</span> <span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>meta</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>total</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+  <span class='lbracket'>[</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="all_am_library_playlists-instance_method">
+  
+    #<strong>all_am_library_playlists</strong>(offset: 0, total: nil)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Download helpers</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 298</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_all_am_library_playlists'>all_am_library_playlists</span><span class='lparen'>(</span><span class='label'>offset:</span> <span class='int'>0</span><span class='comma'>,</span> <span class='label'>total:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>unless</span> <span class='id identifier rubyid_total'>total</span> <span class='op'>!=</span> <span class='kw'>nil</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_offset'>offset</span> <span class='op'>&gt;=</span> <span class='id identifier rubyid_total'>total</span>
+    <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_api_library_playlists'>api_library_playlists</span><span class='lparen'>(</span><span class='label'>offset:</span> <span class='id identifier rubyid_offset'>offset</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_am_playlists'>am_playlists</span> <span class='op'>=</span> <span class='id identifier rubyid_response'>response</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>data</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_am_playlists'>am_playlists</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+      <span class='kw'>return</span> <span class='id identifier rubyid_am_playlists'>am_playlists</span> <span class='op'>+</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_all_am_library_playlists'>all_am_library_playlists</span><span class='lparen'>(</span><span class='label'>offset:</span> <span class='id identifier rubyid_offset'>offset</span> <span class='op'>+</span> <span class='const'><span class='object_link'><a href="#PLAYLISTS_CHUNK_SIZE-constant" title="Drum::AppleMusicService::PLAYLISTS_CHUNK_SIZE (constant)">PLAYLISTS_CHUNK_SIZE</a></span></span><span class='comma'>,</span> <span class='label'>total:</span> <span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>meta</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>total</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+  <span class='lbracket'>[</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="api_add_library_playlist_tracks-instance_method">
+  
+    #<strong>api_add_library_playlist_tracks</strong>(am_library_id, am_track_catalog_ids)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 283</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_api_add_library_playlist_tracks'>api_add_library_playlist_tracks</span><span class='lparen'>(</span><span class='id identifier rubyid_am_library_id'>am_library_id</span><span class='comma'>,</span> <span class='id identifier rubyid_am_track_catalog_ids'>am_track_catalog_ids</span><span class='rparen'>)</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_post_json'>post_json</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/me/library/playlists/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_am_library_id'>am_library_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>/tracks</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='lbrace'>{</span>
+    <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>tracks</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>data</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_am_track_catalog_ids'>am_track_catalog_ids</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_am_id'>am_id</span><span class='op'>|</span>
+        <span class='lbrace'>{</span>
+          <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>id</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_am_id'>am_id</span><span class='comma'>,</span>
+          <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>type</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>songs</span><span class='tstring_end'>&#39;</span></span>
+        <span class='rbrace'>}</span>
+      <span class='kw'>end</span>
+    <span class='rbrace'>}</span>
+  <span class='rbrace'>}</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="api_catalog_playlist-instance_method">
+  
+    #<strong>api_catalog_playlist</strong>(am_storefront, am_catalog_id)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+250
+251
+252</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 250</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_api_catalog_playlist'>api_catalog_playlist</span><span class='lparen'>(</span><span class='id identifier rubyid_am_storefront'>am_storefront</span><span class='comma'>,</span> <span class='id identifier rubyid_am_catalog_id'>am_catalog_id</span><span class='rparen'>)</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_get_json'>get_json</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/catalog/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_am_storefront'>am_storefront</span><span class='embexpr_end'>}</span><span class='tstring_content'>/playlists/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_am_catalog_id'>am_catalog_id</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="api_catalog_search-instance_method">
+  
+    #<strong>api_catalog_search</strong>(am_storefront, term, limit: 1, offset: 0, types: [&#39;songs&#39;])  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+254
+255
+256
+257
+258</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 254</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_api_catalog_search'>api_catalog_search</span><span class='lparen'>(</span><span class='id identifier rubyid_am_storefront'>am_storefront</span><span class='comma'>,</span> <span class='id identifier rubyid_term'>term</span><span class='comma'>,</span> <span class='label'>limit:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='label'>offset:</span> <span class='int'>0</span><span class='comma'>,</span> <span class='label'>types:</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>songs</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_encoded_term'>encoded_term</span> <span class='op'>=</span> <span class='id identifier rubyid_term'>term</span><span class='period'>.</span><span class='id identifier rubyid_sub'>sub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>+</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_encoded_types'>encoded_types</span> <span class='op'>=</span> <span class='id identifier rubyid_types'>types</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>,</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_get_json'>get_json</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/catalog/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_am_storefront'>am_storefront</span><span class='embexpr_end'>}</span><span class='tstring_content'>/search?term=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_encoded_term'>encoded_term</span><span class='embexpr_end'>}</span><span class='tstring_content'>&amp;limit=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_limit'>limit</span><span class='embexpr_end'>}</span><span class='tstring_content'>&amp;offset=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_offset'>offset</span><span class='embexpr_end'>}</span><span class='tstring_content'>&amp;types=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_encoded_types'>encoded_types</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="api_create_library_playlist-instance_method">
+  
+    #<strong>api_create_library_playlist</strong>(name, description: nil, am_track_catalog_ids: [])  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 260</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_api_create_library_playlist'>api_create_library_playlist</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='label'>description:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>am_track_catalog_ids:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_post_json'>post_json</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/me/library/playlists/</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='lbrace'>{</span>
+    <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>attributes</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>name</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>description</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_description'>description</span>
+    <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='comma'>,</span>
+    <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>relationships</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>tracks</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span>
+        <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>data</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_am_track_catalog_ids'>am_track_catalog_ids</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_am_id'>am_id</span><span class='op'>|</span>
+          <span class='lbrace'>{</span>
+            <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>id</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_am_id'>am_id</span><span class='comma'>,</span>
+            <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>type</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>songs</span><span class='tstring_end'>&#39;</span></span>
+          <span class='rbrace'>}</span>
+        <span class='kw'>end</span>
+      <span class='rbrace'>}</span><span class='comma'>,</span>
+      <span class='comment'># TODO: Support parents i.e. playlist folders?
+</span>      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>parent</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span>
+        <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>data</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+      <span class='rbrace'>}</span>
+    <span class='rbrace'>}</span>
+  <span class='rbrace'>}</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="api_library_playlist_tracks-instance_method">
+  
+    #<strong>api_library_playlist_tracks</strong>(am_library_id, offset: 0)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+246
+247
+248</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 246</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_api_library_playlist_tracks'>api_library_playlist_tracks</span><span class='lparen'>(</span><span class='id identifier rubyid_am_library_id'>am_library_id</span><span class='comma'>,</span> <span class='label'>offset:</span> <span class='int'>0</span><span class='rparen'>)</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_get_json'>get_json</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/me/library/playlists/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_am_library_id'>am_library_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>/tracks?limit=</span><span class='embexpr_beg'>#{</span><span class='const'><span class='object_link'><a href="#PLAYLISTS_CHUNK_SIZE-constant" title="Drum::AppleMusicService::PLAYLISTS_CHUNK_SIZE (constant)">PLAYLISTS_CHUNK_SIZE</a></span></span><span class='embexpr_end'>}</span><span class='tstring_content'>&amp;offset=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_offset'>offset</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="api_library_playlists-instance_method">
+  
+    #<strong>api_library_playlists</strong>(offset: 0)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+242
+243
+244</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 242</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_api_library_playlists'>api_library_playlists</span><span class='lparen'>(</span><span class='label'>offset:</span> <span class='int'>0</span><span class='rparen'>)</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_get_json'>get_json</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/me/library/playlists?limit=</span><span class='embexpr_beg'>#{</span><span class='const'><span class='object_link'><a href="#PLAYLISTS_CHUNK_SIZE-constant" title="Drum::AppleMusicService::PLAYLISTS_CHUNK_SIZE (constant)">PLAYLISTS_CHUNK_SIZE</a></span></span><span class='embexpr_end'>}</span><span class='tstring_content'>&amp;offset=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_offset'>offset</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="authenticate-instance_method">
+  
+    #<strong>authenticate</strong>  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 190</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_authenticate'>authenticate</span>
+  <span class='id identifier rubyid_p8_file'>p8_file</span> <span class='op'>=</span> <span class='const'>ENV</span><span class='lbracket'>[</span><span class='const'><span class='object_link'><a href="#MUSICKIT_P8_FILE_VAR-constant" title="Drum::AppleMusicService::MUSICKIT_P8_FILE_VAR (constant)">MUSICKIT_P8_FILE_VAR</a></span></span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_key_id'>key_id</span> <span class='op'>=</span> <span class='const'>ENV</span><span class='lbracket'>[</span><span class='const'><span class='object_link'><a href="#MUSICKIT_KEY_VAR-constant" title="Drum::AppleMusicService::MUSICKIT_KEY_VAR (constant)">MUSICKIT_KEY_VAR</a></span></span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_team_id'>team_id</span> <span class='op'>=</span> <span class='const'>ENV</span><span class='lbracket'>[</span><span class='const'><span class='object_link'><a href="#MUSICKIT_TEAM_ID_VAR-constant" title="Drum::AppleMusicService::MUSICKIT_TEAM_ID_VAR (constant)">MUSICKIT_TEAM_ID_VAR</a></span></span><span class='rbracket'>]</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_p8_file'>p8_file</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='id identifier rubyid_key_id'>key_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='id identifier rubyid_team_id'>team_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Please specify your MusicKit keys (</span><span class='embexpr_beg'>#{</span><span class='const'><span class='object_link'><a href="#MUSICKIT_P8_FILE_VAR-constant" title="Drum::AppleMusicService::MUSICKIT_P8_FILE_VAR (constant)">MUSICKIT_P8_FILE_VAR</a></span></span><span class='embexpr_end'>}</span><span class='tstring_content'>, </span><span class='embexpr_beg'>#{</span><span class='const'><span class='object_link'><a href="#MUSICKIT_KEY_VAR-constant" title="Drum::AppleMusicService::MUSICKIT_KEY_VAR (constant)">MUSICKIT_KEY_VAR</a></span></span><span class='embexpr_end'>}</span><span class='tstring_content'>, </span><span class='embexpr_beg'>#{</span><span class='const'><span class='object_link'><a href="#MUSICKIT_TEAM_ID_VAR-constant" title="Drum::AppleMusicService::MUSICKIT_TEAM_ID_VAR (constant)">MUSICKIT_TEAM_ID_VAR</a></span></span><span class='embexpr_end'>}</span><span class='tstring_content'>) in your env vars!</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_token'>token</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_authenticate_app'>authenticate_app</span><span class='lparen'>(</span><span class='id identifier rubyid_p8_file'>p8_file</span><span class='comma'>,</span> <span class='id identifier rubyid_key_id'>key_id</span><span class='comma'>,</span> <span class='id identifier rubyid_team_id'>team_id</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_user_token'>user_token</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_authenticate_user'>authenticate_user</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='rparen'>)</span>
+
+  <span class='ivar'>@token</span> <span class='op'>=</span> <span class='id identifier rubyid_token'>token</span>
+  <span class='ivar'>@user_token</span> <span class='op'>=</span> <span class='id identifier rubyid_user_token'>user_token</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="authenticate_app-instance_method">
+  
+    #<strong>authenticate_app</strong>(p8_file, key_id, team_id)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Authentication</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 56</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_authenticate_app'>authenticate_app</span><span class='lparen'>(</span><span class='id identifier rubyid_p8_file'>p8_file</span><span class='comma'>,</span> <span class='id identifier rubyid_key_id'>key_id</span><span class='comma'>,</span> <span class='id identifier rubyid_team_id'>team_id</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_existing'>existing</span> <span class='op'>=</span> <span class='ivar'>@auth_tokens</span><span class='lbracket'>[</span><span class='symbol'>:app</span><span class='rbracket'>]</span>
+
+  <span class='kw'>unless</span> <span class='id identifier rubyid_existing'>existing</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='id identifier rubyid_existing'>existing</span><span class='lbracket'>[</span><span class='symbol'>:expires_at</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='id identifier rubyid_existing'>existing</span><span class='lbracket'>[</span><span class='symbol'>:expires_at</span><span class='rbracket'>]</span> <span class='op'>&lt;</span> <span class='const'>DateTime</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span>
+    <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Skipping app authentication...</span><span class='tstring_end'>&#39;</span></span>
+    <span class='kw'>return</span> <span class='id identifier rubyid_existing'>existing</span><span class='lbracket'>[</span><span class='symbol'>:token</span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_expiration_in_days'>expiration_in_days</span> <span class='op'>=</span> <span class='int'>180</span> <span class='comment'># may not be greater than 180
+</span>  <span class='id identifier rubyid_expiration_in_seconds'>expiration_in_seconds</span> <span class='op'>=</span> <span class='id identifier rubyid_expiration_in_days'>expiration_in_days</span> <span class='op'>*</span> <span class='int'>86400</span>
+
+  <span class='comment'># Source: https://github.com/mkoehnke/musickit-token-encoder/blob/master/musickit-token-encoder
+</span>  <span class='comment'># Copyright (c) 2016 Mathias Koehnke (http://www.mathiaskoehnke.de)
+</span>  <span class='comment'>#
+</span>  <span class='comment'># Permission is hereby granted, free of charge, to any person obtaining a copy
+</span>  <span class='comment'># of this software and associated documentation files (the &quot;Software&quot;), to deal
+</span>  <span class='comment'># in the Software without restriction, including without limitation the rights
+</span>  <span class='comment'># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+</span>  <span class='comment'># copies of the Software, and to permit persons to whom the Software is
+</span>  <span class='comment'># furnished to do so, subject to the following conditions:
+</span>  <span class='comment'>#
+</span>  <span class='comment'># The above copyright notice and this permission notice shall be included in
+</span>  <span class='comment'># all copies or substantial portions of the Software.
+</span>  <span class='comment'>#
+</span>  <span class='comment'># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+</span>  <span class='comment'># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+</span>  <span class='comment'># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+</span>  <span class='comment'># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+</span>  <span class='comment'># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+</span>  <span class='comment'># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+</span>  <span class='comment'># THE SOFTWARE.
+</span>
+  <span class='id identifier rubyid_iat'>iat</span> <span class='op'>=</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
+  <span class='id identifier rubyid_exp'>exp</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span> <span class='op'>+</span> <span class='id identifier rubyid_expiration_in_seconds'>expiration_in_seconds</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span> 
+  <span class='id identifier rubyid_pem_file'>pem_file</span> <span class='op'>=</span> <span class='backtick'>`</span><span class='tstring_content'>openssl pkcs8 -nocrypt -in </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_p8_file'>p8_file</span><span class='embexpr_end'>}</span><span class='tstring_end'>`</span></span>
+  <span class='id identifier rubyid_private_key'>private_key</span> <span class='op'>=</span> <span class='const'>OpenSSL</span><span class='op'>::</span><span class='const'>PKey</span><span class='op'>::</span><span class='const'>EC</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_pem_file'>pem_file</span><span class='rparen'>)</span> 
+  <span class='id identifier rubyid_payload'>payload</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>iss:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_team_id'>team_id</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>iat:</span> <span class='id identifier rubyid_iat'>iat</span><span class='comma'>,</span> <span class='label'>exp:</span> <span class='id identifier rubyid_exp'>exp</span> <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_token'>token</span> <span class='op'>=</span> <span class='const'>JWT</span><span class='period'>.</span><span class='id identifier rubyid_encode'>encode</span><span class='lparen'>(</span><span class='id identifier rubyid_payload'>payload</span><span class='comma'>,</span> <span class='id identifier rubyid_private_key'>private_key</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>ES256</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>alg:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>ES256</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>kid:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_key_id'>key_id</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Generated MusicKit JWT token </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_token'>token</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+
+  <span class='ivar'>@auth_tokens</span><span class='lbracket'>[</span><span class='symbol'>:app</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='label'>expires_at:</span> <span class='const'>DateTime</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span> <span class='op'>+</span> <span class='id identifier rubyid_expiration_in_days'>expiration_in_days</span><span class='comma'>,</span>
+    <span class='label'>token:</span> <span class='id identifier rubyid_token'>token</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_token'>token</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="authenticate_user-instance_method">
+  
+    #<strong>authenticate_user</strong>(token)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 105</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_authenticate_user'>authenticate_user</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_existing'>existing</span> <span class='op'>=</span> <span class='ivar'>@auth_tokens</span><span class='lbracket'>[</span><span class='symbol'>:user</span><span class='rbracket'>]</span>
+
+  <span class='kw'>unless</span> <span class='id identifier rubyid_existing'>existing</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='id identifier rubyid_existing'>existing</span><span class='lbracket'>[</span><span class='symbol'>:expires_at</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='id identifier rubyid_existing'>existing</span><span class='lbracket'>[</span><span class='symbol'>:expires_at</span><span class='rbracket'>]</span> <span class='op'>&lt;</span> <span class='const'>DateTime</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span>
+    <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Skipping user authentication...</span><span class='tstring_end'>&#39;</span></span>
+    <span class='kw'>return</span> <span class='id identifier rubyid_existing'>existing</span><span class='lbracket'>[</span><span class='symbol'>:token</span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Generate a new access refresh token,
+</span>  <span class='comment'># this might require user interaction. Since the
+</span>  <span class='comment'># user has to authenticate through the browser
+</span>  <span class='comment'># via Spotify&#39;s website, we use a small embedded
+</span>  <span class='comment'># HTTP server as a &#39;callback&#39;.
+</span>
+  <span class='id identifier rubyid_port'>port</span> <span class='op'>=</span> <span class='int'>17997</span>
+  <span class='id identifier rubyid_server'>server</span> <span class='op'>=</span> <span class='const'>WEBrick</span><span class='op'>::</span><span class='const'>HTTPServer</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='lbrace'>{</span>
+    <span class='label'>Port:</span> <span class='id identifier rubyid_port'>port</span><span class='comma'>,</span>
+    <span class='label'>StartCallback:</span> <span class='const'>Proc</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>do</span>
+      <span class='const'>Launchy</span><span class='period'>.</span><span class='id identifier rubyid_open'>open</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>http://localhost:</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_port'>port</span><span class='embexpr_end'>}</span><span class='tstring_content'>/</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_user_token'>user_token</span> <span class='op'>=</span> <span class='kw'>nil</span>
+
+  <span class='id identifier rubyid_server'>server</span><span class='period'>.</span><span class='id identifier rubyid_mount_proc'>mount_proc</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_req'>req</span><span class='comma'>,</span> <span class='id identifier rubyid_res'>res</span><span class='op'>|</span>
+    <span class='id identifier rubyid_res'>res</span><span class='period'>.</span><span class='id identifier rubyid_content_type'>content_type</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>text/html</span><span class='tstring_end'>&#39;</span></span>
+    <span class='id identifier rubyid_res'>res</span><span class='period'>.</span><span class='id identifier rubyid_body'>body</span> <span class='op'>=</span> <span class='lbracket'>[</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&lt;!DOCTYPE html&gt;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&lt;html&gt;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  &lt;head&gt;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>    &lt;script src=&quot;https://js-cdn.music.apple.com/musickit/v1/musickit.js&quot;&gt;&lt;/script&gt;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>    &lt;script&gt;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>      document.addEventListener(&#39;musickitloaded&#39;, () =&gt; {</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>        MusicKit.configure({</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>          developerToken: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_token'>token</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;,</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>          app: { name: &#39;Drum&#39;, build: &#39;</span><span class='embexpr_beg'>#{</span><span class='const'><span class='object_link'><a href="../Drum.html#VERSION-constant" title="Drum::VERSION (constant)">VERSION</a></span></span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39; }</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>        });</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>      });</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>      window.addEventListener(&#39;load&#39;, () =&gt; {</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>        document.getElementById(&#39;authbutton&#39;).addEventListener(&#39;click&#39;, () =&gt; {</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>          MusicKit.getInstance()</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>            .authorize()</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>            .then(userToken =&gt; fetch(&#39;/callback&#39;, { method: &#39;POST&#39;, body: userToken }))</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>            .then(response =&gt; { document.getElementById(&#39;status&#39;).innerText = &#39;Done!&#39;; });</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>        });</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>      });</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>    &lt;/script&gt;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  &lt;/head&gt;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  &lt;body&gt;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>    &lt;div id=&quot;status&quot;&gt;&lt;button id=&quot;authbutton&quot;&gt;Click me to authorize!&lt;/button&gt;&lt;/div&gt;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  &lt;/body&gt;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&lt;/html&gt;</span><span class='tstring_end'>&#39;</span></span>
+    <span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_server'>server</span><span class='period'>.</span><span class='id identifier rubyid_mount_proc'>mount_proc</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/callback</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_req'>req</span><span class='comma'>,</span> <span class='id identifier rubyid_res'>res</span><span class='op'>|</span>
+    <span class='id identifier rubyid_user_token'>user_token</span> <span class='op'>=</span> <span class='id identifier rubyid_req'>req</span><span class='period'>.</span><span class='id identifier rubyid_body'>body</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_user_token'>user_token</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='id identifier rubyid_user_token'>user_token</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+      <span class='id identifier rubyid_res'>res</span><span class='period'>.</span><span class='id identifier rubyid_body'>body</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Successfully got user token!</span><span class='tstring_end'>&#39;</span></span>
+    <span class='kw'>else</span>
+      <span class='id identifier rubyid_res'>res</span><span class='period'>.</span><span class='id identifier rubyid_body'>body</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Did not get user token! :(</span><span class='tstring_end'>&#39;</span></span>
+    <span class='kw'>end</span>
+    <span class='id identifier rubyid_server'>server</span><span class='period'>.</span><span class='id identifier rubyid_shutdown'>shutdown</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_trap'>trap</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>INT</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span> <span class='id identifier rubyid_server'>server</span><span class='period'>.</span><span class='id identifier rubyid_shutdown'>shutdown</span> <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Launching callback HTTP server on port </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_port'>port</span><span class='embexpr_end'>}</span><span class='tstring_content'>, waiting for auth code...</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_server'>server</span><span class='period'>.</span><span class='id identifier rubyid_start'>start</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_user_token'>user_token</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Did not get a MusicKit user token.</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Generated MusicKit user token </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_user_token'>user_token</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+
+  <span class='comment'># Cache user token for half an hour (an arbitrary duration)
+</span>  <span class='id identifier rubyid_expiration_in_seconds'>expiration_in_seconds</span> <span class='op'>=</span> <span class='int'>1800</span>
+
+  <span class='ivar'>@auth_tokens</span><span class='lbracket'>[</span><span class='symbol'>:user</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='label'>expires_at:</span> <span class='const'>DateTime</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span> <span class='op'>+</span> <span class='lparen'>(</span><span class='id identifier rubyid_expiration_in_seconds'>expiration_in_seconds</span> <span class='op'>/</span> <span class='float'>86400.0</span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='label'>token:</span> <span class='id identifier rubyid_user_token'>user_token</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_user_token'>user_token</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="authorization_headers-instance_method">
+  
+    #<strong>authorization_headers</strong>  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>API wrapper</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+208
+209
+210
+211
+212
+213</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 208</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_authorization_headers'>authorization_headers</span>
+  <span class='lbrace'>{</span>
+    <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Authorization</span><span class='label_end'>&#39;:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Bearer </span><span class='embexpr_beg'>#{</span><span class='ivar'>@token</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+    <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Music-User-Token</span><span class='label_end'>&#39;:</span> <span class='ivar'>@user_token</span>
+  <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="download-instance_method">
+  
+    #<strong>download</strong>(ref)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Service</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+567
+568
+569
+570
+571
+572
+573
+574
+575
+576
+577
+578
+579
+580
+581
+582
+583
+584
+585
+586
+587
+588
+589
+590
+591
+592
+593
+594
+595
+596
+597
+598
+599
+600
+601
+602</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 567</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_download'>download</span><span class='lparen'>(</span><span class='id identifier rubyid_ref'>ref</span><span class='rparen'>)</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_authenticate'>authenticate</span>
+
+  <span class='kw'>case</span> <span class='id identifier rubyid_ref'>ref</span><span class='period'>.</span><span class='id identifier rubyid_resource_type'>resource_type</span>
+  <span class='kw'>when</span> <span class='symbol'>:special</span>
+    <span class='kw'>case</span> <span class='id identifier rubyid_ref'>ref</span><span class='period'>.</span><span class='id identifier rubyid_resource_location'>resource_location</span>
+    <span class='kw'>when</span> <span class='symbol'>:playlists</span>
+      <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Querying library playlists...</span><span class='tstring_end'>&#39;</span></span>
+      <span class='id identifier rubyid_am_playlists'>am_playlists</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_all_am_library_playlists'>all_am_library_playlists</span><span class='period'>.</span><span class='id identifier rubyid_filter'>filter</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_p'>p</span><span class='op'>|</span> <span class='op'>!</span><span class='id identifier rubyid_p'>p</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>attributes</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>name</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='rbrace'>}</span>
+
+      <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Fetching playlists...</span><span class='tstring_end'>&#39;</span></span>
+      <span class='const'>Enumerator</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_am_playlists'>am_playlists</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_enum'>enum</span><span class='op'>|</span>
+        <span class='id identifier rubyid_am_playlists'>am_playlists</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_am_playlist'>am_playlist</span><span class='op'>|</span>
+          <span class='id identifier rubyid_new_playlist'>new_playlist</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_am_library_playlist'>from_am_library_playlist</span><span class='lparen'>(</span><span class='id identifier rubyid_am_playlist'>am_playlist</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_enum'>enum</span><span class='period'>.</span><span class='id identifier rubyid_yield'>yield</span> <span class='id identifier rubyid_new_playlist'>new_playlist</span>
+        <span class='kw'>end</span>
+      <span class='kw'>end</span>
+    <span class='kw'>else</span> <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Special resource location &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_ref'>ref</span><span class='period'>.</span><span class='id identifier rubyid_resource_location'>resource_location</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39; cannot be downloaded (yet)</span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>end</span>
+  <span class='kw'>when</span> <span class='symbol'>:playlist</span>
+    <span class='id identifier rubyid_am_storefront'>am_storefront</span><span class='comma'>,</span> <span class='id identifier rubyid_am_id'>am_id</span> <span class='op'>=</span> <span class='id identifier rubyid_ref'>ref</span><span class='period'>.</span><span class='id identifier rubyid_resource_location'>resource_location</span>
+
+    <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Querying catalog playlist...</span><span class='tstring_end'>&#39;</span></span>
+    <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_api_catalog_playlist'>api_catalog_playlist</span><span class='lparen'>(</span><span class='id identifier rubyid_am_storefront'>am_storefront</span><span class='comma'>,</span> <span class='id identifier rubyid_am_id'>am_id</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_am_playlists'>am_playlists</span> <span class='op'>=</span> <span class='id identifier rubyid_response'>response</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>data</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+
+    <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Fetching playlists...</span><span class='tstring_end'>&#39;</span></span>
+    <span class='const'>Enumerator</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_am_playlists'>am_playlists</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_enum'>enum</span><span class='op'>|</span>
+      <span class='id identifier rubyid_am_playlists'>am_playlists</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_am_playlist'>am_playlist</span><span class='op'>|</span>
+        <span class='id identifier rubyid_new_playlist'>new_playlist</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_am_catalog_playlist'>from_am_catalog_playlist</span><span class='lparen'>(</span><span class='id identifier rubyid_am_playlist'>am_playlist</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_enum'>enum</span><span class='period'>.</span><span class='id identifier rubyid_yield'>yield</span> <span class='id identifier rubyid_new_playlist'>new_playlist</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+  <span class='kw'>else</span> <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Resource type &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_ref'>ref</span><span class='period'>.</span><span class='id identifier rubyid_resource_type'>resource_type</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39; cannot be downloaded (yet)</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="from_am_album_artwork-instance_method">
+  
+    #<strong>from_am_album_artwork</strong>(am_artwork)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+324
+325
+326
+327
+328
+329
+330</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 324</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_from_am_album_artwork'>from_am_album_artwork</span><span class='lparen'>(</span><span class='id identifier rubyid_am_artwork'>am_artwork</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_width'>width</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='id identifier rubyid_am_artwork'>am_artwork</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>width</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#MAX_ALBUM_ARTWORK_WIDTH-constant" title="Drum::AppleMusicService::MAX_ALBUM_ARTWORK_WIDTH (constant)">MAX_ALBUM_ARTWORK_WIDTH</a></span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='period'>.</span><span class='id identifier rubyid_min'>min</span>
+  <span class='id identifier rubyid_height'>height</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='id identifier rubyid_am_artwork'>am_artwork</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>height</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#MAX_ALBUM_ARTWORK_HEIGHT-constant" title="Drum::AppleMusicService::MAX_ALBUM_ARTWORK_HEIGHT (constant)">MAX_ALBUM_ARTWORK_HEIGHT</a></span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='period'>.</span><span class='id identifier rubyid_min'>min</span>
+  <span class='id identifier rubyid_am_artwork'>am_artwork</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>url</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+    <span class='op'>&amp;.</span><span class='id identifier rubyid_sub'>sub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>{w}</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_width'>width</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='rparen'>)</span>
+    <span class='op'>&amp;.</span><span class='id identifier rubyid_sub'>sub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>{h}</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_height'>height</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="from_am_artist_name-instance_method">
+  
+    #<strong>from_am_artist_name</strong>(artist_name)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+332
+333
+334
+335
+336
+337
+338
+339
+340</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 332</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_from_am_artist_name'>from_am_artist_name</span><span class='lparen'>(</span><span class='id identifier rubyid_artist_name'>artist_name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_artist_names'>artist_names</span> <span class='op'>=</span> <span class='id identifier rubyid_artist_name'>artist_name</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\s*[,&amp;]\s*</span><span class='regexp_end'>/</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_artist_names'>artist_names</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_artist_name'>artist_name</span><span class='op'>|</span>
+    <span class='const'><span class='object_link'><a href="Artist.html" title="Drum::Artist (class)">Artist</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
+      <span class='label'>id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_am_id'>from_am_id</span><span class='lparen'>(</span><span class='id identifier rubyid_artist_name'>artist_name</span><span class='rparen'>)</span><span class='comma'>,</span>
+      <span class='label'>name:</span> <span class='id identifier rubyid_artist_name'>artist_name</span>
+    <span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="from_am_catalog_playlist-instance_method">
+  
+    #<strong>from_am_catalog_playlist</strong>(am_playlist)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+453
+454
+455
+456
+457
+458
+459
+460
+461
+462
+463
+464
+465
+466
+467
+468
+469
+470
+471
+472
+473
+474
+475
+476
+477
+478
+479
+480
+481
+482
+483
+484
+485
+486</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 453</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_from_am_catalog_playlist'>from_am_catalog_playlist</span><span class='lparen'>(</span><span class='id identifier rubyid_am_playlist'>am_playlist</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_am_attributes'>am_attributes</span> <span class='op'>=</span> <span class='id identifier rubyid_am_playlist'>am_playlist</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>attributes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_am_global_id'>am_global_id</span> <span class='op'>=</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>playParams</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>id</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_new_playlist'>new_playlist</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Playlist.html" title="Drum::Playlist (class)">Playlist</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Playlist.html#initialize-instance_method" title="Drum::Playlist#initialize (method)">new</a></span></span><span class='lparen'>(</span>
+    <span class='label'>id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_am_id'>from_am_id</span><span class='lparen'>(</span><span class='id identifier rubyid_am_global_id'>am_global_id</span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='label'>name:</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>description:</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>description</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>standard</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_author_name'>author_name</span> <span class='op'>=</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>curatorName</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_new_author'>new_author</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="User.html" title="Drum::User (class)">User</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
+    <span class='label'>id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_am_id'>from_am_id</span><span class='lparen'>(</span><span class='id identifier rubyid_author_name'>author_name</span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='label'>display_name:</span> <span class='id identifier rubyid_author_name'>author_name</span>
+  <span class='rparen'>)</span>
+  <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='period'>.</span><span class='id identifier rubyid_author_id'>author_id</span> <span class='op'>=</span> <span class='id identifier rubyid_new_author'>new_author</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span>
+  <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='period'>.</span><span class='id identifier rubyid_store_user'>store_user</span><span class='lparen'>(</span><span class='id identifier rubyid_new_author'>new_author</span><span class='rparen'>)</span>
+
+  <span class='comment'># TODO: Investigate whether this track list is complete,
+</span>  <span class='comment'>#       perhaps we need a mechanism similar to `all_am_library_playlist_tracks`.
+</span>
+  <span class='id identifier rubyid_am_tracks'>am_tracks</span> <span class='op'>=</span> <span class='id identifier rubyid_am_playlist'>am_playlist</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>relationships</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>tracks</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>data</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='op'>||</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_am_tracks'>am_tracks</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_am_track'>am_track</span><span class='op'>|</span>
+    <span class='id identifier rubyid_new_track'>new_track</span><span class='comma'>,</span> <span class='id identifier rubyid_new_artists'>new_artists</span><span class='comma'>,</span> <span class='id identifier rubyid_new_album'>new_album</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_am_catalog_track'>from_am_catalog_track</span><span class='lparen'>(</span><span class='id identifier rubyid_am_track'>am_track</span><span class='comma'>,</span> <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='rparen'>)</span>
+
+    <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='period'>.</span><span class='id identifier rubyid_store_track'>store_track</span><span class='lparen'>(</span><span class='id identifier rubyid_new_track'>new_track</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='period'>.</span><span class='id identifier rubyid_store_album'>store_album</span><span class='lparen'>(</span><span class='id identifier rubyid_new_album'>new_album</span><span class='rparen'>)</span>
+
+    <span class='id identifier rubyid_new_artists'>new_artists</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_new_artist'>new_artist</span><span class='op'>|</span>
+      <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='period'>.</span><span class='id identifier rubyid_store_artist'>store_artist</span><span class='lparen'>(</span><span class='id identifier rubyid_new_artist'>new_artist</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_new_playlist'>new_playlist</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="from_am_catalog_track-instance_method">
+  
+    #<strong>from_am_catalog_track</strong>(am_track, new_playlist)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 401</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_from_am_catalog_track'>from_am_catalog_track</span><span class='lparen'>(</span><span class='id identifier rubyid_am_track'>am_track</span><span class='comma'>,</span> <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_am_attributes'>am_attributes</span> <span class='op'>=</span> <span class='id identifier rubyid_am_track'>am_track</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>attributes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_new_track'>new_track</span><span class='comma'>,</span> <span class='id identifier rubyid_new_artists'>new_artists</span><span class='comma'>,</span> <span class='id identifier rubyid_new_album'>new_album</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_am_track'>from_am_track</span><span class='lparen'>(</span><span class='id identifier rubyid_am_track'>am_track</span><span class='comma'>,</span> <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_new_track'>new_track</span><span class='period'>.</span><span class='id identifier rubyid_applemusic'>applemusic</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="TrackAppleMusic.html" title="Drum::TrackAppleMusic (class)">TrackAppleMusic</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
+    <span class='label'>catalog_id:</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>playParams</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>id</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='label'>preview_url:</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>previews</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='int'>0</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>url</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='rparen'>)</span>
+
+  <span class='lbracket'>[</span><span class='id identifier rubyid_new_track'>new_track</span><span class='comma'>,</span> <span class='id identifier rubyid_new_artists'>new_artists</span><span class='comma'>,</span> <span class='id identifier rubyid_new_album'>new_album</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="from_am_id-instance_method">
+  
+    #<strong>from_am_id</strong>(am_id)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+320
+321
+322</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 320</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_from_am_id'>from_am_id</span><span class='lparen'>(</span><span class='id identifier rubyid_am_id'>am_id</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_am_id'>am_id</span><span class='period'>.</span><span class='id identifier rubyid_try'>try</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_i'>i</span><span class='op'>|</span> <span class='const'>Digest</span><span class='op'>::</span><span class='const'>SHA1</span><span class='period'>.</span><span class='id identifier rubyid_hexdigest'>hexdigest</span><span class='lparen'>(</span><span class='id identifier rubyid_i'>i</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="from_am_library_playlist-instance_method">
+  
+    #<strong>from_am_library_playlist</strong>(am_playlist)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449
+450
+451</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 413</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_from_am_library_playlist'>from_am_library_playlist</span><span class='lparen'>(</span><span class='id identifier rubyid_am_playlist'>am_playlist</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_am_attributes'>am_attributes</span> <span class='op'>=</span> <span class='id identifier rubyid_am_playlist'>am_playlist</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>attributes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_am_library_id'>am_library_id</span> <span class='op'>=</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>playParams</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>id</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_am_global_id'>am_global_id</span> <span class='op'>=</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>playParams</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>globalId</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_new_playlist'>new_playlist</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Playlist.html" title="Drum::Playlist (class)">Playlist</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Playlist.html#initialize-instance_method" title="Drum::Playlist#initialize (method)">new</a></span></span><span class='lparen'>(</span>
+    <span class='label'>id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_am_id'>from_am_id</span><span class='lparen'>(</span><span class='id identifier rubyid_am_global_id'>am_global_id</span> <span class='op'>||</span> <span class='id identifier rubyid_am_library_id'>am_library_id</span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='label'>name:</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+    <span class='label'>description:</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>description</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>standard</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='label'>applemusic:</span> <span class='const'><span class='object_link'><a href="PlaylistAppleMusic.html" title="Drum::PlaylistAppleMusic (class)">PlaylistAppleMusic</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
+      <span class='label'>library_id:</span> <span class='id identifier rubyid_am_library_id'>am_library_id</span><span class='comma'>,</span>
+      <span class='label'>global_id:</span> <span class='id identifier rubyid_am_global_id'>am_global_id</span><span class='comma'>,</span>
+      <span class='label'>public:</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>isPublic</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
+      <span class='label'>editable:</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>canEdit</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
+      <span class='label'>image_url:</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>artwork</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>url</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+    <span class='rparen'>)</span>
+  <span class='rparen'>)</span>
+
+  <span class='comment'># TODO: Author information
+</span>
+  <span class='kw'>begin</span>
+    <span class='id identifier rubyid_am_tracks'>am_tracks</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_all_am_library_playlist_tracks'>all_am_library_playlist_tracks</span><span class='lparen'>(</span><span class='id identifier rubyid_am_playlist'>am_playlist</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Got </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_am_tracks'>am_tracks</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span><span class='embexpr_end'>}</span><span class='tstring_content'> playlist track(s) for &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;...</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_am_tracks'>am_tracks</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_am_track'>am_track</span><span class='op'>|</span>
+      <span class='id identifier rubyid_new_track'>new_track</span><span class='comma'>,</span> <span class='id identifier rubyid_new_artists'>new_artists</span><span class='comma'>,</span> <span class='id identifier rubyid_new_album'>new_album</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_am_library_track'>from_am_library_track</span><span class='lparen'>(</span><span class='id identifier rubyid_am_track'>am_track</span><span class='comma'>,</span> <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='rparen'>)</span>
+
+      <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='period'>.</span><span class='id identifier rubyid_store_track'>store_track</span><span class='lparen'>(</span><span class='id identifier rubyid_new_track'>new_track</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='period'>.</span><span class='id identifier rubyid_store_album'>store_album</span><span class='lparen'>(</span><span class='id identifier rubyid_new_album'>new_album</span><span class='rparen'>)</span>
+
+      <span class='id identifier rubyid_new_artists'>new_artists</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_new_artist'>new_artist</span><span class='op'>|</span>
+        <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='period'>.</span><span class='id identifier rubyid_store_artist'>store_artist</span><span class='lparen'>(</span><span class='id identifier rubyid_new_artist'>new_artist</span><span class='rparen'>)</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+  <span class='kw'>rescue</span> <span class='const'>RestClient</span><span class='op'>::</span><span class='const'>NotFound</span>
+    <span class='comment'># Swallow 404s, apparently sometimes there are no tracks associated with a list
+</span>    <span class='kw'>nil</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_new_playlist'>new_playlist</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="from_am_library_track-instance_method">
+  
+    #<strong>from_am_library_track</strong>(am_track, new_playlist)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 389</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_from_am_library_track'>from_am_library_track</span><span class='lparen'>(</span><span class='id identifier rubyid_am_track'>am_track</span><span class='comma'>,</span> <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_am_attributes'>am_attributes</span> <span class='op'>=</span> <span class='id identifier rubyid_am_track'>am_track</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>attributes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_new_track'>new_track</span><span class='comma'>,</span> <span class='id identifier rubyid_new_artists'>new_artists</span><span class='comma'>,</span> <span class='id identifier rubyid_new_album'>new_album</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_am_track'>from_am_track</span><span class='lparen'>(</span><span class='id identifier rubyid_am_track'>am_track</span><span class='comma'>,</span> <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_new_track'>new_track</span><span class='period'>.</span><span class='id identifier rubyid_applemusic'>applemusic</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="TrackAppleMusic.html" title="Drum::TrackAppleMusic (class)">TrackAppleMusic</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
+    <span class='label'>library_id:</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>playParams</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>id</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='label'>catalog_id:</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>playParams</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>catalogId</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='rparen'>)</span>
+
+  <span class='lbracket'>[</span><span class='id identifier rubyid_new_track'>new_track</span><span class='comma'>,</span> <span class='id identifier rubyid_new_artists'>new_artists</span><span class='comma'>,</span> <span class='id identifier rubyid_new_album'>new_album</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="from_am_track-instance_method">
+  
+    #<strong>from_am_track</strong>(am_track, new_playlist)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 342</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_from_am_track'>from_am_track</span><span class='lparen'>(</span><span class='id identifier rubyid_am_track'>am_track</span><span class='comma'>,</span> <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_am_attributes'>am_attributes</span> <span class='op'>=</span> <span class='id identifier rubyid_am_track'>am_track</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>attributes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+
+  <span class='comment'># TODO: Generate the album/artist IDs from something other than the names
+</span>
+  <span class='id identifier rubyid_new_track'>new_track</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Track.html" title="Drum::Track (class)">Track</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Track.html#initialize-instance_method" title="Drum::Track#initialize (method)">new</a></span></span><span class='lparen'>(</span>
+    <span class='label'>name:</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>genres:</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>genreNames</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>duration_ms:</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>durationInMillis</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>isrc:</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>isrc</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>released_at:</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>releaseDate</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_try'>try</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_d'>d</span><span class='op'>|</span> <span class='const'>DateTime</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_d'>d</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_album_name'>album_name</span> <span class='op'>=</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>albumName</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_artist_name'>artist_name</span> <span class='op'>=</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>artistName</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_composer_name'>composer_name</span> <span class='op'>=</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>composerName</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_am_album_artwork'>am_album_artwork</span> <span class='op'>=</span> <span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>artwork</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_new_artists'>new_artists</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_new_albums'>new_albums</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+
+  <span class='kw'>unless</span> <span class='id identifier rubyid_album_name'>album_name</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_new_album'>new_album</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Album.html" title="Drum::Album (class)">Album</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Album.html#initialize-instance_method" title="Drum::Album#initialize (method)">new</a></span></span><span class='lparen'>(</span>
+      <span class='label'>id:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_am_id'>from_am_id</span><span class='lparen'>(</span><span class='id identifier rubyid_album_name'>album_name</span><span class='rparen'>)</span><span class='comma'>,</span>
+      <span class='label'>name:</span> <span class='id identifier rubyid_album_name'>album_name</span><span class='comma'>,</span>
+      <span class='label'>applemusic:</span> <span class='const'><span class='object_link'><a href="AlbumAppleMusic.html" title="Drum::AlbumAppleMusic (class)">AlbumAppleMusic</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
+        <span class='label'>image_url:</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_am_album_artwork'>from_am_album_artwork</span><span class='lparen'>(</span><span class='id identifier rubyid_am_album_artwork'>am_album_artwork</span><span class='rparen'>)</span>
+      <span class='rparen'>)</span>
+    <span class='rparen'>)</span>
+    <span class='id identifier rubyid_new_track'>new_track</span><span class='period'>.</span><span class='id identifier rubyid_album_id'>album_id</span> <span class='op'>=</span> <span class='id identifier rubyid_new_album'>new_album</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span>
+    <span class='id identifier rubyid_new_albums'>new_albums</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_new_album'>new_album</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>unless</span> <span class='id identifier rubyid_artist_name'>artist_name</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_new_artists'>new_artists</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_am_artist_name'>from_am_artist_name</span><span class='lparen'>(</span><span class='id identifier rubyid_artist_name'>artist_name</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_new_track'>new_track</span><span class='period'>.</span><span class='id identifier rubyid_artist_ids'>artist_ids</span> <span class='op'>=</span> <span class='id identifier rubyid_new_artists'>new_artists</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_a'>a</span><span class='op'>|</span> <span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>unless</span> <span class='id identifier rubyid_composer_name'>composer_name</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_new_composers'>new_composers</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_am_artist_name'>from_am_artist_name</span><span class='lparen'>(</span><span class='id identifier rubyid_composer_name'>composer_name</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_new_track'>new_track</span><span class='period'>.</span><span class='id identifier rubyid_composer_ids'>composer_ids</span> <span class='op'>=</span> <span class='id identifier rubyid_new_composers'>new_composers</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_c'>c</span><span class='op'>|</span> <span class='id identifier rubyid_c'>c</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='rbrace'>}</span>
+    <span class='id identifier rubyid_new_artists'>new_artists</span> <span class='op'>+=</span> <span class='id identifier rubyid_new_composers'>new_composers</span>
+  <span class='kw'>end</span>
+
+  <span class='lbracket'>[</span><span class='id identifier rubyid_new_track'>new_track</span><span class='comma'>,</span> <span class='id identifier rubyid_new_artists'>new_artists</span><span class='comma'>,</span> <span class='id identifier rubyid_new_album'>new_album</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="get_json-instance_method">
+  
+    #<strong>get_json</strong>(endpoint)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 215</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_get_json'>get_json</span><span class='lparen'>(</span><span class='id identifier rubyid_endpoint'>endpoint</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>-&gt; GET </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_endpoint'>endpoint</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='const'>RestClient</span><span class='period'>.</span><span class='id identifier rubyid_get'>get</span><span class='lparen'>(</span>
+    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='const'><span class='object_link'><a href="#BASE_URL-constant" title="Drum::AppleMusicService::BASE_URL (constant)">BASE_URL</a></span></span><span class='embexpr_end'>}</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_endpoint'>endpoint</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_authorization_headers'>authorization_headers</span>
+  <span class='rparen'>)</span>
+  <span class='kw'>unless</span> <span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_code'>code</span> <span class='op'>&gt;=</span> <span class='int'>200</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_code'>code</span> <span class='op'>&lt;</span> <span class='int'>300</span>
+    <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Something went wrong while GETting </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_endpoint'>endpoint</span><span class='embexpr_end'>}</span><span class='tstring_content'>: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_response'>response</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+  <span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_body'>body</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="name-instance_method">
+  
+    #<strong>name</strong>  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+50
+51
+52</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 50</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_name'>name</span>
+  <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>applemusic</span><span class='tstring_end'>&#39;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="parse_applemusic_link-instance_method">
+  
+    #<strong>parse_applemusic_link</strong>(raw)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+529
+530
+531
+532
+533
+534
+535
+536
+537
+538
+539
+540
+541
+542
+543
+544
+545
+546
+547
+548
+549
+550</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 529</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_parse_applemusic_link'>parse_applemusic_link</span><span class='lparen'>(</span><span class='id identifier rubyid_raw'>raw</span><span class='rparen'>)</span>
+  <span class='comment'># Parses links like https://music.apple.com/us/playlist/some-name/pl.123456789
+</span>
+  <span class='comment'># TODO: Investigate whether such links can always be fetched through the catalog API
+</span>  <span class='comment'># TODO: Handle library links
+</span>
+  <span class='id identifier rubyid_uri'>uri</span> <span class='op'>=</span> <span class='const'>URI</span><span class='lparen'>(</span><span class='id identifier rubyid_raw'>raw</span><span class='rparen'>)</span>
+  <span class='kw'>unless</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>https</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_uri'>uri</span><span class='op'>&amp;.</span><span class='id identifier rubyid_scheme'>scheme</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_uri'>uri</span><span class='op'>&amp;.</span><span class='id identifier rubyid_host'>host</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>music.apple.com</span><span class='tstring_end'>&#39;</span></span>
+    <span class='kw'>return</span> <span class='kw'>nil</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_parsed_path'>parsed_path</span> <span class='op'>=</span> <span class='id identifier rubyid_uri'>uri</span><span class='period'>.</span><span class='id identifier rubyid_path'>path</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>unless</span> <span class='id identifier rubyid_parsed_path'>parsed_path</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span> <span class='op'>==</span> <span class='int'>5</span>
+    <span class='kw'>return</span> <span class='kw'>nil</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_am_storefront'>am_storefront</span> <span class='op'>=</span> <span class='id identifier rubyid_parsed_path'>parsed_path</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_resource_type'>resource_type</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_parse_resource_type'>parse_resource_type</span><span class='lparen'>(</span><span class='id identifier rubyid_parsed_path'>parsed_path</span><span class='lbracket'>[</span><span class='int'>2</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_am_id'>am_id</span> <span class='op'>=</span> <span class='id identifier rubyid_parsed_path'>parsed_path</span><span class='lbracket'>[</span><span class='int'>4</span><span class='rbracket'>]</span>
+
+  <span class='const'><span class='object_link'><a href="Ref.html" title="Drum::Ref (class)">Ref</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_resource_type'>resource_type</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='id identifier rubyid_am_storefront'>am_storefront</span><span class='comma'>,</span> <span class='id identifier rubyid_am_id'>am_id</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="parse_ref-instance_method">
+  
+    #<strong>parse_ref</strong>(raw_ref)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+552
+553
+554
+555
+556
+557
+558
+559
+560
+561
+562
+563</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 552</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_parse_ref'>parse_ref</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='period'>.</span><span class='id identifier rubyid_is_token'>is_token</span>
+    <span class='id identifier rubyid_location'>location</span> <span class='op'>=</span> <span class='kw'>case</span> <span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='period'>.</span><span class='id identifier rubyid_text'>text</span>
+    <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>/tracks</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>then</span> <span class='symbol'>:tracks</span>
+    <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>/playlists</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>then</span> <span class='symbol'>:playlists</span>
+    <span class='kw'>else</span> <span class='kw'>return</span> <span class='kw'>nil</span>
+    <span class='kw'>end</span>
+    <span class='const'><span class='object_link'><a href="Ref.html" title="Drum::Ref (class)">Ref</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='symbol'>:special</span><span class='comma'>,</span> <span class='id identifier rubyid_location'>location</span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_parse_applemusic_link'>parse_applemusic_link</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='period'>.</span><span class='id identifier rubyid_text'>text</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="parse_resource_type-instance_method">
+  
+    #<strong>parse_resource_type</strong>(raw)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Ref parsing</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+520
+521
+522
+523
+524
+525
+526
+527</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 520</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_parse_resource_type'>parse_resource_type</span><span class='lparen'>(</span><span class='id identifier rubyid_raw'>raw</span><span class='rparen'>)</span>
+  <span class='kw'>case</span> <span class='id identifier rubyid_raw'>raw</span>
+  <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>playlist</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>then</span> <span class='symbol'>:playlist</span>
+  <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>album</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>then</span> <span class='symbol'>:album</span>
+  <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>artist</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>then</span> <span class='symbol'>:artist</span>
+  <span class='kw'>else</span> <span class='kw'>nil</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="post_json-instance_method">
+  
+    #<strong>post_json</strong>(endpoint, json)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 227</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_post_json'>post_json</span><span class='lparen'>(</span><span class='id identifier rubyid_endpoint'>endpoint</span><span class='comma'>,</span> <span class='id identifier rubyid_json'>json</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>-&gt; POST </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_endpoint'>endpoint</span><span class='embexpr_end'>}</span><span class='tstring_content'> with </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_json'>json</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='const'>RestClient</span><span class='period'>.</span><span class='id identifier rubyid_post'>post</span><span class='lparen'>(</span>
+    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='const'><span class='object_link'><a href="#BASE_URL-constant" title="Drum::AppleMusicService::BASE_URL (constant)">BASE_URL</a></span></span><span class='embexpr_end'>}</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_endpoint'>endpoint</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+    <span class='id identifier rubyid_json'>json</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span><span class='comma'>,</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_authorization_headers'>authorization_headers</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='lbrace'>{</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Content-Type</span><span class='label_end'>&#39;:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>application/json</span><span class='tstring_end'>&#39;</span></span>
+    <span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='rparen'>)</span>
+  <span class='kw'>unless</span> <span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_code'>code</span> <span class='op'>&gt;=</span> <span class='int'>200</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_code'>code</span> <span class='op'>&lt;</span> <span class='int'>300</span>
+    <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Something went wrong while POSTing to </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_endpoint'>endpoint</span><span class='embexpr_end'>}</span><span class='tstring_content'>: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_response'>response</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+  <span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_body'>body</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="to_am_catalog_track_id-instance_method">
+  
+    #<strong>to_am_catalog_track_id</strong>(track, playlist)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Upload helpers</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+490
+491
+492
+493
+494
+495
+496
+497
+498
+499
+500
+501
+502
+503
+504
+505
+506</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 490</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_to_am_catalog_track_id'>to_am_catalog_track_id</span><span class='lparen'>(</span><span class='id identifier rubyid_track'>track</span><span class='comma'>,</span> <span class='id identifier rubyid_playlist'>playlist</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_am_id'>am_id</span> <span class='op'>=</span> <span class='id identifier rubyid_track'>track</span><span class='period'>.</span><span class='id identifier rubyid_applemusic'>applemusic</span><span class='op'>&amp;.</span><span class='id identifier rubyid_catalog_id'>catalog_id</span>
+  <span class='kw'>unless</span> <span class='id identifier rubyid_am_id'>am_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='comment'># We already have an associated catalog ID
+</span>    <span class='id identifier rubyid_am_id'>am_id</span>
+  <span class='kw'>else</span>
+    <span class='comment'># We need to search for the song
+</span>    <span class='id identifier rubyid_search_phrase'>search_phrase</span> <span class='op'>=</span> <span class='id identifier rubyid_playlist'>playlist</span><span class='period'>.</span><span class='id identifier rubyid_track_search_phrase'>track_search_phrase</span><span class='lparen'>(</span><span class='id identifier rubyid_track'>track</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_am_storefront'>am_storefront</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>de</span><span class='tstring_end'>&#39;</span></span> <span class='comment'># TODO: Make this configurable/dynamic
+</span>    <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_api_catalog_search'>api_catalog_search</span><span class='lparen'>(</span><span class='id identifier rubyid_am_storefront'>am_storefront</span><span class='comma'>,</span> <span class='id identifier rubyid_search_phrase'>search_phrase</span><span class='comma'>,</span> <span class='label'>limit:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='label'>offset:</span> <span class='int'>0</span><span class='comma'>,</span> <span class='label'>types:</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>songs</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>results</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>songs</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>data</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='int'>0</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_try'>try</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_am_track'>am_track</span><span class='op'>|</span>
+      <span class='id identifier rubyid_am_attributes'>am_attributes</span> <span class='op'>=</span> <span class='id identifier rubyid_am_track'>am_track</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>attributes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+      <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Matched &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_track'>track</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39; with &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39; by &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_am_attributes'>am_attributes</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>artistName</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39; from Apple Music</span><span class='tstring_end'>&quot;</span></span>
+      <span class='id identifier rubyid_am_track'>am_track</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="upload-instance_method">
+  
+    #<strong>upload</strong>(ref, playlists)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+604
+605
+606
+607
+608
+609
+610
+611
+612
+613
+614
+615
+616
+617
+618
+619</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 604</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_upload'>upload</span><span class='lparen'>(</span><span class='id identifier rubyid_ref'>ref</span><span class='comma'>,</span> <span class='id identifier rubyid_playlists'>playlists</span><span class='rparen'>)</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_authenticate'>authenticate</span>
+
+  <span class='comment'># Note that pushes currently intentionally always create a new playlist
+</span>  <span class='comment'># TODO: Flag for overwriting (something like -f, --force?)
+</span>  <span class='comment'>#       (the flag should be declared in the CLI and perhaps added
+</span>  <span class='comment'>#       to Service.upload as a parameter)
+</span>
+  <span class='kw'>unless</span> <span class='id identifier rubyid_ref'>ref</span><span class='period'>.</span><span class='id identifier rubyid_resource_type'>resource_type</span> <span class='op'>==</span> <span class='symbol'>:special</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_ref'>ref</span><span class='period'>.</span><span class='id identifier rubyid_resource_location'>resource_location</span> <span class='op'>==</span> <span class='symbol'>:playlists</span>
+    <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Cannot upload to anything other than @applemusic/playlists yet!</span><span class='tstring_end'>&#39;</span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_playlists'>playlists</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_playlist'>playlist</span><span class='op'>|</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_upload_playlist'>upload_playlist</span><span class='lparen'>(</span><span class='id identifier rubyid_playlist'>playlist</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="upload_playlist-instance_method">
+  
+    #<strong>upload_playlist</strong>(playlist)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+508
+509
+510
+511
+512
+513
+514
+515
+516</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 508</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_upload_playlist'>upload_playlist</span><span class='lparen'>(</span><span class='id identifier rubyid_playlist'>playlist</span><span class='rparen'>)</span>
+  <span class='comment'># TODO: Chunking?
+</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_api_create_library_playlist'>api_create_library_playlist</span><span class='lparen'>(</span>
+    <span class='id identifier rubyid_playlist'>playlist</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span>
+    <span class='label'>description:</span> <span class='id identifier rubyid_playlist'>playlist</span><span class='period'>.</span><span class='id identifier rubyid_description'>description</span><span class='comma'>,</span>
+    <span class='label'>am_track_catalog_ids:</span> <span class='id identifier rubyid_playlist'>playlist</span><span class='period'>.</span><span class='id identifier rubyid_tracks'>tracks</span><span class='period'>.</span><span class='id identifier rubyid_filter_map'>filter_map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_t'>t</span><span class='op'>|</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_to_am_catalog_track_id'>to_am_catalog_track_id</span><span class='lparen'>(</span><span class='id identifier rubyid_t'>t</span><span class='comma'>,</span> <span class='id identifier rubyid_playlist'>playlist</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Fri Oct 15 16:08:28 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.0).
+</div>
+
+    </div>
+  </body>
+</html>
