@@ -6,16 +6,26 @@ A small tool for copying your playlists across music streaming services. Think `
 
 ## Usage
 
-The basic usage pattern is always `drum cp [source] [destination]` where `source` and `destination` may be any of the following:
+The basic usage pattern is always `drum cp [source] [destination]` where `source` and `destination` may be any of the following (internally called _a ref_):
 
-* A file or folder, e.g. `.`, `some/folder`, `some-file.yaml`
-* A URI, e.g. `https://open.spotify.com/playlist/123456`, `spotify:playlist:123456`, `file:///path/to/list.yaml`
-* A special token, e.g. `@spotify/playlists`, `@spotify/tracks`, `@stdin`, `@stdout`
+* A file or folder, e.g.
+  * `.`
+  * `some/folder`
+  * `some-file.yaml`
+* A URI, e.g.
+  * `https://open.spotify.com/playlist/123456`
+  * `spotify:playlist:123456`
+  * `https://music.apple.com/us/playlist/some-name/pl.123456789`
+  * `file:///path/to/list.yaml`
+* A special token, e.g.
+  * `@spotify/playlists`
+  * `@spotify/tracks`
+  * `@applemusic/playlists`
+  * `@stdin`
+  * `@stdout`
 * A dash `-`, synonymous with `@stdin` and `@stdout`, depending on usage
 
 > Note that if the source is folder-like, i.e. includes multiple playlists, the destination has to be folder-like too. (The reverse is not true though.)
-
-> Note that copying may have side-effects on the source playlist, e.g. pushing a new local playlist to `@spotify/playlists` will add the corresponding Spotify ID to the local playlist.
 
 ### Examples
 
@@ -39,10 +49,11 @@ The basic usage pattern is always `drum cp [source] [destination]` where `source
 
 ## Supported Services
 
-Currently, the following music streaming services are supported:
+Currently, the following music services are supported:
 
 * Spotify
-* Apple Music (WIP)
+* Apple Music
+* Local, YAML-based playlists (via stdio or files)
 
 > Note that the tool only processes metadata, not the actual audio files.
 
