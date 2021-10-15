@@ -19,12 +19,22 @@ module Drum
   module Casings
     # Converts a string to kebab-case.
     #
-    # @return [String] The kebab-cased version of the string
+    # @return [String] The kebabcased version of the string
     def kebabcase
       self.gsub(/([A-Z]+)([A-Z][a-z])/,'\1-\2')
           .gsub(/([a-z\d])([A-Z])/,'\1-\2')
           .gsub(/[\s_\/\-_:\.]+/, '-')
           .downcase
+    end
+
+    # Converts a string to Start Case.
+    #
+    # @return [String] The startcased version of the string
+    def startcase
+      self.kebabcase
+          .split('-')
+          .map { |s| s.capitalize }
+          .join(' ')
     end
   end
 
