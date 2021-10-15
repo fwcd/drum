@@ -98,7 +98,7 @@ MUSICKIT_KEY_ID=...
 MUSICKIT_TEAM_ID=...
 ```
 
-This (private) p8 key can be obtained as described [here](https://help.apple.com/developer-account/#/devce5522674) or [here](https://developer.apple.com/documentation/applemusicapi/getting_keys_and_creating_tokens) (requires an Apple Developer Program membership).
+This keys can be obtained as described [here](https://developer.apple.com/documentation/applemusicapi/getting_keys_and_creating_tokens) (requires an Apple Developer Program membership).
 
 ## Limitations
 
