@@ -27,14 +27,40 @@ module Drum
           .downcase
     end
 
+    # Converts a string to ['array', 'case']
+    #
+    # @return [Array<String>] The arraycased version of the string
+    def arraycase
+      self.kebabcase
+          .split('-')
+    end
+
     # Converts a string to Start Case.
     #
     # @return [String] The startcased version of the string
     def startcase
-      self.kebabcase
-          .split('-')
+      self.arraycase
           .map { |s| s.capitalize }
           .join(' ')
+    end
+
+    # Converts a string to camelCase.
+    #
+    # @return [String] The camelcased version of the string
+    def camelcase
+      self.arraycase
+          .each_with_index
+          .map { |s, i| if i == 0 then s else s.capitalize end }
+          .join
+    end
+
+    # Converts a string to PascalCase.
+    #
+    # @return [String] The pascalcased version of the string
+    def pascalcase
+      self.arraycase
+          .map { |s| s.capitalize }
+          .join
     end
   end
 
