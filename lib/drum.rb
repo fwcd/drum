@@ -181,13 +181,16 @@ module Drum
               playlist.path.unshift(author_name)
             end
 
-            playlist.path.map! do |n|
-              case options[:recase_paths]
-              when 'kebabcase' then n.kebabcase
-              when 'startcase' then n.startcase
-              when 'camelcase' then n.camelcase
-              when 'pascalcase' then n.pascalcase
-              else n
+            unless options[:recase_paths].nil?
+              casing = options[:recase_paths]
+              playlist.path.map! do |n|
+                case casing
+                when 'kebabcase' then n.kebabcase
+                when 'startcase' then n.startcase
+                when 'camelcase' then n.camelcase
+                when 'pascalcase' then n.pascalcase
+                else raise "Casing '#{casing}' is not implemented (yet)!"
+                end
               end
             end
 
