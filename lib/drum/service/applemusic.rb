@@ -252,7 +252,7 @@ module Drum
     end
 
     def api_catalog_search(am_storefront, term, limit: 1, offset: 0, types: ['songs'])
-      encoded_term = term.sub(' ', '+')
+      encoded_term = term.gsub(' ', '+')
       encoded_types = types.join(',')
       self.get_json("/catalog/#{am_storefront}/search?term=#{encoded_term}&limit=#{limit}&offset=#{offset}&types=#{encoded_types}")
     end
@@ -271,11 +271,8 @@ module Drum
                 'type' => 'songs'
               }
             end
-          },
-          # TODO: Support parents i.e. playlist folders?
-          'parent' => {
-            'data' => []
           }
+          # TODO: Support parents i.e. playlist folders?
         }
       })
     end
