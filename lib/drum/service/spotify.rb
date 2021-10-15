@@ -280,7 +280,7 @@ module Drum
       sp_id.try { |i| Digest::SHA1.hexdigest(sp_id) }
     end
 
-    def from_sp_album(sp_album, new_playlist, output: method(:puts))
+    def from_sp_album(sp_album, new_playlist)
       new_id = self.from_sp_id(sp_album.id, new_playlist)
       new_album = new_playlist.albums[new_id]
       unless new_album.nil?
@@ -305,7 +305,7 @@ module Drum
       [new_album, new_artists]
     end
 
-    def from_sp_track(sp_track, new_playlist, output: method(:puts))
+    def from_sp_track(sp_track, new_playlist)
       new_track = Track.new(
         name: sp_track.name,
         duration_ms: sp_track.duration_ms,
@@ -322,7 +322,7 @@ module Drum
         new_artist
       end
 
-      new_album, new_album_artists = self.from_sp_album(sp_track.album, new_playlist, output: output)
+      new_album, new_album_artists = self.from_sp_album(sp_track.album, new_playlist)
       new_track.album_id = new_album.id
       new_artists += new_album_artists
 
@@ -367,7 +367,7 @@ module Drum
       )
     end
 
-    def from_sp_playlist(sp_playlist, sp_tracks = nil, output: method(:puts))
+    def from_sp_playlist(sp_playlist, sp_tracks = nil)
       new_playlist = Playlist.new(
         name: sp_playlist.name,
         description: sp_playlist&.description,
@@ -396,9 +396,9 @@ module Drum
       sp_added_ats = sp_playlist.tracks_added_at
 
       sp_tracks = sp_tracks || self.all_sp_playlist_tracks(sp_playlist)
-      output.call "Got #{sp_tracks.length} playlist track(s) for '#{sp_playlist.name}'..."
+      puts "Got #{sp_tracks.length} playlist track(s) for '#{sp_playlist.name}'..."
       sp_tracks.each do |sp_track|
-        new_track, new_artists, new_album = self.from_sp_track(sp_track, new_playlist, output: output)
+        new_track, new_artists, new_album = self.from_sp_track(sp_track, new_playlist)
         new_track.added_at = sp_added_ats[sp_track.id]
 
         sp_added_by = sp_added_bys[sp_track.id]
@@ -421,7 +421,7 @@ module Drum
 
     # Upload helpers
 
-    def to_sp_track(track, playlist, output: method(:puts))
+    def to_sp_track(track, playlist)
       sp_id = track&.spotify&.id
       search_phrase = "#{track.name} #{track.artist_ids.filter_map { |i| playlist.artists[i]&.name }.join(' ')}"
       unless sp_id.nil?
@@ -433,41 +433,41 @@ module Drum
         sp_track = sp_results[0]
 
         unless sp_track.nil?
-          output.call "Matched '#{track.name}' with '#{sp_track.name}' by '#{sp_track.artists.map { |a| a.name }.join(', ')}' from Spotify"
+          puts "Matched '#{track.name}' with '#{sp_track.name}' by '#{sp_track.artists.map { |a| a.name }.join(', ')}' from Spotify"
         end
 
         sp_track
       end
     end
 
-    def to_sp_tracks(tracks, playlist, output: method(:puts))
+    def to_sp_tracks(tracks, playlist)
       unless tracks.nil? || tracks.empty?
-        sp_tracks = tracks[...TO_SPOTIFY_TRACKS_CHUNK_SIZE].filter_map { |t| self.to_sp_track(t, playlist, output: output) }
-        sp_tracks + to_sp_tracks(tracks[TO_SPOTIFY_TRACKS_CHUNK_SIZE...], playlist, output: output)
+        sp_tracks = tracks[...TO_SPOTIFY_TRACKS_CHUNK_SIZE].filter_map { |t| self.to_sp_track(t, playlist) }
+        sp_tracks + to_sp_tracks(tracks[TO_SPOTIFY_TRACKS_CHUNK_SIZE...], playlist)
       else
         []
       end
     end
 
-    def upload_sp_playlist_tracks(sp_tracks, sp_playlist, output: method(:puts))
+    def upload_sp_playlist_tracks(sp_tracks, sp_playlist)
       unless sp_tracks.nil? || sp_tracks.empty?
         sp_playlist.add_tracks!(sp_tracks[...UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE])
-        self.upload_sp_playlist_tracks(sp_tracks[UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE...], sp_playlist, output: output)
+        self.upload_sp_playlist_tracks(sp_tracks[UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE...], sp_playlist)
       end
     end
 
-    def upload_playlist(playlist, output: method(:puts))
+    def upload_playlist(playlist)
       # TODO: Use actual description
       description = Time.now.strftime('Pushed with Drum on %Y-%m-%d.')
       sp_playlist = @me.create_playlist!(playlist.name, description: description, public: false, collaborative: false)
 
       tracks = playlist.tracks
 
-      output.call "Externalizing #{tracks.length} playlist track(s)..."
-      sp_tracks = self.to_sp_tracks(tracks, playlist, output: output)
+      puts "Externalizing #{tracks.length} playlist track(s)..."
+      sp_tracks = self.to_sp_tracks(tracks, playlist)
 
-      output.call "Uploading #{sp_tracks.length} playlist track(s)..."
-      self.upload_sp_playlist_tracks(sp_tracks, sp_playlist, output: output)
+      puts "Uploading #{sp_tracks.length} playlist track(s)..."
+      self.upload_sp_playlist_tracks(sp_tracks, sp_playlist)
 
       # TODO: Clone the original playlist and insert potentially new Spotify ids
       nil
@@ -548,7 +548,7 @@ module Drum
           puts 'Fetching playlists...'
           Enumerator.new(sp_playlists.length) do |enum|
             sp_playlists.each do |sp_playlist|
-              new_playlist = self.from_sp_playlist(sp_playlist, output: bar.method(:puts))
+              new_playlist = self.from_sp_playlist(sp_playlist)
               enum.yield new_playlist
             end
           end
@@ -566,7 +566,7 @@ module Drum
           new_playlist.store_user(new_me)
 
           sp_saved_tracks.each do |sp_track|
-            new_track, new_artists, new_album = self.from_sp_track(sp_track, new_playlist, output: bar.method(:puts))
+            new_track, new_artists, new_album = self.from_sp_track(sp_track, new_playlist)
 
             new_artists.each do |new_artist|
               new_playlist.store_artist(new_artist)
@@ -598,13 +598,12 @@ module Drum
         raise 'Cannot upload to anything other than @spotify/playlists yet!'
       end
 
-      if playlists.is_a? Array
-        puts "Uploading #{playlists.length} playlist(s)..."
-        bar = ProgressBar.new(playlists.length)
+      unless playlists.size.nil?
+        puts "Uploading #{playlists.size} playlist(s)..."
       end
 
       playlists.each do |playlist|
-        self.upload_playlist(playlist, output: bar&.method(:puts) || method(:puts))
+        self.upload_playlist(playlist)
         bar&.increment!
       end
     end

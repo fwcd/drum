@@ -351,7 +351,7 @@ module Drum
       [new_track, new_artists, new_album]
     end
 
-    def from_am_library_playlist(am_playlist, output: method(:puts))
+    def from_am_library_playlist(am_playlist)
       am_attributes = am_playlist['attributes']
       am_library_id = am_attributes.dig('playParams', 'id')
       am_global_id = am_attributes.dig('playParams', 'globalId')
@@ -372,7 +372,7 @@ module Drum
 
       begin
         am_tracks = self.all_am_library_playlist_tracks(am_playlist)
-        output.call "Got #{am_tracks.length} playlist track(s) for '#{new_playlist.name}'..."
+        puts "Got #{am_tracks.length} playlist track(s) for '#{new_playlist.name}'..."
         am_tracks.each do |am_track|
           new_track, new_artists, new_album = self.from_am_library_track(am_track, new_playlist)
 
@@ -488,7 +488,7 @@ module Drum
           puts 'Fetching playlists...'
           Enumerator.new(am_playlists.length) do |enum|
             am_playlists.each do |am_playlist|
-              new_playlist = self.from_am_library_playlist(am_playlist, output: bar.method(:puts))
+              new_playlist = self.from_am_library_playlist(am_playlist)
               enum.yield new_playlist
             end
           end
