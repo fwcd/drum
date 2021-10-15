@@ -1,12 +1,15 @@
 require 'drum/model/playlist'
 require 'drum/model/ref'
 require 'drum/service/service'
+require 'drum/utils/log'
 require 'pathname'
 require 'yaml'
 
 module Drum
   # A service that reads/writes playlists to/from YAML files.
   class FileService < Service
+    include Log
+
     def name
       'file'
     end
@@ -25,7 +28,7 @@ module Drum
       if path.directory?
         raise 'Removing directories is not supported!'
       end
-      puts "Removing #{path}..."
+      log.info "Removing #{path}..."
       path.delete
     end
 

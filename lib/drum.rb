@@ -86,7 +86,7 @@ module Drum
       def confirm(prompt)
         answer = @hl.ask "#{prompt} [y/n]"
         unless answer == 'y'
-          puts 'Okay, exiting.'
+          log.info 'Okay, exiting.'
           exit
         end
       end
@@ -108,7 +108,7 @@ module Drum
         playlists = service.download(ref)
         
         playlists.each do |playlist|
-          puts({
+          log.all({
             'name' => playlist.name,
             'description' => playlist&.description,
             'tracks' => playlist.tracks.each_with_index.map do |track, i|
@@ -192,7 +192,7 @@ module Drum
       end
 
       self.with_service(ref.service_name) do |name, service|
-        puts "Removing from #{name}..."
+        log.info "Removing from #{name}..."
         service.remove(ref)
       end
     end
@@ -203,7 +203,7 @@ module Drum
     #
     # @return [void]
     def services
-      puts @services.each_key.to_a.join("\n")
+      log.info @services.each_key.to_a.join("\n")
     end
 
     map %w[--version -v] => :__print_version
@@ -213,7 +213,7 @@ module Drum
     #
     # @return [void]
     def __print_version
-      puts VERSION
+      log.all VERSION
     end
   end
 end

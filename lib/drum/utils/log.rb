@@ -9,6 +9,7 @@ module Drum
   #   @return [Proc] A function taking a string for outputting a message
   class Logger
     module Level
+      ALL = 100
       ERROR = 2
       WARN = 1
       INFO = 0
@@ -36,6 +37,13 @@ module Drum
       if level >= self.level
         self.output.(msg)
       end
+    end
+
+    # Logs a message at the ALL level.
+    #
+    # @param [String] msg The message to log.
+    def all(msg)
+      self.log(Level::ALL, msg)
     end
 
     # Logs a message at the ERROR level.
@@ -79,7 +87,7 @@ module Drum
     #
     # @param [Logger] The logger
     def log
-      @log ||= Logger.new
+      @@log ||= Logger.new
     end
   end
 end

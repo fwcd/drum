@@ -1,11 +1,14 @@
 require 'drum/model/playlist'
 require 'drum/model/ref'
 require 'drum/service/service'
+require 'drum/utils/log'
 require 'yaml'
 
 module Drum
   # A service that reads from stdin and writes to stdout.
   class StdioService < Service
+    include Log
+
     def name
       'stdio'
     end
@@ -37,7 +40,7 @@ module Drum
     def upload(playlist_ref, playlists)
       if playlist_ref.resource_location.include?(:stdout)
         playlists.each do |playlist|
-          puts playlist.serialize.to_yaml
+          log.all playlist.serialize.to_yaml
         end
         nil
       else

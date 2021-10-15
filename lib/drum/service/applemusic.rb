@@ -4,6 +4,7 @@ require 'drum/model/ref'
 require 'drum/model/playlist'
 require 'drum/model/track'
 require 'drum/service/service'
+require 'drum/utils/log'
 require 'drum/utils/persist'
 require 'drum/version'
 require 'date'
@@ -18,6 +19,7 @@ require 'webrick'
 module Drum
   # A service that uses the Apple Music API to query playlists.
   class AppleMusicService < Service
+    include Log
     extend Limiter::Mixin
 
     BASE_URL = 'https://api.music.apple.com/v1'
@@ -55,7 +57,7 @@ module Drum
       existing = @auth_tokens[:app]
 
       unless existing.nil? || existing[:expires_at].nil? || existing[:expires_at] < DateTime.now
-        puts 'Skipping app authentication...'
+        log.info 'Skipping app authentication...'
         return existing[:token]
       end
 
@@ -90,7 +92,7 @@ module Drum
       payload = { iss: "#{team_id}", iat: iat, exp: exp }
 
       token = JWT.encode(payload, private_key, "ES256", { alg: "ES256", kid: "#{key_id}" })
-      puts "Generated MusicKit JWT token #{token}"
+      log.info "Generated MusicKit JWT token #{token}"
 
       @auth_tokens[:app] = {
         expires_at: DateTime.now + expiration_in_days,
@@ -104,7 +106,7 @@ module Drum
       existing = @auth_tokens[:user]
 
       unless existing.nil? || existing[:expires_at].nil? || existing[:expires_at] < DateTime.now
-        puts 'Skipping user authentication...'
+        log.info 'Skipping user authentication...'
         return existing[:token]
       end
 
@@ -166,13 +168,13 @@ module Drum
 
       trap 'INT' do server.shutdown end
 
-      puts "Launching callback HTTP server on port #{port}, waiting for auth code..."
+      log.info "Launching callback HTTP server on port #{port}, waiting for auth code..."
       server.start
 
       if user_token.nil?
         raise "Did not get a MusicKit user token."
       end
-      puts "Generated MusicKit user token #{user_token}"
+      log.info "Generated MusicKit user token #{user_token}"
 
       # Cache user token for half an hour (an arbitrary duration)
       expiration_in_seconds = 1800
@@ -372,7 +374,7 @@ module Drum
 
       begin
         am_tracks = self.all_am_library_playlist_tracks(am_playlist)
-        puts "Got #{am_tracks.length} playlist track(s) for '#{new_playlist.name}'..."
+        log.info "Got #{am_tracks.length} playlist track(s) for '#{new_playlist.name}'..."
         am_tracks.each do |am_track|
           new_track, new_artists, new_album = self.from_am_library_track(am_track, new_playlist)
 
@@ -482,10 +484,10 @@ module Drum
       when :special
         case ref.resource_location
         when :playlists
-          puts 'Querying library playlists...'
+          log.info 'Querying library playlists...'
           am_playlists = self.all_am_library_playlists.filter { |p| !p.dig('attributes', 'name').nil? }
 
-          puts 'Fetching playlists...'
+          log.info 'Fetching playlists...'
           Enumerator.new(am_playlists.length) do |enum|
             am_playlists.each do |am_playlist|
               new_playlist = self.from_am_library_playlist(am_playlist)
@@ -497,11 +499,11 @@ module Drum
       when :playlist
         am_storefront, am_id = ref.resource_location
 
-        puts 'Querying catalog playlist...'
+        log.info 'Querying catalog playlist...'
         response = self.api_catalog_playlist(am_storefront, am_id)
         am_playlists = response['data']
 
-        puts 'Fetching playlists...'
+        log.info 'Fetching playlists...'
         Enumerator.new(am_playlists.length) do |enum|
           am_playlists.each do |am_playlist|
             new_playlist = self.from_am_catalog_playlist(am_playlist)

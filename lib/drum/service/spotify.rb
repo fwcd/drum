@@ -5,6 +5,7 @@ require 'drum/model/track'
 require 'drum/model/ref'
 require 'drum/service/service'
 require 'drum/utils/persist'
+require 'drum/utils/log'
 require 'base64'
 require 'date'
 require 'digest'
@@ -20,6 +21,7 @@ require 'webrick'
 module Drum
   # A service implementation that uses the Spotify Web API to query playlists.
   class SpotifyService < Service
+    include Log
     extend Limiter::Mixin
 
     PLAYLISTS_CHUNK_SIZE = 50
@@ -85,7 +87,7 @@ module Drum
         token_type: token_type,
         expires_at: expires_at
       }
-      puts "Successfully added access token that expires at #{expires_at}."
+      log.info "Successfully added access token that expires at #{expires_at}."
       
       [access_token, refresh_token, token_type]
     end
@@ -136,7 +138,7 @@ module Drum
 
       trap 'INT' do server.shutdown end
       
-      puts "Launching callback HTTP server on port #{port}, waiting for auth code..."
+      log.info "Launching callback HTTP server on port #{port}, waiting for auth code..."
       server.start
       
       if auth_code.nil?
@@ -174,15 +176,15 @@ module Drum
       existing = @auth_tokens[:latest]
 
       unless existing.nil? || existing[:expires_at].nil? || existing[:expires_at] < DateTime.now
-        puts 'Skipping authentication...'
+        log.info 'Skipping authentication...'
         return existing[:access_token], existing[:refresh_token], existing[:token_type]
       end
 
       unless existing.nil? || existing[:refresh_token].nil?
-        puts 'Authenticating via refresh...'
+        log.info 'Authenticating via refresh...'
         self.authenticate_user_via_refresh(client_id, client_secret, existing[:refresh_token])
       else
-        puts 'Authenticating via browser...'
+        log.info 'Authenticating via browser...'
         self.authenticate_user_via_browser(client_id, client_secret)
       end
     end
@@ -232,7 +234,7 @@ module Drum
       @me = RSpotify::User.new(me_json)
       @authenticated = true
 
-      puts "Successfully logged in to Spotify API as #{me_json['id']}."
+      log.info "Successfully logged in to Spotify API as #{me_json['id']}."
     end
 
     # Download helpers
@@ -396,7 +398,7 @@ module Drum
       sp_added_ats = sp_playlist.tracks_added_at
 
       sp_tracks = sp_tracks || self.all_sp_playlist_tracks(sp_playlist)
-      puts "Got #{sp_tracks.length} playlist track(s) for '#{sp_playlist.name}'..."
+      log.info "Got #{sp_tracks.length} playlist track(s) for '#{sp_playlist.name}'..."
       sp_tracks.each do |sp_track|
         new_track, new_artists, new_album = self.from_sp_track(sp_track, new_playlist)
         new_track.added_at = sp_added_ats[sp_track.id]
@@ -433,7 +435,7 @@ module Drum
         sp_track = sp_results[0]
 
         unless sp_track.nil?
-          puts "Matched '#{track.name}' with '#{sp_track.name}' by '#{sp_track.artists.map { |a| a.name }.join(', ')}' from Spotify"
+          log.info "Matched '#{track.name}' with '#{sp_track.name}' by '#{sp_track.artists.map { |a| a.name }.join(', ')}' from Spotify"
         end
 
         sp_track
@@ -463,10 +465,10 @@ module Drum
 
       tracks = playlist.tracks
 
-      puts "Externalizing #{tracks.length} playlist track(s)..."
+      log.info "Externalizing #{tracks.length} playlist track(s)..."
       sp_tracks = self.to_sp_tracks(tracks, playlist)
 
-      puts "Uploading #{sp_tracks.length} playlist track(s)..."
+      log.info "Uploading #{sp_tracks.length} playlist track(s)..."
       self.upload_sp_playlist_tracks(sp_tracks, sp_playlist)
 
       # TODO: Clone the original playlist and insert potentially new Spotify ids
@@ -542,10 +544,10 @@ module Drum
       when :special
         case ref.resource_location
         when :playlists
-          puts 'Querying playlists...'
+          log.info 'Querying playlists...'
           sp_playlists = self.all_sp_library_playlists
 
-          puts 'Fetching playlists...'
+          log.info 'Fetching playlists...'
           Enumerator.new(sp_playlists.length) do |enum|
             sp_playlists.each do |sp_playlist|
               new_playlist = self.from_sp_playlist(sp_playlist)
@@ -553,10 +555,10 @@ module Drum
             end
           end
         when :tracks
-          puts 'Querying saved tracks...'
+          log.info 'Querying saved tracks...'
           sp_saved_tracks = self.all_sp_library_tracks
 
-          puts 'Fetching saved tracks...'
+          log.info 'Fetching saved tracks...'
           new_playlist = Playlist.new(
             name: 'Saved Tracks'
           )
@@ -599,7 +601,7 @@ module Drum
       end
 
       unless playlists.size.nil?
-        puts "Uploading #{playlists.size} playlist(s)..."
+        log.info "Uploading #{playlists.size} playlist(s)..."
       end
 
       playlists.each do |playlist|

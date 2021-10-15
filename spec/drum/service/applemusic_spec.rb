@@ -12,7 +12,7 @@ describe Drum::AppleMusicService do
 
   before :each do
     allow(@service).to receive(:authenticate) do
-      puts 'Skipping authentication in test'
+      # Skipping authentication in test
     end
 
     allow(@service).to receive(:get_json) do |endpoint|
