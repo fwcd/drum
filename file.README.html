@@ -66,21 +66,43 @@
 
 <h2 id="label-Usage">Usage</h2>
 
-<p>The basic usage pattern is always <code>drum cp [source] [destination]</code> where <code>source</code> and <code>destination</code> may be any of the following:</p>
+<p>The basic usage pattern is always <code>drum cp [source] [destination]</code> where <code>source</code> and <code>destination</code> may be any of the following (internally called <em>a ref</em>):</p>
 <ul><li>
-<p>A file or folder, e.g. <code>.</code>, <code>some/folder</code>, <code>some-file.yaml</code></p>
+<p>A file or folder, e.g.</p>
 </li><li>
-<p>A URI, e.g. <code>https://open.spotify.com/playlist/123456</code>, <code>spotify:playlist:123456</code>, <code>file:///path/to/list.yaml</code></p>
+<p><code>.</code></p>
 </li><li>
-<p>A special token, e.g. <code>@spotify/playlists</code>, <code>@spotify/tracks</code>, <code>@stdin</code>, <code>@stdout</code></p>
+<p><code>some/folder</code></p>
+</li><li>
+<p><code>some-file.yaml</code></p>
+</li><li>
+<p>A URI, e.g.</p>
+</li><li>
+<p><code>https://open.spotify.com/playlist/123456</code></p>
+</li><li>
+<p><code>spotify:playlist:123456</code></p>
+</li><li>
+<p><code>https://music.apple.com/us/playlist/some-name/pl.123456789</code></p>
+</li><li>
+<p><code>file:///path/to/list.yaml</code></p>
+</li><li>
+<p>A special token, e.g.</p>
+</li><li>
+<p><code>@spotify/playlists</code></p>
+</li><li>
+<p><code>@spotify/tracks</code></p>
+</li><li>
+<p><code>@applemusic/playlists</code></p>
+</li><li>
+<p><code>@stdin</code></p>
+</li><li>
+<p><code>@stdout</code></p>
 </li><li>
 <p>A dash <code>-</code>, synonymous with <code>@stdin</code> and <code>@stdout</code>, depending on usage</p>
 </li></ul>
 
 <blockquote>
 <p>Note that if the source is folder-like, i.e. includes multiple playlists, the destination has to be folder-like too. (The reverse is not true though.)</p>
-
-<p>Note that copying may have side-effects on the source playlist, e.g. pushing a new local playlist to <code>@spotify/playlists</code> will add the corresponding Spotify ID to the local playlist.</p>
 </blockquote>
 
 <h3 id="label-Examples">Examples</h3>
@@ -111,11 +133,13 @@
 
 <h2 id="label-Supported+Services">Supported Services</h2>
 
-<p>Currently, the following music streaming services are supported:</p>
+<p>Currently, the following music services are supported:</p>
 <ul><li>
 <p>Spotify</p>
 </li><li>
-<p>Apple Music (WIP)</p>
+<p>Apple Music</p>
+</li><li>
+<p>Local, YAML-based playlists (via stdio or files)</p>
 </li></ul>
 
 <blockquote>
@@ -166,7 +190,9 @@ MUSICKIT_TEAM_ID=...
 
 <h2 id="label-Limitations">Limitations</h2>
 <ul><li>
-<p>Neither the <a href="https://developer.spotify.com/documentation/general/guides/working-with-playlists/#folders">Spotify API</a> nor the <a href="https://github.com/Musish/Musish/issues/189#issuecomment-455749901">Apple Music API</a> provide a way to access folders currently</p>
+<p>The Spotify API <a href="https://developer.spotify.com/documentation/general/guides/working-with-playlists/#folders">does not support folders</a></p>
+</li><li>
+<p>The Apple Music API does support folders, these are not implemented yet, however (see <a href="https://github.com/fwcd/drum/issues/17">this issue</a>)</p>
 </li></ul>
 
 <h2 id="label-Contributing">Contributing</h2>
@@ -179,7 +205,7 @@ MUSICKIT_TEAM_ID=...
 </div></div>
 
       <div id="footer">
-  Generated on Fri Oct 15 17:46:35 2021 by
+  Generated on Fri Oct 15 18:19:22 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.0).
 </div>
