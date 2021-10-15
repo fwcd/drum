@@ -26,7 +26,7 @@ jobs:
         touch ~/.gem/credentials
         chmod 600 ~/.gem/credentials
         echo ":github: Bearer ${{ secrets.GITHUB_TOKEN }}" >> ~/.gem/credentials
-        echo ":rubygems: Bearer ${{ secrets.RUBYGEMS_TOKEN }}" >> ~/.gem/credentials
+        echo ":rubygems: ${{ secrets.RUBYGEMS_TOKEN }}" >> ~/.gem/credentials
     - name: Push gem to GitHub Packages
       run: bundle exec gem push --key github --host "https://rubygems.pkg.github.com/fwcd" pkg/drum-*.gem
     - name: Push gem to RubyGems.org
