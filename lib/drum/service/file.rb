@@ -35,7 +35,7 @@ module Drum
     def download(playlist_ref)
       path = playlist_ref.resource_location
       paths = if path.directory?
-        path.children
+        path.children.filter { |p| !p.directory? && ['.yml', '.yaml'].include?(p.extname) }
       else
         [path]
       end
