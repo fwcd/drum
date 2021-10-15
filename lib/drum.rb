@@ -181,7 +181,7 @@ module Drum
               playlist.path.unshift(author_name)
             end
 
-            unless options[:recase_paths].nil?
+            if options[:recase_paths]
               casing = options[:recase_paths]
               playlist.path.map! do |n|
                 case casing
