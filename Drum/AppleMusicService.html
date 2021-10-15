@@ -1001,19 +1001,19 @@
       <pre class="lines">
 
 
+306
+307
+308
 309
 310
 311
 312
 313
 314
-315
-316
-317
-318</pre>
+315</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 309</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 306</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_all_am_library_playlist_tracks'>all_am_library_playlist_tracks</span><span class='lparen'>(</span><span class='id identifier rubyid_am_playlist'>am_playlist</span><span class='comma'>,</span> <span class='label'>offset:</span> <span class='int'>0</span><span class='comma'>,</span> <span class='label'>total:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>unless</span> <span class='id identifier rubyid_total'>total</span> <span class='op'>!=</span> <span class='kw'>nil</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_offset'>offset</span> <span class='op'>&gt;=</span> <span class='id identifier rubyid_total'>total</span>
@@ -1056,19 +1056,19 @@
       <pre class="lines">
 
 
+295
+296
+297
 298
 299
 300
 301
 302
 303
-304
-305
-306
-307</pre>
+304</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 298</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 295</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_all_am_library_playlists'>all_am_library_playlists</span><span class='lparen'>(</span><span class='label'>offset:</span> <span class='int'>0</span><span class='comma'>,</span> <span class='label'>total:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>unless</span> <span class='id identifier rubyid_total'>total</span> <span class='op'>!=</span> <span class='kw'>nil</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_offset'>offset</span> <span class='op'>&gt;=</span> <span class='id identifier rubyid_total'>total</span>
@@ -1100,6 +1100,9 @@
       <pre class="lines">
 
 
+280
+281
+282
 283
 284
 285
@@ -1108,13 +1111,10 @@
 288
 289
 290
-291
-292
-293
-294</pre>
+291</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 283</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 280</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_api_add_library_playlist_tracks'>api_add_library_playlist_tracks</span><span class='lparen'>(</span><span class='id identifier rubyid_am_library_id'>am_library_id</span><span class='comma'>,</span> <span class='id identifier rubyid_am_track_catalog_ids'>am_track_catalog_ids</span><span class='rparen'>)</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_post_json'>post_json</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/me/library/playlists/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_am_library_id'>am_library_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>/tracks</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='lbrace'>{</span>
@@ -1188,7 +1188,7 @@
       <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 254</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_api_catalog_search'>api_catalog_search</span><span class='lparen'>(</span><span class='id identifier rubyid_am_storefront'>am_storefront</span><span class='comma'>,</span> <span class='id identifier rubyid_term'>term</span><span class='comma'>,</span> <span class='label'>limit:</span> <span class='int'>1</span><span class='comma'>,</span> <span class='label'>offset:</span> <span class='int'>0</span><span class='comma'>,</span> <span class='label'>types:</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>songs</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_encoded_term'>encoded_term</span> <span class='op'>=</span> <span class='id identifier rubyid_term'>term</span><span class='period'>.</span><span class='id identifier rubyid_sub'>sub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>+</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_encoded_term'>encoded_term</span> <span class='op'>=</span> <span class='id identifier rubyid_term'>term</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>+</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
   <span class='id identifier rubyid_encoded_types'>encoded_types</span> <span class='op'>=</span> <span class='id identifier rubyid_types'>types</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>,</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_get_json'>get_json</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/catalog/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_am_storefront'>am_storefront</span><span class='embexpr_end'>}</span><span class='tstring_content'>/search?term=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_encoded_term'>encoded_term</span><span class='embexpr_end'>}</span><span class='tstring_content'>&amp;limit=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_limit'>limit</span><span class='embexpr_end'>}</span><span class='tstring_content'>&amp;offset=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_offset'>offset</span><span class='embexpr_end'>}</span><span class='tstring_content'>&amp;types=</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_encoded_types'>encoded_types</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
@@ -1230,10 +1230,7 @@
 275
 276
 277
-278
-279
-280
-281</pre>
+278</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 260</span>
@@ -1252,12 +1249,9 @@
             <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>type</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>songs</span><span class='tstring_end'>&#39;</span></span>
           <span class='rbrace'>}</span>
         <span class='kw'>end</span>
-      <span class='rbrace'>}</span><span class='comma'>,</span>
-      <span class='comment'># TODO: Support parents i.e. playlist folders?
-</span>      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>parent</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='lbrace'>{</span>
-        <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>data</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
       <span class='rbrace'>}</span>
-    <span class='rbrace'>}</span>
+      <span class='comment'># TODO: Support parents i.e. playlist folders?
+</span>    <span class='rbrace'>}</span>
   <span class='rbrace'>}</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1775,6 +1769,9 @@
       <pre class="lines">
 
 
+564
+565
+566
 567
 568
 569
@@ -1807,13 +1804,10 @@
 596
 597
 598
-599
-600
-601
-602</pre>
+599</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 567</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 564</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_download'>download</span><span class='lparen'>(</span><span class='id identifier rubyid_ref'>ref</span><span class='rparen'>)</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_authenticate'>authenticate</span>
@@ -1871,16 +1865,16 @@
       <pre class="lines">
 
 
+321
+322
+323
 324
 325
 326
-327
-328
-329
-330</pre>
+327</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 324</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 321</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_from_am_album_artwork'>from_am_album_artwork</span><span class='lparen'>(</span><span class='id identifier rubyid_am_artwork'>am_artwork</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_width'>width</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='id identifier rubyid_am_artwork'>am_artwork</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>width</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#MAX_ALBUM_ARTWORK_WIDTH-constant" title="Drum::AppleMusicService::MAX_ALBUM_ARTWORK_WIDTH (constant)">MAX_ALBUM_ARTWORK_WIDTH</a></span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='period'>.</span><span class='id identifier rubyid_min'>min</span>
@@ -1909,18 +1903,18 @@
       <pre class="lines">
 
 
+329
+330
+331
 332
 333
 334
 335
 336
-337
-338
-339
-340</pre>
+337</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 332</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 329</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_from_am_artist_name'>from_am_artist_name</span><span class='lparen'>(</span><span class='id identifier rubyid_artist_name'>artist_name</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_artist_names'>artist_names</span> <span class='op'>=</span> <span class='id identifier rubyid_artist_name'>artist_name</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\s*[,&amp;]\s*</span><span class='regexp_end'>/</span></span><span class='rparen'>)</span>
@@ -1951,6 +1945,9 @@
       <pre class="lines">
 
 
+450
+451
+452
 453
 454
 455
@@ -1981,13 +1978,10 @@
 480
 481
 482
-483
-484
-485
-486</pre>
+483</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 453</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 450</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_from_am_catalog_playlist'>from_am_catalog_playlist</span><span class='lparen'>(</span><span class='id identifier rubyid_am_playlist'>am_playlist</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_am_attributes'>am_attributes</span> <span class='op'>=</span> <span class='id identifier rubyid_am_playlist'>am_playlist</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>attributes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -2043,6 +2037,9 @@
       <pre class="lines">
 
 
+398
+399
+400
 401
 402
 403
@@ -2050,13 +2047,10 @@
 405
 406
 407
-408
-409
-410
-411</pre>
+408</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 401</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 398</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_from_am_catalog_track'>from_am_catalog_track</span><span class='lparen'>(</span><span class='id identifier rubyid_am_track'>am_track</span><span class='comma'>,</span> <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_am_attributes'>am_attributes</span> <span class='op'>=</span> <span class='id identifier rubyid_am_track'>am_track</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>attributes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -2089,12 +2083,12 @@
       <pre class="lines">
 
 
-320
-321
-322</pre>
+317
+318
+319</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 320</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 317</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_from_am_id'>from_am_id</span><span class='lparen'>(</span><span class='id identifier rubyid_am_id'>am_id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_am_id'>am_id</span><span class='period'>.</span><span class='id identifier rubyid_try'>try</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_i'>i</span><span class='op'>|</span> <span class='const'>Digest</span><span class='op'>::</span><span class='const'>SHA1</span><span class='period'>.</span><span class='id identifier rubyid_hexdigest'>hexdigest</span><span class='lparen'>(</span><span class='id identifier rubyid_i'>i</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
@@ -2119,6 +2113,9 @@
       <pre class="lines">
 
 
+410
+411
+412
 413
 414
 415
@@ -2154,13 +2151,10 @@
 445
 446
 447
-448
-449
-450
-451</pre>
+448</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 413</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 410</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_from_am_library_playlist'>from_am_library_playlist</span><span class='lparen'>(</span><span class='id identifier rubyid_am_playlist'>am_playlist</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_am_attributes'>am_attributes</span> <span class='op'>=</span> <span class='id identifier rubyid_am_playlist'>am_playlist</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>attributes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -2221,6 +2215,9 @@
       <pre class="lines">
 
 
+386
+387
+388
 389
 390
 391
@@ -2228,13 +2225,10 @@
 393
 394
 395
-396
-397
-398
-399</pre>
+396</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 389</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 386</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_from_am_library_track'>from_am_library_track</span><span class='lparen'>(</span><span class='id identifier rubyid_am_track'>am_track</span><span class='comma'>,</span> <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_am_attributes'>am_attributes</span> <span class='op'>=</span> <span class='id identifier rubyid_am_track'>am_track</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>attributes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -2267,6 +2261,9 @@
       <pre class="lines">
 
 
+339
+340
+341
 342
 343
 344
@@ -2309,13 +2306,10 @@
 381
 382
 383
-384
-385
-386
-387</pre>
+384</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 342</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 339</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_from_am_track'>from_am_track</span><span class='lparen'>(</span><span class='id identifier rubyid_am_track'>am_track</span><span class='comma'>,</span> <span class='id identifier rubyid_new_playlist'>new_playlist</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_am_attributes'>am_attributes</span> <span class='op'>=</span> <span class='id identifier rubyid_am_track'>am_track</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>attributes</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -2459,6 +2453,9 @@
       <pre class="lines">
 
 
+526
+527
+528
 529
 530
 531
@@ -2477,13 +2474,10 @@
 544
 545
 546
-547
-548
-549
-550</pre>
+547</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 529</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 526</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_parse_applemusic_link'>parse_applemusic_link</span><span class='lparen'>(</span><span class='id identifier rubyid_raw'>raw</span><span class='rparen'>)</span>
   <span class='comment'># Parses links like https://music.apple.com/us/playlist/some-name/pl.123456789
@@ -2527,6 +2521,9 @@
       <pre class="lines">
 
 
+549
+550
+551
 552
 553
 554
@@ -2535,13 +2532,10 @@
 557
 558
 559
-560
-561
-562
-563</pre>
+560</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 552</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 549</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_parse_ref'>parse_ref</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='period'>.</span><span class='id identifier rubyid_is_token'>is_token</span>
@@ -2586,17 +2580,17 @@
       <pre class="lines">
 
 
+517
+518
+519
 520
 521
 522
 523
-524
-525
-526
-527</pre>
+524</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 520</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 517</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_parse_resource_type'>parse_resource_type</span><span class='lparen'>(</span><span class='id identifier rubyid_raw'>raw</span><span class='rparen'>)</span>
   <span class='kw'>case</span> <span class='id identifier rubyid_raw'>raw</span>
@@ -2689,6 +2683,9 @@
       <pre class="lines">
 
 
+487
+488
+489
 490
 491
 492
@@ -2702,13 +2699,10 @@
 500
 501
 502
-503
-504
-505
-506</pre>
+503</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 490</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 487</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_am_catalog_track_id'>to_am_catalog_track_id</span><span class='lparen'>(</span><span class='id identifier rubyid_track'>track</span><span class='comma'>,</span> <span class='id identifier rubyid_playlist'>playlist</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_am_id'>am_id</span> <span class='op'>=</span> <span class='id identifier rubyid_track'>track</span><span class='period'>.</span><span class='id identifier rubyid_applemusic'>applemusic</span><span class='op'>&amp;.</span><span class='id identifier rubyid_catalog_id'>catalog_id</span>
@@ -2747,6 +2741,9 @@
       <pre class="lines">
 
 
+601
+602
+603
 604
 605
 606
@@ -2759,13 +2756,10 @@
 613
 614
 615
-616
-617
-618
-619</pre>
+616</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 604</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 601</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_upload'>upload</span><span class='lparen'>(</span><span class='id identifier rubyid_ref'>ref</span><span class='comma'>,</span> <span class='id identifier rubyid_playlists'>playlists</span><span class='rparen'>)</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_authenticate'>authenticate</span>
@@ -2803,18 +2797,18 @@
       <pre class="lines">
 
 
+505
+506
+507
 508
 509
 510
 511
 512
-513
-514
-515
-516</pre>
+513</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 508</span>
+      <pre class="code"><span class="info file"># File 'lib/drum/service/applemusic.rb', line 505</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_upload_playlist'>upload_playlist</span><span class='lparen'>(</span><span class='id identifier rubyid_playlist'>playlist</span><span class='rparen'>)</span>
   <span class='comment'># TODO: Chunking?
@@ -2835,7 +2829,7 @@
 </div>
 
       <div id="footer">
-  Generated on Fri Oct 15 16:08:28 2021 by
+  Generated on Fri Oct 15 16:46:44 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.0).
 </div>
