@@ -425,12 +425,12 @@ module Drum
 
     def to_sp_track(track, playlist)
       sp_id = track&.spotify&.id
-      search_phrase = "#{track.name} #{track.artist_ids.filter_map { |i| playlist.artists[i]&.name }.join(' ')}"
       unless sp_id.nil?
         # We already have an associated Spotify ID
         RSpotify::Track.find(sp_id)
       else
         # We need to search for the song
+        search_phrase = playlist.track_search_phrase(track)
         sp_results = RSpotify::Track.search(search_phrase, limit: 1)
         sp_track = sp_results[0]
 

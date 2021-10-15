@@ -84,6 +84,13 @@ module Drum
       self.tracks << track
     end
 
+    # Describes a track in a way useful for song matching by search.
+    #
+    # @return [String] A short description of track name and artists
+    def track_search_phrase(track)
+      "#{track.name} #{track.artist_ids.filter_map { |i| self.artists[i]&.name }.join(' ')}"
+    end
+
     # Parses a playlist from a nested Hash that uses string keys.
     #
     # @param [Hash<String, Object>] h The Hash to be parsed

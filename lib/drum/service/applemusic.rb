@@ -251,6 +251,12 @@ module Drum
       self.get_json("/catalog/#{am_storefront}/playlists/#{am_catalog_id}")
     end
 
+    def api_catalog_search(am_storefront, term, limit: 1, offset: 0, types: ['songs'])
+      encoded_term = term.sub(' ', '+')
+      encoded_types = types.join(',')
+      self.get_json("/catalog/#{am_storefront}/search?term=#{encoded_term}&limit=#{limit}&offset=#{offset}&types=#{encoded_types}")
+    end
+
     def api_create_library_playlist(name, description: nil, am_track_catalog_ids: [])
       self.post_json("/me/library/playlists/", {
         'attributes' => {
@@ -481,9 +487,22 @@ module Drum
 
     # Upload helpers
 
-    def to_am_catalog_track_id(track)
-      # TODO: Search if id does not exist
-      track.applemusic&.catalog_id
+    def to_am_catalog_track_id(track, playlist)
+      am_id = track.applemusic&.catalog_id
+      unless am_id.nil?
+        # We already have an associated catalog ID
+        am_id
+      else
+        # We need to search for the song
+        search_phrase = playlist.track_search_phrase(track)
+        am_storefront = 'de' # TODO: Make this configurable/dynamic
+        response = self.api_catalog_search(am_storefront, search_phrase, limit: 1, offset: 0, types: ['songs'])
+        response.dig('results', 'songs', 'data', 0).try do |am_track|
+          am_attributes = am_track['attributes']
+          log.info "Matched '#{track.name}' with '#{am_attributes['name']}' by '#{am_attributes['artistName']}' from Apple Music"
+          am_track['id']
+        end
+      end
     end
 
     def upload_playlist(playlist)
@@ -492,7 +511,7 @@ module Drum
       self.api_create_library_playlist(
         playlist.name,
         description: playlist.description,
-        am_track_catalog_ids: playlist.tracks.map { |t| self.to_am_catalog_track_id(t) }
+        am_track_catalog_ids: playlist.tracks.filter_map { |t| self.to_am_catalog_track_id(t, playlist) }
       )
     end
 
