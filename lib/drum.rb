@@ -121,9 +121,9 @@ module Drum
     end
     
     desc 'cp [SOURCE] [DEST]', 'Copy a playlist from the source to the given destination'
-    method_option :group_by_author, type: :boolean, default: false, desc: "Whether to prepend the author name to each playlist's path"
-    method_option :kebabcase_paths, type: :boolean, default: false, desc: "Whether to automatically kebabcase each playlist's path segments"
-    method_option :note_date, type: :boolean, default: false, desc: "Whether to add a small note with the upload date to each description."
+    method_option :group_by_author, type: :boolean, default: false, desc: "Prepend the author name to each playlist's path"
+    method_option :recase_paths, type: :string, enum: ['kebabcase', 'startcase'], default: false, desc: "Convert each playlist's path segments to a specific case"
+    method_option :note_date, type: :boolean, default: false, desc: "Add a small note with the upload date to each description."
 
     # Copies a playlist from the source to the given destination.
     #
@@ -168,8 +168,11 @@ module Drum
               playlist.path.unshift(author_name)
             end
 
-            if options[:kebabcase_paths]
+            case options[:recase_paths]
+            when 'kebabcase'
               playlist.path.map! { |n| n.kebabcase }
+            when 'startcase'
+              playlist.path.map! { |n| n.startcase }
             end
 
             if options[:note_date]
