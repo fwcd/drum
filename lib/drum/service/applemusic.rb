@@ -258,7 +258,7 @@ module Drum
       self.get_json("/catalog/#{am_storefront}/search?term=#{encoded_term}&limit=#{limit}&offset=#{offset}&types=#{encoded_types}")
     end
 
-    def api_create_library_playlist(name, description: nil, am_track_catalog_ids: [])
+    def api_create_library_playlist(name, description: nil, am_parent_id: nil, am_track_catalog_ids: [])
       self.post_json("/me/library/playlists/", {
         'attributes' => {
           'name' => name,
@@ -272,9 +272,18 @@ module Drum
                 'type' => 'songs'
               }
             end
-          }
-          # TODO: Support parents i.e. playlist folders?
-        }
+          },
+          'parent' => am_parent_id.try do |am_id|
+            {
+              'data' => [
+                {
+                  'id' => am_id,
+                  'type' => 'library-playlist-folders'
+                }
+              ]
+            }
+          end
+        }.compact
       })
     end
 
