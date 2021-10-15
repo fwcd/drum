@@ -125,13 +125,18 @@ module Drum
     method_option :group_by_author,
       type: :boolean,
       default: false,
-      desc: "Prepend the author name to each playlist's path"
+      desc: "Prepend the author name to each playlist's path."
 
     method_option :recase_paths,
       type: :string,
       enum: ['kebabcase', 'startcase', 'camelcase', 'pascalcase'],
       default: false,
-      desc: "Convert each playlist's path segments to a specific case"
+      desc: "Convert each playlist's path segments to a specific case."
+
+    method_option :flatten,
+      type: :boolean,
+      default: false,
+      desc: 'Clear all playlist paths. Note that flags such as --group-by-author will still be applied.'
 
     method_option :note_date,
       type: :boolean,
@@ -175,6 +180,10 @@ module Drum
 
           playlists = playlists.map do |playlist|
             bar&.increment!
+
+            if options[:flatten]
+              playlist.path = []
+            end
 
             if options[:group_by_author]
               author_name = playlist.author_id.try { |id| playlist.users[id] }&.display_name || 'Other'
