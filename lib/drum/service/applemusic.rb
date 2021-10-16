@@ -334,6 +334,17 @@ module Drum
       end
     end
 
+    def api_library_playlist_parent(am_parent_id)
+      begin
+        self.get_json("/me/library/playlist-folders/#{am_parent_id}/parent")
+      rescue RestClient::NotFound
+        # The API seems to throw a 404 when a corresponding folder exists without parent
+        {
+          'data' => []
+        }
+      end
+    end
+
     def api_catalog_playlist(am_storefront, am_catalog_id)
       self.get_json("/catalog/#{am_storefront}/playlists/#{am_catalog_id}")
     end
@@ -428,10 +439,6 @@ module Drum
         end
       end
       []
-    end
-
-    def resolve_folder_path(am_library_id, cached_by_library_ids: @cached_folder_tree.by_am_library_ids)
-      cached_by_library_ids[am_library_id]
     end
 
     def from_am_id(am_id)
