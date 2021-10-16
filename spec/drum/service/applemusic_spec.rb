@@ -484,5 +484,16 @@ describe Drum::AppleMusicService do
         })
       end
     end
+
+    describe 'parent' do
+      it 'should find the correct parents' do
+        # We cannot compare for object identity with 'be' here
+        # since the tree is using WeakRef wrappers internally.
+        expect(@a.parent).to be_nil
+        expect(@b.parent).to eq(@a)
+        expect(@d.parent).to eq(@a)
+        expect(@c.parent).to eq(@b)
+      end
+    end
   end
 end

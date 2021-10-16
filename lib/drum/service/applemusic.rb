@@ -15,6 +15,7 @@ require 'launchy'
 require 'rest-client'
 require 'ruby-limiter'
 require 'uri'
+require 'weakref'
 require 'webrick'
 
 module Drum
@@ -44,12 +45,17 @@ module Drum
     #  @return [String] The library id of the playlist folder
     # @!attribute name
     #  @return [String] The name of the playlist folder
+    # @!attribute parent
+    #  @return [optional, WeakRef<CachedFolderNode>] The parent
     # @!attribute children
     #  @return [Hash<String, CachedFolderNode>] The child nodes keyed by name
-    CachedFolderNode = Struct.new(:am_library_id, :name, :children, keyword_init: true) do
+    CachedFolderNode = Struct.new(:am_library_id, :name, :parent, :children, keyword_init: true) do
       def initialize(*)
         super
         self.children ||= {}
+        self.children.each_value do |child|
+          child.parent = WeakRef.new(self)
+        end
       end
 
       def lookup(path)
@@ -57,6 +63,12 @@ module Drum
         in [] then self
         in [name, *rest] then self.children[name]&.lookup(rest)
         end
+      end
+
+      def store_child(child)
+        children[name] = child.name
+        child.parent = WeakRef.new(self)
+        child
       end
 
       def by_am_library_ids
@@ -68,6 +80,8 @@ module Drum
       def by_am_library_ids!(output)
         output[self.am_library_id] = self
         children.each_value do |child|
+          # Make sure that the parent is set and correct
+          child.parent = WeakRef.new(self)
           child.by_am_library_ids!(output)
         end
         output
@@ -405,6 +419,10 @@ module Drum
       []
     end
 
+    def resolve_folder_path(am_library_id, cached_by_library_ids: @cached_folder_tree.by_am_library_ids)
+      cached_by_library_ids[am_library_id]
+    end
+
     def from_am_id(am_id)
       am_id.try { |i| Digest::SHA1.hexdigest(i) }
     end
@@ -575,7 +593,7 @@ module Drum
 
     # Upload helpers
 
-    def make_am_folders(path, cached_parent: @cached_folder_tree)
+    def make_folder(path, cached_parent: @cached_folder_tree)
       unless path.empty?
         name = path[0]
         cached = cached_parent.children[name]
@@ -587,10 +605,10 @@ module Drum
 
           am_subfolders.each do |am_subfolder|
             am_subfolder.dig('attributes', 'name').try do |subname|
-              cached_parent.children[subname] = CachedFolderNode.new(
+              cached_parent.store_child(CachedFolderNode.new(
                 name: subname,
                 am_library_id: am_subfolder['id']
-              )
+              ))
             end
           end
 
@@ -601,10 +619,10 @@ module Drum
             log.info "Creating folder '#{name}'..."
             am_folder = self.api_create_library_playlist_folder(name, am_parent_id: am_parent_id)['data'][0]
 
-            cached = CachedFolderNode.new(
+            cached = cached_parent.store_child(CachedFolderNode.new(
               name: am_folder.dig('attributes', 'name'),
               am_library_id: am_folder['id']
-            )
+            ))
           else
             log.info "Using existing folder '#{name}'..."
           end
@@ -612,7 +630,7 @@ module Drum
           log.info "Using existing (cached) folder '#{name}'..."
         end
 
-        self.make_am_folders(path[1...], cached_parent: cached)
+        self.make_folder(path[1...], cached_parent: cached)
       else
         cached_parent
       end
@@ -637,7 +655,7 @@ module Drum
     end
 
     def upload_playlist(playlist)
-      cached_folder_node = self.make_am_folders(playlist.path)
+      cached_folder_node = self.make_folder(playlist.path)
 
       # TODO: Chunk tracks?
       #       => The API seems to handle ~120 songs in the create request fine already
