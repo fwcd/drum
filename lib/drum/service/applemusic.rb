@@ -570,21 +570,30 @@ module Drum
           am_parent_id = cached_parent.am_library_id
           am_children = self.api_library_playlist_children(am_parent_id)['data'] || []
           am_subfolders = am_children.filter { |c| c['type'] == 'library-playlist-folders' }
-          am_folder = am_subfolders.find { |c| c.dig('attributes', 'name') == name }
 
-          if am_folder.nil?
+          am_subfolders.each do |am_subfolder|
+            am_subfolder.dig('attributes', 'name').try do |subname|
+              cached_parent.children[subname] = CachedFolderNode.new(
+                name: subname,
+                am_library_id: am_subfolder['id']
+              )
+            end
+          end
+
+          cached = cached_parent.children[name]
+
+          if cached.nil?
             # Create the folder for our path segment
             log.info "Creating folder '#{name}'..."
             am_folder = self.api_create_library_playlist_folder(name, am_parent_id: am_parent_id)['data'][0]
+
+            cached = CachedFolderNode.new(
+              name: am_folder.dig('attributes', 'name'),
+              am_library_id: am_folder['id']
+            )
           else
             log.info "Using existing folder '#{name}'..."
           end
-
-          cached = CachedFolderNode.new(
-            name: name,
-            am_library_id: am_folder['id']
-          )
-          cached_parent.children[name] = cached
         else
           log.info "Using existing (cached) folder '#{name}'..."
         end
