@@ -46,7 +46,11 @@ module Drum
         Dir.glob("#{base_path}/**/*.{yaml,yml}").map do |p|
           path = Pathname.new(p)
           playlist = Playlist.deserialize(YAML.load(path.read))
-          playlist.path = path.relative_path_from(base_path).parent.each_filename.to_a
+          playlist.path = if path.parent == base_path
+            []
+          else
+            path.parent.relative_path_from(base_path).each_filename.to_a
+          end
           playlist
         end
       else
