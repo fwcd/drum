@@ -58,6 +58,20 @@ module Drum
         in [name, *rest] then self.children[name]&.lookup(rest)
         end
       end
+
+      def by_am_library_ids
+        by_ids = {}
+        self.by_am_library_ids!(by_ids)
+        by_ids
+      end
+
+      def by_am_library_ids!(output)
+        output[self.am_library_id] = self
+        children.each do |child|
+          child.by_am_library_ids!(output)
+        end
+        output
+      end
     end
 
     # Initializes the Apple Music service.
