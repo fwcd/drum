@@ -546,6 +546,8 @@ module Drum
         end
 
         self.make_am_folders(path[1...], am_parent_id: am_folder['id'])
+      else
+        am_parent_id
       end
     end
 
@@ -568,7 +570,7 @@ module Drum
     end
 
     def upload_playlist(playlist)
-      self.make_am_folders(playlist.path)
+      am_parent_id = self.make_am_folders(playlist.path)
 
       # TODO: Chunk tracks?
       #       => The API seems to handle ~120 songs in the create request fine already
@@ -576,6 +578,7 @@ module Drum
       self.api_create_library_playlist(
         playlist.name,
         description: playlist.description,
+        am_parent_id: am_parent_id,
         am_track_catalog_ids: playlist.tracks.filter_map { |t| self.to_am_catalog_track_id(t, playlist) }
       )
     end
