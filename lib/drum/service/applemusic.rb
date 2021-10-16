@@ -67,7 +67,7 @@ module Drum
 
       def by_am_library_ids!(output)
         output[self.am_library_id] = self
-        children.each do |child|
+        children.each_value do |child|
           child.by_am_library_ids!(output)
         end
         output

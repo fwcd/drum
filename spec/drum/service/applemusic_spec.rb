@@ -440,27 +440,48 @@ describe Drum::AppleMusicService do
   end
 
   describe Drum::AppleMusicService::CachedFolderNode do
+    before :all do
+      @c = Drum::AppleMusicService::CachedFolderNode.new(
+        name: 'c',
+        am_library_id: 'id.c'
+      )
+      @d = Drum::AppleMusicService::CachedFolderNode.new(
+        name: 'd',
+        am_library_id: 'id.d'
+      )
+      @b = Drum::AppleMusicService::CachedFolderNode.new(
+        name: 'b',
+        am_library_id: 'id.b',
+        children: {'c' => @c}
+      )
+      @a = Drum::AppleMusicService::CachedFolderNode.new(
+        name: 'a',
+        am_library_id: 'id.a',
+        children: {
+          'b' => @b,
+          'd' => @d
+        }
+      )
+    end
+
     describe 'lookup' do
       it 'should find nodes in a nested tree' do
-        c = Drum::AppleMusicService::CachedFolderNode.new(name: 'c')
-        d = Drum::AppleMusicService::CachedFolderNode.new(name: 'd')
-        b = Drum::AppleMusicService::CachedFolderNode.new(
-          name: 'b',
-          children: {'c' => c}
-        )
-        a = Drum::AppleMusicService::CachedFolderNode.new(
-          name: 'a',
-          children: {
-            'b' => b,
-            'd' => d
-          }
-        )
+        expect(@a.lookup([])).to be(@a)
+        expect(@a.lookup(['b'])).to be(@b)
+        expect(@a.lookup(['d'])).to be(@d)
+        expect(@a.lookup(['c'])).to be_nil
+        expect(@a.lookup(['b', 'c'])).to be(@c)
+      end
+    end
 
-        expect(a.lookup([])).to be(a)
-        expect(a.lookup(['b'])).to be(b)
-        expect(a.lookup(['d'])).to be(d)
-        expect(a.lookup(['c'])).to be_nil
-        expect(a.lookup(['b', 'c'])).to be(c)
+    describe 'by_am_library_ids' do
+      it 'should generate a flat id to node hash' do
+        expect(@a.by_am_library_ids).to eq({
+          'id.a' => @a,
+          'id.b' => @b,
+          'id.c' => @c,
+          'id.d' => @d
+        })
       end
     end
   end
