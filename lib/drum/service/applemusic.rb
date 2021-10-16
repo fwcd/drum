@@ -248,6 +248,21 @@ module Drum
       self.get_json("/me/library/playlists/#{am_library_id}/tracks?limit=#{PLAYLISTS_CHUNK_SIZE}&offset=#{offset}")
     end
 
+    def api_library_playlist_folder(am_library_id)
+      self.get_json("/me/library/playlist-folders/#{am_library_id}")
+    end
+
+    def api_library_playlist_children(am_parent_id = nil)
+      begin
+        self.get_json("/me/library/playlist-folders/#{am_parent_id || 'p.playlistsroot'}/children")
+      rescue RestClient::NotFound
+        # The API seems to throw a 404 when a corresponding folder exists without children
+        {
+          'data' => []
+        }
+      end
+    end
+
     def api_catalog_playlist(am_storefront, am_catalog_id)
       self.get_json("/catalog/#{am_storefront}/playlists/#{am_catalog_id}")
     end
@@ -285,6 +300,26 @@ module Drum
           end
         }.compact
       })
+    end
+
+    def api_create_library_playlist_folder(name, am_parent_id: nil)
+      self.post_json('/me/library/playlist-folders', {
+        'attributes' => {
+          'name' => name
+        },
+        'relationships' => am_parent_id.try do |am_id|
+          {
+            'parent' => {
+              'data' => [
+                {
+                  'id' => am_parent_id,
+                  'type' => 'library-playlist-folders'
+                }
+              ]
+            }
+          }
+        end
+      }.compact)
     end
 
     def api_add_library_playlist_tracks(am_library_id, am_track_catalog_ids)
@@ -494,6 +529,26 @@ module Drum
 
     # Upload helpers
 
+    def make_am_folders(path, am_parent_id: nil)
+      unless path.empty?
+        name = path[0]
+
+        am_children = self.api_library_playlist_children(am_parent_id)['data'] || []
+        am_subfolders = am_children.filter { |c| c['type'] == 'library-playlist-folders' }
+        am_folder = am_subfolders.find { |c| c.dig('attributes', 'name') == name }
+
+        if am_folder.nil?
+          # Create the folder for our path segment
+          log.info "Creating folder '#{name}'..."
+          am_folder = self.api_create_library_playlist_folder(name, am_parent_id: am_parent_id)['data'][0]
+        else
+          log.info "Using existing folder '#{name}'..."
+        end
+
+        self.make_am_folders(path[1...], am_parent_id: am_folder['id'])
+      end
+    end
+
     def to_am_catalog_track_id(track, playlist)
       am_id = track.applemusic&.catalog_id
       unless am_id.nil?
@@ -513,7 +568,10 @@ module Drum
     end
 
     def upload_playlist(playlist)
-      # TODO: Chunking?
+      self.make_am_folders(playlist.path)
+
+      # TODO: Chunk tracks?
+      #       => The API seems to handle ~120 songs in the create request fine already
 
       self.api_create_library_playlist(
         playlist.name,
