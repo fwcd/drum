@@ -451,17 +451,16 @@ describe Drum::AppleMusicService do
       )
       @b = Drum::AppleMusicService::CachedFolderNode.new(
         name: 'b',
-        am_library_id: 'id.b',
-        children: {'c' => @c}
+        am_library_id: 'id.b'
       )
       @a = Drum::AppleMusicService::CachedFolderNode.new(
         name: 'a',
-        am_library_id: 'id.a',
-        children: {
-          'b' => @b,
-          'd' => @d
-        }
+        am_library_id: 'id.a'
       )
+
+      @b.store_child(@c)
+      @a.store_child(@b)
+      @a.store_child(@d)
     end
 
     describe 'lookup' do
@@ -487,8 +486,9 @@ describe Drum::AppleMusicService do
 
     describe 'parent' do
       it 'should find the correct parents' do
-        # We cannot compare for object identity with 'be' here
-        # since the tree is using WeakRef wrappers internally.
+        # We cannot (directly) compare for object identity with 'be' here
+        # since the tree is using WeakRef wrappers internally. The 'eq'
+        # operator, however, uses object identity internally.
         expect(@a.parent).to be_nil
         expect(@b.parent).to eq(@a)
         expect(@d.parent).to eq(@a)

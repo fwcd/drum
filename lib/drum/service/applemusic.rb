@@ -47,26 +47,33 @@ module Drum
     #  @return [String] The name of the playlist folder
     # @!attribute parent
     #  @return [optional, WeakRef<CachedFolderNode>] The parent
-    # @!attribute children
-    #  @return [Hash<String, CachedFolderNode>] The child nodes keyed by name
-    CachedFolderNode = Struct.new(:am_library_id, :name, :parent, :children, keyword_init: true) do
-      def initialize(*)
-        super
-        self.children ||= {}
-        self.children.each_value do |child|
-          child.parent = WeakRef.new(self)
-        end
+    class CachedFolderNode
+      attr_accessor :am_library_id
+      attr_accessor :name
+      attr_accessor :parent
+
+      def initialize(am_library_id: nil, name: nil, parent: nil)
+        @am_library_id = am_library_id
+        @name = name
+        @parent = parent
+
+        # [Hash<String, CachedFolderNode>] The child nodes keyed by name
+        @children = {}
+      end
+
+      def each_child(&block)
+        @children.each_value(&block)
       end
 
       def lookup(path)
         case path
         in [] then self
-        in [name, *rest] then self.children[name]&.lookup(rest)
+        in [name, *rest] then @children[name]&.lookup(rest)
         end
       end
 
       def store_child(child)
-        children[name] = child.name
+        @children[child.name] = child
         child.parent = WeakRef.new(self)
         child
       end
@@ -79,7 +86,7 @@ module Drum
 
       def by_am_library_ids!(output)
         output[self.am_library_id] = self
-        children.each_value do |child|
+        self.each_child do |child|
           # Make sure that the parent is set and correct
           child.parent = WeakRef.new(self)
           child.by_am_library_ids!(output)
@@ -596,7 +603,7 @@ module Drum
     def make_folder(path, cached_parent: @cached_folder_tree)
       unless path.empty?
         name = path[0]
-        cached = cached_parent.children[name]
+        cached = cached_parent.children.lookup([name])
 
         if cached.nil?
           am_parent_id = cached_parent.am_library_id
