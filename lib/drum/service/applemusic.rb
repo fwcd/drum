@@ -65,6 +65,10 @@ module Drum
         @children.each_value(&block)
       end
 
+      def path
+        (parent&.path || []) + [name]
+      end
+
       def lookup(path)
         case path
         in [] then self

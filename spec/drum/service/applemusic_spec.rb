@@ -495,5 +495,14 @@ describe Drum::AppleMusicService do
         expect(@c.parent).to eq(@b)
       end
     end
+
+    describe 'path' do
+      it 'should compute the correct paths' do
+        expect(@a.path).to eq(['a'])
+        expect(@b.path).to eq(['a', 'b'])
+        expect(@c.path).to eq(['a', 'b', 'c'])
+        expect(@d.path).to eq(['a', 'd'])
+      end
+    end
   end
 end
