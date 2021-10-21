@@ -501,12 +501,12 @@
       <pre class="lines">
 
 
-246
-247
-248</pre>
+255
+256
+257</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 246</span>
+      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 255</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid___print_version'>__print_version</span>
   <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_all'>all</span> <span class='const'><span class='object_link'><a href="../Drum.html#VERSION-constant" title="Drum::VERSION (constant)">VERSION</a></span></span>
@@ -578,11 +578,6 @@
       <pre class="lines">
 
 
-146
-147
-148
-149
-150
 151
 152
 153
@@ -642,10 +637,19 @@
 207
 208
 209
-210</pre>
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 146</span>
+      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 151</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_cp'>cp</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_src_ref'>raw_src_ref</span><span class='comma'>,</span> <span class='id identifier rubyid_raw_dest_ref'>raw_dest_ref</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_src_ref'>src_ref</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_parse_ref'>parse_ref</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_src_ref'>raw_src_ref</span><span class='rparen'>)</span>
@@ -679,6 +683,10 @@
 </span>
       <span class='id identifier rubyid_playlists'>playlists</span> <span class='op'>=</span> <span class='id identifier rubyid_playlists'>playlists</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_playlist'>playlist</span><span class='op'>|</span>
         <span class='id identifier rubyid_bar'>bar</span><span class='op'>&amp;.</span><span class='id identifier rubyid_increment!'>increment!</span>
+
+        <span class='kw'>if</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:flatten</span><span class='rbracket'>]</span>
+          <span class='id identifier rubyid_playlist'>playlist</span><span class='period'>.</span><span class='id identifier rubyid_path'>path</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+        <span class='kw'>end</span>
 
         <span class='kw'>if</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:group_by_author</span><span class='rbracket'>]</span>
           <span class='id identifier rubyid_author_name'>author_name</span> <span class='op'>=</span> <span class='id identifier rubyid_playlist'>playlist</span><span class='period'>.</span><span class='id identifier rubyid_author_id'>author_id</span><span class='period'>.</span><span class='id identifier rubyid_try'>try</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_id'>id</span><span class='op'>|</span> <span class='id identifier rubyid_playlist'>playlist</span><span class='period'>.</span><span class='id identifier rubyid_users'>users</span><span class='lbracket'>[</span><span class='id identifier rubyid_id'>id</span><span class='rbracket'>]</span> <span class='rbrace'>}</span><span class='op'>&amp;.</span><span class='id identifier rubyid_display_name'>display_name</span> <span class='op'>||</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Other</span><span class='tstring_end'>&#39;</span></span>
@@ -763,21 +771,21 @@
       <pre class="lines">
 
 
-218
-219
-220
-221
-222
-223
-224
-225
-226
 227
 228
-229</pre>
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 218</span>
+      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 227</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_rm'>rm</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_ref'>ref</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_parse_ref'>parse_ref</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='rparen'>)</span>
@@ -822,12 +830,12 @@
       <pre class="lines">
 
 
-236
-237
-238</pre>
+245
+246
+247</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 236</span>
+      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 245</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_services'>services</span>
   <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span> <span class='ivar'>@services</span><span class='period'>.</span><span class='id identifier rubyid_each_key'>each_key</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -941,7 +949,7 @@
 </div>
 
       <div id="footer">
-  Generated on Fri Oct 15 18:51:52 2021 by
+  Generated on Thu Oct 21 02:22:21 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.0).
 </div>
