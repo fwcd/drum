@@ -395,12 +395,8 @@ module Drum
         new_playlist.store_user(new_author)
       end
 
-      begin
-        sp_added_bys = sp_playlist.tracks_added_by
-        sp_added_ats = sp_playlist.tracks_added_at
-      rescue RestClient::NotFound
-        # Swallow 404s here (apparently they seem to occur sporadically)
-      end
+      sp_added_bys = sp_playlist.tracks_added_by
+      sp_added_ats = sp_playlist.tracks_added_at
 
       sp_tracks = sp_tracks || self.all_sp_playlist_tracks(sp_playlist)
       log.info "Got #{sp_tracks.length} playlist track(s) for '#{sp_playlist.name}'..."
@@ -559,8 +555,12 @@ module Drum
           log.info 'Fetching playlists...'
           Enumerator.new(sp_playlists.length) do |enum|
             sp_playlists.each do |sp_playlist|
-              new_playlist = self.from_sp_playlist(sp_playlist)
-              enum.yield new_playlist
+              begin
+                new_playlist = self.from_sp_playlist(sp_playlist)
+                enum.yield new_playlist
+              rescue StandardError => e
+                log.info "Could not download playlist '#{sp_playlist.name}': #{e}"
+              end
             end
           end
         when :tracks
