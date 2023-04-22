@@ -24,6 +24,7 @@ The basic usage pattern is always `drum cp [source] [destination]` where `source
   * `@spotify/playlists`
   * `@spotify/tracks`
   * `@applemusic/playlists`
+  * `@music/playlists` (referring to the local Apple Music (`Music.app`) library on macOS)
   * `@stdin`
   * `@stdout`
 * A dash `-`, synonymous with `@stdin` and `@stdout`, depending on usage
