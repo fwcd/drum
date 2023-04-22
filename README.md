@@ -1,5 +1,8 @@
 # Drum
 
+[![Test](https://github.com/fwcd/drum/actions/workflows/test.yml/badge.svg)](https://github.com/fwcd/drum/actions/workflows/test.yml)
+[![Documentation](https://github.com/fwcd/drum/actions/workflows/documentation.yml/badge.svg)](https://fwcd.github.io/drum)
+
 A small tool for copying your playlists across music streaming services. Think `rsync`, but for playlists.
 
 ![Icon](artwork/icon128.png)
@@ -66,6 +69,8 @@ To run the application, run `bundle exec bin/drum`. You can also run `bin/consol
 > Note that you may need to run `bundle exec ruby bin/drum` on Windows
 
 To package the application into a gem, run `bundle exec rake build`. The built gem should then be located in `pkg`.
+
+> Note: If you wish to install `drum` using `gem install`, you may need to install additional gems such as `rb-scpt` on macOS to use platform-specific integrations. See [the `Gemfile`](Gemfile) for more information.
 
 To install the gem, run `bundle exec rake install`.
 
