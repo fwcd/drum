@@ -58,13 +58,25 @@ module Drum
     # Upload helpers
 
     def to_track_proxy(library_proxy, playlist, track)
+      # Get track metadata
+      name = track.name
+      artists = track.artist_ids.map { |id| playlist.artists[id].name }
+
       # Match the track with a track in the local library
       # TODO: Don't require exact 100% matches
+      name_query = Appscript.its.name.eq(name)
+      artists_query = artists
+        .map { |a| Appscript.its.artist.contains(a) }
+        .reduce { |q1, q2| q1.or(q2) }
+      query = name_query.and(artists_query)
+
+      # Find a matching track in the track
       # TODO: Instead of choosing the first, prefer iTunes-matched/higher bitrate ones etc.
-      query = Appscript.its.name.eq(track.name)
-         .and(Appscript.its.artist.contains(playlist.artists[track.artist_ids[0]].name))
       track_proxy = library_proxy.tracks[query].get.first
-      unless track_proxy.nil?
+
+      if track_proxy.nil?
+        log.warn "No match found for '#{track.name}' by '#{artists.first}'"
+      else
         log.info "Matched '#{track.name}' with '#{track_proxy.name.get}' by '#{track_proxy.artist.get}'"
       end
       track_proxy
