@@ -4,13 +4,18 @@ on: [push]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: ['ubuntu-latest', 'macos-latest']
+        ruby: ['2.7.0']
+
+    runs-on: '${{ matrix.os }}'
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 2.7.0
+        ruby-version: '${{ matrix.ruby }}'
     - name: Install dependencies
       run: |
         gem install bundler -v 2.2.0
