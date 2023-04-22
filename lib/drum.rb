@@ -2,6 +2,7 @@ require 'drum/model/raw_ref'
 require 'drum/service/applemusic'
 require 'drum/service/file'
 require 'drum/service/mock'
+require 'drum/service/music'
 require 'drum/service/service'
 require 'drum/service/spotify'
 require 'drum/service/stdio'
@@ -35,6 +36,7 @@ module Drum
       # Declare services in descending order of parse priority
       @services = [
         MockService.new,
+        MusicService.new,
         StdioService.new,
         AppleMusicService.new(@cache_dir),
         SpotifyService.new(@cache_dir),
