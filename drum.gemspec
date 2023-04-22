@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
   spec.executables   = ['drum']
   spec.require_paths = ['lib']
   
-  spec.add_dependency 'thor', '~> 0.20'
+  spec.add_dependency 'thor', '~> 1.2'
   spec.add_dependency 'rspotify', '~> 2.10'
   spec.add_dependency 'launchy', '~> 2.4'
   spec.add_dependency 'ruby-limiter', '~> 2.1'

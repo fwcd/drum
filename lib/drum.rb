@@ -132,7 +132,6 @@ module Drum
     method_option :recase_paths,
       type: :string,
       enum: ['kebabcase', 'startcase', 'camelcase', 'pascalcase'],
-      default: false,
       desc: "Convert each playlist's path segments to a specific case."
 
     method_option :flatten,
