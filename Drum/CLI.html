@@ -6,7 +6,7 @@
 <title>
   Class: Drum::CLI
   
-    &mdash; Documentation by YARD 0.9.26
+    &mdash; Documentation by YARD 0.9.34
   
 </title>
 
@@ -353,7 +353,6 @@
       <pre class="lines">
 
 
-23
 24
 25
 26
@@ -376,10 +375,12 @@
 43
 44
 45
-46</pre>
+46
+47
+48</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 23</span>
+      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 24</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='kw'>super</span>
@@ -396,6 +397,7 @@
   <span class='comment'># Declare services in descending order of parse priority
 </span>  <span class='ivar'>@services</span> <span class='op'>=</span> <span class='lbracket'>[</span>
     <span class='const'><span class='object_link'><a href="MockService.html" title="Drum::MockService (class)">MockService</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='comma'>,</span>
+    <span class='const'><span class='object_link'><a href="MusicService.html" title="Drum::MusicService (class)">MusicService</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='comma'>,</span>
     <span class='const'><span class='object_link'><a href="StdioService.html" title="Drum::StdioService (class)">StdioService</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='comma'>,</span>
     <span class='const'><span class='object_link'><a href="AppleMusicService.html" title="Drum::AppleMusicService (class)">AppleMusicService</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="AppleMusicService.html#initialize-instance_method" title="Drum::AppleMusicService#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='ivar'>@cache_dir</span><span class='rparen'>)</span><span class='comma'>,</span>
     <span class='const'><span class='object_link'><a href="SpotifyService.html" title="Drum::SpotifyService (class)">SpotifyService</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="SpotifyService.html#initialize-instance_method" title="Drum::SpotifyService#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='ivar'>@cache_dir</span><span class='rparen'>)</span><span class='comma'>,</span>
@@ -454,12 +456,12 @@
       <pre class="lines">
 
 
-48
-49
-50</pre>
+50
+51
+52</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 48</span>
+      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 50</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_exit_on_failure?'>exit_on_failure?</span>
   <span class='kw'>true</span>
@@ -501,12 +503,12 @@
       <pre class="lines">
 
 
-255
 256
-257</pre>
+257
+258</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 255</span>
+      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 256</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid___print_version'>__print_version</span>
   <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_all'>all</span> <span class='const'><span class='object_link'><a href="../Drum.html#VERSION-constant" title="Drum::VERSION (constant)">VERSION</a></span></span>
@@ -578,7 +580,6 @@
       <pre class="lines">
 
 
-151
 152
 153
 154
@@ -646,10 +647,11 @@
 216
 217
 218
-219</pre>
+219
+220</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 151</span>
+      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 152</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_cp'>cp</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_src_ref'>raw_src_ref</span><span class='comma'>,</span> <span class='id identifier rubyid_raw_dest_ref'>raw_dest_ref</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_src_ref'>src_ref</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_parse_ref'>parse_ref</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_src_ref'>raw_src_ref</span><span class='rparen'>)</span>
@@ -771,7 +773,6 @@
       <pre class="lines">
 
 
-227
 228
 229
 230
@@ -782,10 +783,11 @@
 235
 236
 237
-238</pre>
+238
+239</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 227</span>
+      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 228</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_rm'>rm</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_ref'>ref</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_parse_ref'>parse_ref</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='rparen'>)</span>
@@ -830,12 +832,12 @@
       <pre class="lines">
 
 
-245
 246
-247</pre>
+247
+248</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 245</span>
+      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 246</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_services'>services</span>
   <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span> <span class='ivar'>@services</span><span class='period'>.</span><span class='id identifier rubyid_each_key'>each_key</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -891,8 +893,6 @@
       <pre class="lines">
 
 
-100
-101
 102
 103
 104
@@ -912,10 +912,12 @@
 118
 119
 120
-121</pre>
+121
+122
+123</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 100</span>
+      <pre class="code"><span class="info file"># File 'lib/drum.rb', line 102</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_show'>show</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_ref'>ref</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_parse_ref'>parse_ref</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_ref'>raw_ref</span><span class='rparen'>)</span>
@@ -949,9 +951,9 @@
 </div>
 
       <div id="footer">
-  Generated on Sun May  8 00:26:27 2022 by
-  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-2.7.0).
+  Generated on Sat Apr 22 20:56:39 2023 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.34 (ruby-2.7.0).
 </div>
 
     </div>
