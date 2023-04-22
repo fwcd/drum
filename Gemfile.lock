@@ -6,6 +6,7 @@ PATH
       jwt (~> 2.2)
       launchy (~> 2.4)
       progress_bar (~> 1.3)
+      rb-scpt (~> 1.0)
       rest-client (~> 2.0)
       rspotify (~> 2.10)
       ruby-limiter (~> 2.1)
@@ -60,6 +61,7 @@ GEM
     rack-protection (2.2.0)
       rack
     rake (13.0.6)
+    rb-scpt (1.0.3)
     rest-client (2.0.2)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)

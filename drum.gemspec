@@ -33,4 +33,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'highline', '~> 2.0'
   spec.add_dependency 'rest-client', '~> 2.0'
   spec.add_dependency 'progress_bar', '~> 1.3'
+  spec.add_dependency 'rb-scpt', '~> 1.0'
 end
