@@ -1,5 +1,8 @@
 # Drum
 
+[![Test](https://github.com/fwcd/drum/actions/workflows/test.yml/badge.svg)](https://github.com/fwcd/drum/actions/workflows/test.yml)
+[![Documentation](https://github.com/fwcd/drum/actions/workflows/documentation.yml/badge.svg)](https://fwcd.github.io/drum)
+
 A small tool for copying your playlists across music streaming services. Think `rsync`, but for playlists.
 
 ![Icon](artwork/icon128.png)
