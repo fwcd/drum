@@ -5,7 +5,6 @@ require 'drum/model/playlist'
 require 'drum/model/track'
 require 'drum/service/service'
 require 'drum/utils/log'
-require 'rb-scpt'
 
 module Drum
   # A service that uses AppleScript to interact with the local Apple Music (Music.app) library.
@@ -14,6 +13,14 @@ module Drum
 
     def name
       'music'
+    end
+
+    def require_rb_scpt
+      begin
+        require 'rb-scpt'
+      rescue LoadError
+        raise "Using the local Apple Music importer requires the 'rb-scpt' gem (which requires macOS)"
+      end
     end
 
     # Ref parsing
@@ -32,11 +39,15 @@ module Drum
 
     # Service
 
-    def download(playlist_ref)
+    def download(ref)
+      self.require_rb_scpt
+
       raise 'Downloading is not implemented yet'
     end
 
-    def upload(playlist_ref, playlists)
+    def upload(ref, playlists)
+      self.require_rb_scpt
+
       unless ref.resource_type == :special && ref.resource_location == :playlists
         raise "Cannot upload to anything other than @#{self.name}/playlists yet!"
       end
