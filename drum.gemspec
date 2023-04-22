@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.bindir        = 'bin'
   spec.executables   = ['drum']
   spec.require_paths = ['lib']
-  
+
   spec.add_dependency 'thor', '~> 1.2'
   spec.add_dependency 'rspotify', '~> 2.10'
   spec.add_dependency 'launchy', '~> 2.4'
@@ -33,5 +33,4 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'highline', '~> 2.0'
   spec.add_dependency 'rest-client', '~> 2.0'
   spec.add_dependency 'progress_bar', '~> 1.3'
-  spec.add_dependency 'rb-scpt', '~> 1.0'
 end

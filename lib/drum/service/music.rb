@@ -5,6 +5,7 @@ require 'drum/model/playlist'
 require 'drum/model/track'
 require 'drum/service/service'
 require 'drum/utils/log'
+require 'rb-scpt'
 
 module Drum
   # A service that uses AppleScript to interact with the local Apple Music (Music.app) library.
