@@ -23,6 +23,16 @@ module Drum
       end
     end
 
+    def get_library_proxy
+      self.require_rb_scpt
+      music = Appscript.app('Music')
+      source = music.sources[1]
+      unless source.kind.get == :library
+        raise 'Could not get music library source'
+      end
+      return source
+    end
+
     # Ref parsing
 
     def parse_ref(raw_ref)
@@ -37,23 +47,32 @@ module Drum
       end
     end
 
+    # Upload helpers
+
+    def upload_playlist(library_proxy, playlist)
+      library_proxy.make(new: :playlist, with_properties: {
+        name: playlist.name,
+        description: playlist.description,
+      })
+      # TODO: Add tracks
+    end
+
     # Service
 
     def download(ref)
-      self.require_rb_scpt
-
       raise 'Downloading is not implemented yet'
     end
 
     def upload(ref, playlists)
-      self.require_rb_scpt
+      library_proxy = self.get_library_proxy
 
       unless ref.resource_type == :special && ref.resource_location == :playlists
         raise "Cannot upload to anything other than @#{self.name}/playlists yet!"
       end
       
-      # TODO
-      raise 'Uploading is not implemented yet'
+      playlists.each do |playlist|
+        self.upload_playlist(library_proxy, playlist)
+      end
     end
   end
 end
