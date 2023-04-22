@@ -8,6 +8,14 @@ require 'drum/utils/log'
 
 module Drum
   # A service that uses AppleScript to interact with the local Apple Music (Music.app) library.
+  #
+  # Useful resources:
+  # - https://github.com/BrendanThompson/rb-scpt/tree/develop/sample
+  # - https://stackoverflow.com/questions/12964766/create-playlist-in-itunes-with-python-and-scripting-bridge
+  # - https://dougscripts.com/itunes/itinfo/info01.php
+  # - https://dougscripts.com/itunes/itinfo/info02.php
+  # - https://dougscripts.com/itunes/itinfo/info03.php
+  # - https://github.com/sorah/jockey/blob/master/add.rb
   class MusicService < Service
     include Log
 
@@ -49,12 +57,31 @@ module Drum
 
     # Upload helpers
 
+    def to_track_proxy(library_proxy, playlist, track)
+      # Match the track with a track in the local library
+      # TODO: Don't require exact 100% matches
+      # TODO: Instead of choosing the first, prefer iTunes-matched/higher bitrate ones etc.
+      query = Appscript.its.name.eq(track.name)
+         .and(Appscript.its.artist.contains(playlist.artists[track.artist_ids[0]].name))
+      track_proxy = library_proxy.tracks[query].get.first
+      unless track_proxy.nil?
+        log.info "Matched '#{track.name}' with '#{track_proxy.name.get}' by '#{track_proxy.artist.get}'"
+      end
+      track_proxy
+    end
+
     def upload_playlist(library_proxy, playlist)
-      library_proxy.make(new: :playlist, with_properties: {
+      playlist_proxy = library_proxy.make(new: :playlist, with_properties: {
         name: playlist.name,
         description: playlist.description,
-      })
-      # TODO: Add tracks
+      }.compact)
+      
+      playlist.tracks.each do |track|
+        track_proxy = self.to_track_proxy(library_proxy, playlist, track)
+        unless track_proxy.nil?
+          track_proxy.duplicate(to: playlist_proxy)
+        end
+      end
     end
 
     # Service
