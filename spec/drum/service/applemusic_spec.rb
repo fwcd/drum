@@ -438,4 +438,71 @@ describe Drum::AppleMusicService do
       })
     end
   end
+
+  describe Drum::AppleMusicService::CachedFolderNode do
+    before :all do
+      @c = Drum::AppleMusicService::CachedFolderNode.new(
+        name: 'c',
+        am_library_id: 'id.c'
+      )
+      @d = Drum::AppleMusicService::CachedFolderNode.new(
+        name: 'd',
+        am_library_id: 'id.d'
+      )
+      @b = Drum::AppleMusicService::CachedFolderNode.new(
+        name: 'b',
+        am_library_id: 'id.b'
+      )
+      @a = Drum::AppleMusicService::CachedFolderNode.new(
+        name: 'a',
+        am_library_id: 'id.a'
+      )
+
+      @b.store_child(@c)
+      @a.store_child(@b)
+      @a.store_child(@d)
+    end
+
+    describe 'lookup' do
+      it 'should find nodes in a nested tree' do
+        expect(@a.lookup([])).to be(@a)
+        expect(@a.lookup(['b'])).to be(@b)
+        expect(@a.lookup(['d'])).to be(@d)
+        expect(@a.lookup(['c'])).to be_nil
+        expect(@a.lookup(['b', 'c'])).to be(@c)
+      end
+    end
+
+    describe 'by_am_library_ids' do
+      it 'should generate a flat id to node hash' do
+        expect(@a.by_am_library_ids).to eq({
+          'id.a' => @a,
+          'id.b' => @b,
+          'id.c' => @c,
+          'id.d' => @d
+        })
+      end
+    end
+
+    describe 'parent' do
+      it 'should find the correct parents' do
+        # We cannot (directly) compare for object identity with 'be' here
+        # since the tree is using WeakRef wrappers internally. The 'eq'
+        # operator, however, uses object identity internally.
+        expect(@a.parent).to be_nil
+        expect(@b.parent).to eq(@a)
+        expect(@d.parent).to eq(@a)
+        expect(@c.parent).to eq(@b)
+      end
+    end
+
+    describe 'path' do
+      it 'should compute the correct paths' do
+        expect(@a.path).to eq(['a'])
+        expect(@b.path).to eq(['a', 'b'])
+        expect(@c.path).to eq(['a', 'b', 'c'])
+        expect(@d.path).to eq(['a', 'd'])
+      end
+    end
+  end
 end

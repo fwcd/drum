@@ -15,6 +15,7 @@ require 'launchy'
 require 'rest-client'
 require 'ruby-limiter'
 require 'uri'
+require 'weakref'
 require 'webrick'
 
 module Drum
@@ -37,6 +38,67 @@ module Drum
     limit_method :api_library_playlists, rate: 60
     limit_method :api_library_playlist_tracks, rate: 60
 
+    # An internal representation of the folder structure in the remote Apple Music library.
+    # See the comment in initialize for more details.
+    #
+    # @!attribute am_library_id
+    #  @return [String] The library id of the playlist folder
+    # @!attribute name
+    #  @return [String] The name of the playlist folder
+    # @!attribute parent
+    #  @return [optional, WeakRef<CachedFolderNode>] The parent
+    class CachedFolderNode
+      attr_accessor :am_library_id
+      attr_accessor :name
+      attr_accessor :parent
+
+      def initialize(am_library_id: nil, name: nil, parent: nil)
+        @am_library_id = am_library_id
+        @name = name
+        @parent = parent
+
+        # [Hash<String, CachedFolderNode>] The child nodes keyed by name
+        @children = {}
+      end
+
+      def each_child(&block)
+        @children.each_value(&block)
+      end
+
+      def path
+        (parent&.path || []) + [name]
+      end
+
+      def lookup(path)
+        case path
+        in [] then self
+        in [name, *rest] then @children[name]&.lookup(rest)
+        end
+      end
+
+      def store_child(child)
+        @children[child.name] = child
+        child.parent = WeakRef.new(self)
+        child
+      end
+
+      def by_am_library_ids
+        by_ids = {}
+        self.by_am_library_ids!(by_ids)
+        by_ids
+      end
+
+      def by_am_library_ids!(output)
+        output[self.am_library_id] = self
+        self.each_child do |child|
+          # Make sure that the parent is set and correct
+          child.parent = WeakRef.new(self)
+          child.by_am_library_ids!(output)
+        end
+        output
+      end
+    end
+
     # Initializes the Apple Music service.
     #
     # @param [String] cache_dir The path to the cache directory (shared by all services)
@@ -46,6 +108,11 @@ module Drum
 
       @auth_tokens = PersistentHash.new(@cache_dir / 'auth-tokens.yaml')
       @authenticated = false
+
+      # We cache the created/discovered folder tree for efficiency
+      # and to avoid race conditions where newly created folders
+      # don't immediately show up via the API.
+      @cached_folder_tree = CachedFolderNode.new
     end
 
     def name
@@ -215,27 +282,31 @@ module Drum
 
     def get_json(endpoint)
       log.debug "-> GET #{endpoint}"
-      response = RestClient.get(
-        "#{BASE_URL}#{endpoint}",
-        self.authorization_headers
-      )
-      unless response.code >= 200 && response.code < 300
-        raise "Something went wrong while GETting #{endpoint}: #{response}"
+      begin
+        response = RestClient.get(
+          "#{BASE_URL}#{endpoint}",
+          self.authorization_headers
+        )
+      rescue RestClient::Exception => e
+        log.debug "Could not GET #{endpoint} (#{e.message}): #{e.response}"
+        raise
       end
       JSON.parse(response.body)
     end
 
     def post_json(endpoint, json)
       log.debug "-> POST #{endpoint} with #{json}"
-      response = RestClient.post(
-        "#{BASE_URL}#{endpoint}",
-        json.to_json,
-        self.authorization_headers.merge({
-          'Content-Type': 'application/json'
-        })
-      )
-      unless response.code >= 200 && response.code < 300
-        raise "Something went wrong while POSTing to #{endpoint}: #{response}"
+      begin
+        response = RestClient.post(
+          "#{BASE_URL}#{endpoint}",
+          json.to_json,
+          self.authorization_headers.merge({
+            'Content-Type': 'application/json'
+          })
+        )
+      rescue RestClient::Exception => e
+        log.debug "Could not POST #{endpoint} (#{e.message}): #{e.response}"
+        raise
       end
       JSON.parse(response.body)
     end
@@ -248,6 +319,32 @@ module Drum
       self.get_json("/me/library/playlists/#{am_library_id}/tracks?limit=#{PLAYLISTS_CHUNK_SIZE}&offset=#{offset}")
     end
 
+    def api_library_playlist_folder(am_library_id)
+      self.get_json("/me/library/playlist-folders/#{am_library_id}")
+    end
+
+    def api_library_playlist_children(am_parent_id = nil)
+      begin
+        self.get_json("/me/library/playlist-folders/#{am_parent_id || 'p.playlistsroot'}/children")
+      rescue RestClient::NotFound
+        # The API seems to throw a 404 when a corresponding folder exists without children
+        {
+          'data' => []
+        }
+      end
+    end
+
+    def api_library_playlist_parent(am_parent_id)
+      begin
+        self.get_json("/me/library/playlist-folders/#{am_parent_id}/parent")
+      rescue RestClient::NotFound
+        # The API seems to throw a 404 when a corresponding folder exists without parent
+        {
+          'data' => []
+        }
+      end
+    end
+
     def api_catalog_playlist(am_storefront, am_catalog_id)
       self.get_json("/catalog/#{am_storefront}/playlists/#{am_catalog_id}")
     end
@@ -258,7 +355,7 @@ module Drum
       self.get_json("/catalog/#{am_storefront}/search?term=#{encoded_term}&limit=#{limit}&offset=#{offset}&types=#{encoded_types}")
     end
 
-    def api_create_library_playlist(name, description: nil, am_track_catalog_ids: [])
+    def api_create_library_playlist(name, description: nil, am_parent_id: nil, am_track_catalog_ids: [])
       self.post_json("/me/library/playlists/", {
         'attributes' => {
           'name' => name,
@@ -272,10 +369,39 @@ module Drum
                 'type' => 'songs'
               }
             end
-          }
-          # TODO: Support parents i.e. playlist folders?
-        }
+          },
+          'parent' => am_parent_id.try do |am_id|
+            {
+              'data' => [
+                {
+                  'id' => am_id,
+                  'type' => 'library-playlist-folders'
+                }
+              ]
+            }
+          end
+        }.compact
       })
+    end
+
+    def api_create_library_playlist_folder(name, am_parent_id: nil)
+      self.post_json('/me/library/playlist-folders', {
+        'attributes' => {
+          'name' => name
+        },
+        'relationships' => am_parent_id.try do |am_id|
+          {
+            'parent' => {
+              'data' => [
+                {
+                  'id' => am_parent_id,
+                  'type' => 'library-playlist-folders'
+                }
+              ]
+            }
+          }
+        end
+      }.compact)
     end
 
     def api_add_library_playlist_tracks(am_library_id, am_track_catalog_ids)
@@ -485,6 +611,49 @@ module Drum
 
     # Upload helpers
 
+    def make_folder(path, cached_parent: @cached_folder_tree)
+      unless path.empty?
+        name = path[0]
+        cached = cached_parent.children.lookup([name])
+
+        if cached.nil?
+          am_parent_id = cached_parent.am_library_id
+          am_children = self.api_library_playlist_children(am_parent_id)['data'] || []
+          am_subfolders = am_children.filter { |c| c['type'] == 'library-playlist-folders' }
+
+          am_subfolders.each do |am_subfolder|
+            am_subfolder.dig('attributes', 'name').try do |subname|
+              cached_parent.store_child(CachedFolderNode.new(
+                name: subname,
+                am_library_id: am_subfolder['id']
+              ))
+            end
+          end
+
+          cached = cached_parent.children[name]
+
+          if cached.nil?
+            # Create the folder for our path segment
+            log.info "Creating folder '#{name}'..."
+            am_folder = self.api_create_library_playlist_folder(name, am_parent_id: am_parent_id)['data'][0]
+
+            cached = cached_parent.store_child(CachedFolderNode.new(
+              name: am_folder.dig('attributes', 'name'),
+              am_library_id: am_folder['id']
+            ))
+          else
+            log.info "Using existing folder '#{name}'..."
+          end
+        else
+          log.info "Using existing (cached) folder '#{name}'..."
+        end
+
+        self.make_folder(path[1...], cached_parent: cached)
+      else
+        cached_parent
+      end
+    end
+
     def to_am_catalog_track_id(track, playlist)
       am_id = track.applemusic&.catalog_id
       unless am_id.nil?
@@ -504,11 +673,15 @@ module Drum
     end
 
     def upload_playlist(playlist)
-      # TODO: Chunking?
+      cached_folder_node = self.make_folder(playlist.path)
+
+      # TODO: Chunk tracks?
+      #       => The API seems to handle ~120 songs in the create request fine already
 
       self.api_create_library_playlist(
         playlist.name,
         description: playlist.description,
+        am_parent_id: cached_folder_node.am_library_id,
         am_track_catalog_ids: playlist.tracks.filter_map { |t| self.to_am_catalog_track_id(t, playlist) }
       )
     end
