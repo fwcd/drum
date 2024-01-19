@@ -26,8 +26,8 @@ module Drum
 
       @hl = HighLine.new
 
-      # Set up .drum directory
-      @dot_dir = Pathname.new(Dir.home) / '.drum'
+      # Set up directory for persisted state
+      @dot_dir = Pathname.new(Dir.home) / '.local' / 'state' / 'drum'
       @dot_dir.mkdir unless @dot_dir.directory?
 
       @cache_dir = @dot_dir / 'cache'
