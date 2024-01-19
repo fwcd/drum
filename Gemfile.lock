@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    drum (0.1.15)
+    drum (0.2.0)
       highline (~> 2.0)
       jwt (~> 2.2)
       launchy (~> 2.4)
