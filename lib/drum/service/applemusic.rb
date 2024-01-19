@@ -167,8 +167,6 @@ module Drum
         server.shutdown
       end
 
-      trap 'INT' do server.shutdown end
-
       log.info "Launching callback HTTP server on port #{port}, waiting for auth code..."
       server.start
 
@@ -186,6 +184,8 @@ module Drum
       }
 
       user_token
+    ensure
+      server&.shutdown
     end
 
     def authenticate
