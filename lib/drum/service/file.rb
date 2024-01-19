@@ -2,6 +2,7 @@ require 'drum/model/playlist'
 require 'drum/model/ref'
 require 'drum/service/service'
 require 'drum/utils/log'
+require 'drum/utils/yaml'
 require 'pathname'
 require 'uri'
 require 'yaml'
@@ -9,7 +10,7 @@ require 'yaml'
 module Drum
   # A service that reads/writes playlists to/from YAML files.
   class FileService < Service
-    include Log
+    include Log, YAMLUtils
 
     def name
       'file'
@@ -45,12 +46,12 @@ module Drum
       if base_path.directory?
         Dir.glob("#{base_path}/**/*.{yaml,yml}").map do |p|
           path = Pathname.new(p)
-          playlist = Playlist.deserialize(YAML.load(path.read))
+          playlist = Playlist.deserialize(from_yaml(path.read))
           playlist.path = path.relative_path_from(base_path).parent.each_filename.to_a
           playlist
         end
       else
-        [Playlist.deserialize(YAML.load(base_path.read))]
+        [Playlist.deserialize(from_yaml(base_path.read))]
       end
     end
 
@@ -74,7 +75,7 @@ module Drum
           end
 
           length = 6
-          while playlist_path[length].exist? && Playlist.deserialize(YAML.load(playlist_path[length].read)).id != playlist.id
+          while playlist_path[length].exist? && Playlist.deserialize(from_yaml(playlist_path[length].read)).id != playlist.id
             length += 1
           end
 

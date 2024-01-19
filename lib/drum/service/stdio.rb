@@ -2,12 +2,13 @@ require 'drum/model/playlist'
 require 'drum/model/ref'
 require 'drum/service/service'
 require 'drum/utils/log'
+require 'drum/utils/yaml'
 require 'yaml'
 
 module Drum
   # A service that reads from stdin and writes to stdout.
   class StdioService < Service
-    include Log
+    include Log, YAMLUtils
 
     def name
       'stdio'
@@ -31,7 +32,7 @@ module Drum
     def download(playlist_ref)
       if playlist_ref.resource_location.include?(:stdin)
         # TODO: Support multiple, --- delimited playlists?
-        [Playlist.deserialize(YAML.load(STDIN.read))]
+        [Playlist.deserialize(from_yaml(STDIN.read))]
       else
         []
       end

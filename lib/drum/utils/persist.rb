@@ -1,4 +1,5 @@
 require 'drum/utils/log'
+require 'drum/utils/yaml'
 require 'yaml'
 
 module Drum
@@ -7,7 +8,7 @@ module Drum
   # @!attribute value
   #  @return [Hash] The wrapped hash
   class PersistentHash
-    include Log
+    include Log, YAMLUtils
     attr_reader :value
 
     # Creates a new persistent hash.
@@ -29,7 +30,7 @@ module Drum
 
     # Loads the hash from the file.
     def load
-      @value = YAML.load(File.read(@file_path))
+      @value = from_yaml(File.read(@file_path))
     end
 
     # Saves the hash to the file.
