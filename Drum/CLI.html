@@ -387,8 +387,8 @@
 
   <span class='ivar'>@hl</span> <span class='op'>=</span> <span class='const'>HighLine</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
 
-  <span class='comment'># Set up .drum directory
-</span>  <span class='ivar'>@dot_dir</span> <span class='op'>=</span> <span class='const'>Pathname</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'>Dir</span><span class='period'>.</span><span class='id identifier rubyid_home'>home</span><span class='rparen'>)</span> <span class='op'>/</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.drum</span><span class='tstring_end'>&#39;</span></span>
+  <span class='comment'># Set up directory for persisted state
+</span>  <span class='ivar'>@dot_dir</span> <span class='op'>=</span> <span class='const'>Pathname</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'>Dir</span><span class='period'>.</span><span class='id identifier rubyid_home'>home</span><span class='rparen'>)</span> <span class='op'>/</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.local</span><span class='tstring_end'>&#39;</span></span> <span class='op'>/</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>state</span><span class='tstring_end'>&#39;</span></span> <span class='op'>/</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>drum</span><span class='tstring_end'>&#39;</span></span>
   <span class='ivar'>@dot_dir</span><span class='period'>.</span><span class='id identifier rubyid_mkdir'>mkdir</span> <span class='kw'>unless</span> <span class='ivar'>@dot_dir</span><span class='period'>.</span><span class='id identifier rubyid_directory?'>directory?</span>
 
   <span class='ivar'>@cache_dir</span> <span class='op'>=</span> <span class='ivar'>@dot_dir</span> <span class='op'>/</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cache</span><span class='tstring_end'>&#39;</span></span>
@@ -951,7 +951,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sat Apr 22 20:59:26 2023 by
+  Generated on Fri Jan 19 01:51:06 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.34 (ruby-2.7.0).
 </div>
