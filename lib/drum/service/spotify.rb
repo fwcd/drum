@@ -555,6 +555,14 @@ module Drum
           log.info 'Fetching playlists...'
           Enumerator.new(sp_playlists.length) do |enum|
             sp_playlists.each do |sp_playlist|
+              # These playlists seem to cause trouble for some reason, by either
+              # 404ing or by returning seemingly endless amounts of tracks, so
+              # we'll ignore them for now...
+              if sp_playlist.name.start_with?('Your Top Songs')
+                log.info "Skipping '#{sp_playlist.name}'"
+                next
+              end
+
               3.times do |attempt|
                 begin
                   if attempt > 0
