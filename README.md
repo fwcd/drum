@@ -59,7 +59,8 @@ Currently, the following music services are supported:
 * Apple Music
 * Local, YAML-based playlists (via stdio or files)
 
-> Note that the tool only processes metadata, not the actual audio files.
+> [!NOTE]
+> The tool only processes metadata, not the actual audio files.
 
 ## Development
 
@@ -67,17 +68,22 @@ After checking out the repo, run `bin/setup` (or `bundle install`) to install de
 
 To run the application, run `bundle exec bin/drum`. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-> Note that you may need to run `bundle exec ruby bin/drum` on Windows
+> [!NOTE]
+> You may need to run `bundle exec ruby bin/drum` on Windows
 
 To package the application into a gem, run `bundle exec rake build`. The built gem should then be located in `pkg`.
 
-> Note: If you wish to install `drum` using `gem install`, you may need to install additional gems such as `rb-scpt` on macOS to use platform-specific integrations. See [the `Gemfile`](Gemfile) for more information.
+> [!NOTE]
+> If you wish to install `drum` using `gem install`, you may need to install additional gems such as `rb-scpt` on macOS to use platform-specific integrations. See [the `Gemfile`](Gemfile) for more information.
 
 To install the gem, run `bundle exec rake install`.
 
 To generate the documentation, run `bundle exec rake yard`.
 
 To run tests, run `bundle exec rake spec`.
+
+> [!TIP]
+> If you wish to use a language server such as Solargraph and code completion isn't working for required gems, you may have to run `yard gems`: https://solargraph.org/guides/troubleshooting
 
 ### Spotify
 
