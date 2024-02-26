@@ -147,7 +147,7 @@
 </li></ul>
 
 <blockquote>
-<p>Note that the tool only processes metadata, not the actual audio files.</p>
+<p>[!NOTE] The tool only processes metadata, not the actual audio files.</p>
 </blockquote>
 
 <h2 id="label-Development">Development</h2>
@@ -157,13 +157,13 @@
 <p>To run the application, run <code>bundle exec bin/drum</code>. You can also run <code>bin/console</code> for an interactive prompt that will allow you to experiment.</p>
 
 <blockquote>
-<p>Note that you may need to run <code>bundle exec ruby bin/drum</code> on Windows</p>
+<p>[!NOTE] You may need to run <code>bundle exec ruby bin/drum</code> on Windows</p>
 </blockquote>
 
 <p>To package the application into a gem, run <code>bundle exec rake build</code>. The built gem should then be located in <code>pkg</code>.</p>
 
 <blockquote>
-<p>Note: If you wish to install <code>drum</code> using <code>gem install</code>, you may need to install additional gems such as <code>rb-scpt</code> on macOS to use platform-specific integrations. See <a href="Gemfile">the Gemfile</a> for more information.</p>
+<p>[!NOTE] If you wish to install <code>drum</code> using <code>gem install</code>, you may need to install additional gems such as <code>rb-scpt</code> on macOS to use platform-specific integrations. See <a href="Gemfile">the Gemfile</a> for more information.</p>
 </blockquote>
 
 <p>To install the gem, run <code>bundle exec rake install</code>.</p>
@@ -171,6 +171,10 @@
 <p>To generate the documentation, run <code>bundle exec rake yard</code>.</p>
 
 <p>To run tests, run <code>bundle exec rake spec</code>.</p>
+
+<blockquote>
+<p>[!TIP] If you wish to use a language server such as Solargraph and code completion isn&#39;t working for required gems, you may have to run <code>yard gems</code>: <a href="https://solargraph.org/guides/troubleshooting">solargraph.org/guides/troubleshooting</a></p>
+</blockquote>
 
 <h3 id="label-Spotify">Spotify</h3>
 
@@ -213,7 +217,7 @@ MUSICKIT_TEAM_ID=...
 </div></div>
 
       <div id="footer">
-  Generated on Fri Jan 19 02:07:36 2024 by
+  Generated on Mon Feb 26 01:18:41 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.34 (ruby-2.7.0).
 </div>
