@@ -555,11 +555,22 @@ module Drum
           log.info 'Fetching playlists...'
           Enumerator.new(sp_playlists.length) do |enum|
             sp_playlists.each do |sp_playlist|
-              begin
-                new_playlist = self.from_sp_playlist(sp_playlist)
-                enum.yield new_playlist
-              rescue StandardError => e
-                log.info "Could not download playlist '#{sp_playlist.name}': #{e}"
+              3.times do |attempt|
+                begin
+                  if attempt > 0
+                    log.info "Attempt \##{attempt + 1} to download '#{sp_playlist.name}'..."
+                  end
+                  new_playlist = self.from_sp_playlist(sp_playlist)
+                  enum.yield new_playlist
+                  break
+                rescue RestClient::TooManyRequests => e
+                  seconds = e.response.headers[:retry_after]&.to_f || 0.5
+                  log.info "Got 429 Too Many Requests while downloading '#{sp_playlist.name}', retrying in #{seconds} seconds..."
+                  sleep seconds
+                rescue StandardError => e
+                  log.info "Could not download playlist '#{sp_playlist.name}': #{e}"
+                  break
+                end
               end
             end
           end
