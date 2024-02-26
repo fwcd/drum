@@ -74,7 +74,7 @@ To run the application, run `bundle exec bin/drum`. You can also run `bin/consol
 
 To package the application into a gem, run `bundle exec rake build`. The built gem should then be located in `pkg`.
 
-> [!NOTE]
+> [!IMPORTANT]
 > If you wish to install `drum` using `gem install`, you may need to install additional gems such as `rb-scpt` on macOS to use platform-specific integrations. See [the `Gemfile`](Gemfile) for more information.
 
 To install the gem, run `bundle exec rake install`.
