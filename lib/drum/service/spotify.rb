@@ -31,6 +31,8 @@ module Drum
     TO_SPOTIFY_TRACKS_CHUNK_SIZE = 50
     UPLOAD_PLAYLIST_TRACKS_CHUNK_SIZE = 100
 
+    MAX_PLAYLIST_TRACKS = 10_000
+
     CLIENT_ID_VAR = 'SPOTIFY_CLIENT_ID'
     CLIENT_SECRET_VAR = 'SPOTIFY_CLIENT_SECRET'
 
@@ -254,6 +256,13 @@ module Drum
       while !(sp_tracks = sp_playlist.tracks(limit: TRACKS_CHUNK_SIZE, offset: offset)).empty?
         offset += TRACKS_CHUNK_SIZE
         all_sp_tracks += sp_tracks
+        if offset > sp_playlist.total + TRACKS_CHUNK_SIZE
+          log.warn "Truncating playlist '#{sp_playlist.name}' at #{offset}, which strangely seems to yield more tracks than its length of #{sp_playlist.total} would suggest."
+          break
+        elsif offset > MAX_PLAYLIST_TRACKS
+          log.warn "Truncating playlist '#{sp_playlist.name}' at #{offset}, since it exceeds the maximum of #{MAX_PLAYLIST_TRACKS} tracks."
+          break
+        end
       end
       all_sp_tracks
     end
