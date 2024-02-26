@@ -29,7 +29,8 @@ The basic usage pattern is always `drum cp [source] [destination]` where `source
   * `@stdout`
 * A dash `-`, synonymous with `@stdin` and `@stdout`, depending on usage
 
-> Note that if the source is folder-like, i.e. includes multiple playlists, the destination has to be folder-like too. (The reverse is not true though.)
+> [!NOTE]
+> If the source is folder-like, i.e. includes multiple playlists, the destination has to be folder-like too. (The reverse is not true though.)
 
 ### Examples
 
