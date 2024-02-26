@@ -69,7 +69,7 @@ After checking out the repo, run `bin/setup` (or `bundle install`) to install de
 
 To run the application, run `bundle exec bin/drum`. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-> [!NOTE]
+> [!IMPORTANT]
 > You may need to run `bundle exec ruby bin/drum` on Windows
 
 To package the application into a gem, run `bundle exec rake build`. The built gem should then be located in `pkg`.
