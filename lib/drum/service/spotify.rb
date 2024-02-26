@@ -241,30 +241,30 @@ module Drum
     # Download helpers
     
     def all_sp_library_playlists(offset: 0)
-      sp_playlists = @me.playlists(limit: PLAYLISTS_CHUNK_SIZE, offset: offset)
-      unless sp_playlists.empty?
-        sp_playlists + self.all_sp_library_playlists(offset: offset + PLAYLISTS_CHUNK_SIZE)
-      else
-        []
+      all_sp_playlists = []
+      while !(sp_playlists = @me.playlists(limit: PLAYLISTS_CHUNK_SIZE, offset: offset)).empty?
+        offset += PLAYLISTS_CHUNK_SIZE
+        all_sp_playlists += sp_playlists
       end
+      all_sp_playlists
     end
 
     def all_sp_playlist_tracks(sp_playlist, offset: 0)
-      sp_tracks = sp_playlist.tracks(limit: TRACKS_CHUNK_SIZE, offset: offset)
-      unless sp_tracks.empty?
-        sp_tracks + self.all_sp_playlist_tracks(sp_playlist, offset: offset + TRACKS_CHUNK_SIZE)
-      else
-        []
+      all_sp_tracks = []
+      while !(sp_tracks = sp_playlist.tracks(limit: TRACKS_CHUNK_SIZE, offset: offset)).empty?
+        offset += TRACKS_CHUNK_SIZE
+        all_sp_tracks += sp_tracks
       end
+      all_sp_tracks
     end
 
     def all_sp_library_tracks(offset: 0)
-      sp_tracks = @me.saved_tracks(limit: SAVED_TRACKS_CHUNKS_SIZE, offset: offset)
-      unless sp_tracks.empty?
-        sp_tracks + self.all_sp_library_tracks(offset: offset + SAVED_TRACKS_CHUNKS_SIZE)
-      else
-        []
+      all_sp_tracks = []
+      while !(sp_tracks = @me.saved_tracks(limit: SAVED_TRACKS_CHUNKS_SIZE, offset: offset)).empty?
+        offset += SAVED_TRACKS_CHUNKS_SIZE
+        all_sp_tracks += sp_tracks
       end
+      all_sp_tracks
     end
 
     def extract_sp_features(sp_track)
