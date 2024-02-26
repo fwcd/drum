@@ -566,14 +566,14 @@ module Drum
                 rescue RestClient::TooManyRequests => e
                   seconds = e.response.headers[:retry_after]&.to_f || 0.5
                   if seconds <= 300
-                    log.info "Got 429 Too Many Requests while downloading '#{sp_playlist.name}', retrying in #{seconds} seconds..."
+                    log.warn "Got 429 Too Many Requests while downloading '#{sp_playlist.name}', retrying in #{seconds} seconds..."
                     sleep seconds
                   else
                     log.error "Got 429 Too Many Requests while downloading '#{sp_playlist.name}' with a too large retry time of #{seconds} seconds"
                     raise
                   end
                 rescue StandardError => e
-                  log.info "Could not download playlist '#{sp_playlist.name}': #{e}"
+                  log.warn "Could not download playlist '#{sp_playlist.name}': #{e}"
                   break
                 end
               end
